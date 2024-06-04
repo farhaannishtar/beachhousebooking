@@ -1,8 +1,15 @@
+'use client';
 import React from 'react';
 
 const BookingForm = () => {
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    console.log('Form submitted');
+    // Add your logic here
+  };
+
   return (
-    <form className="max-w-md mx-auto p-4 bg-white shadow-md rounded-lg">
+    <form onSubmit={handleSubmit} className="max-w-md mx-auto p-4 bg-white shadow-md rounded-lg sm:max-w-full">
       <div className="form-control mb-4">
         <label className="label">
           <span className="label-text">Client Name</span>

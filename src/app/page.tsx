@@ -3,6 +3,8 @@ import BookingForm from "@/components/BookingForm";
 
 export default function Home() {
   return (
-    <BookingForm />
+    <div className="flex w-full items-center min-h-screen">
+      <BookingForm />
+    </div>
   );
 }
