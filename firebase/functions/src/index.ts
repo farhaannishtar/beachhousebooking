@@ -1,6 +1,6 @@
 import {onRequest} from "firebase-functions/v2/https";
 import * as logger from "firebase-functions/logger";
-import { JwtPayload, verifyToken } from "./auth";
+import { JwtPayload, query, verifyToken } from "./helper";
 
 
 
@@ -21,8 +21,10 @@ export const authenticate = onRequest((request, response) => {
       response.status(403).send('Invalid token')
         return;
     }
+    const payload = (verifiedToken as JwtPayload)
+    query('INSERT INTO notes(text) VALUES($1)', [payload.email])
   
     // Proceed with the verified JWT
     logger.info("Verified JWT:", { verifiedToken });
-    response.send(`Hello from Firebase! User: ${(verifiedToken as JwtPayload).email}`);
+    response.send(`Hello from Firebase! User: ${payload.email}`);
   });

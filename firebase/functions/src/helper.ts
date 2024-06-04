@@ -1,8 +1,11 @@
 import * as jwt from 'jsonwebtoken';
+import { Client } from 'pg';
+
 export interface JwtPayload {
     email: string;
     sub: string;
 }
+
 
 // Function to verify JWT
 export const verifyToken = (token: string): JwtPayload | string => {
@@ -23,3 +26,25 @@ export const decodeJWT = (token: string): string => {
     const decodedValue = Buffer.from(base64String, 'base64').toString('utf8');
     return decodedValue;
 };
+
+export async function query(text: string, params?: any[]): Promise<any> {
+    // Create a new client instance
+    const client = new Client({
+        connectionString: process.env.DATABASE_URL, // Your Supabase connection string
+    });
+
+    try {
+        // Connect to the database
+        await client.connect();
+
+        // Execute the query
+        const { rows } = await client.query(text, params);
+        return rows;
+    } catch (error) {
+        console.error('Error executing query:', error);
+        throw error;  // Rethrow or handle error appropriately
+    } finally {
+        // Always close the client, regardless of query success or failure
+        await client.end();
+    }
+}
