@@ -12,11 +12,12 @@ const client: JWT = new JWT({
 });
 const calendar = google.calendar({ version: 'v3', auth: client as any });
 
-export async function insertEvent(calendarId: string, event: calendar_v3.Schema$Event): Promise<void> {
-  await calendar.events.insert({
+export async function insertEvent(calendarId: string, event: calendar_v3.Schema$Event): Promise<string> {
+  let resp = await calendar.events.insert({
     calendarId: calendarId,
     requestBody: event,
   });
+  return resp.data.id!
 }
 
 export async function listEvents(calendarId: string, maxResults: number = 10, minTime: string | undefined = undefined): Promise<calendar_v3.Schema$Event[]> {
@@ -40,4 +41,11 @@ export async function patchEvent(calendarId: string, eventId: string, event: cal
       requestBody: event
   });
 
+}
+
+export async function deleteEvent(calendarId: string, eventId: string): Promise<void> {
+  await calendar.events.delete({
+      calendarId: calendarId,
+      eventId: eventId
+  });
 }

@@ -3,7 +3,7 @@ import * as dotenv from 'dotenv';
 // import { query } from './helper';
 import { insertEvent, listEvents, patchEvent } from './calendar';
 import { BookingDB, Property } from '../../../shared-types/src/booking';
-import { createBooking } from '.';
+import { createBooking } from './booking';
 
 dotenv.config();
 

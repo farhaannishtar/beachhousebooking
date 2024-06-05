@@ -59,7 +59,7 @@ export interface Payment {
 
 export interface Event {
     eventName: string
-    calendarId?: string | undefined
+    calendarIds?: { [key: string]: string } | undefined
     notes: string
     startDateTime: string
     endDateTime: string
