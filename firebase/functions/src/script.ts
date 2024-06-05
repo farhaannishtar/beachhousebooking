@@ -1,6 +1,7 @@
 // import { verifyToken } from "./auth";
 import * as dotenv from 'dotenv';
-import { query } from './helper';
+// import { query } from './helper';
+import { insertEvent, listEvents, patchEvent } from './calendar';
 
 dotenv.config();
 
@@ -22,11 +23,36 @@ dotenv.config();
 
 
 async function main() {
-    const notes = await query('SELECT * FROM notes');
-    console.log(notes);
-    const notes2 = await query('INSERT INTO notes(text) VALUES($1)', ["Hello"]);
-    console.log(notes2);
-    
+    // const notes = await query('SELECT * FROM notes');
+    // console.log(notes);
+    // const notes2 = await query('INSERT INTO notes(text) VALUES($1)', ["Hello"]);
+    // console.log(notes2);
+    let events = await listEvents('nathikazad@gmail.com', 1, (new Date()).toISOString())
+
+    events.forEach((event) => {
+        const start = event.start?.dateTime || event.start?.date;
+        console.log(`${start} - ${event.summary}`);
+        console.log(event)
+    });
+
+    insertEvent('nathikazad@gmail.com', {
+        summary: 'Google I/O 2022',
+        location: 'San Francisco',
+        description: 'A chance to hear more about Google\'s developer products.',
+        start: {
+          dateTime: '2024-06-09T09:00:00-07:00',
+          timeZone: 'America/Los_Angeles',
+        },
+        end: {
+          dateTime: '2024-06-09T17:00:00-07:00',
+          timeZone: 'America/Los_Angeles'
+        }
+      });
+
+    patchEvent('nathikazad@gmail.com', "c5j3ae1n64q66bb465i32b9k6dh34b9ocks32b9jc5h3gphp65ij8cb2c4",
+        {
+            colorId: "11"
+        })
     return;
 }
 
