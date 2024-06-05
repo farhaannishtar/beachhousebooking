@@ -27,7 +27,8 @@ export const authenticate = onRequest((request, response) => {
     const payload = (verifiedToken as JwtPayload)
     let booking: Booking = JSON.parse(request.body)
 
-    createBooking(booking, payload.email);    
+    createBooking(booking, payload.email);  
+    logger.info("😈😈😈😈")  
     response.send(`Hello from Firebase! User: ${payload.email}`);
   });
 });
