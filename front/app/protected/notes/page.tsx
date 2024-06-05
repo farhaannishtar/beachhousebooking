@@ -4,7 +4,7 @@ import { Booking } from "../../../../shared-types/src/booking";
 
 export default async function Notes() {
   const supabase = createClient();
-  const { data: notes } = await supabase.from("notes").select();
+  const { data: notes } = await supabase.from("bookings").select();
 
   
   const createNote = async (formData: FormData) => {
@@ -109,7 +109,7 @@ export default async function Notes() {
         {notes?.map(note => (
           <li key={note.id}>
             <strong>ID:</strong> {note.id} <br />
-            <strong>Text:</strong> {note.text}
+            <strong>Text:</strong> {JSON.stringify(note.json, null, 2)}
           </li>
         ))}
       </ul>
