@@ -3,7 +3,7 @@ import * as cors from 'cors';
 import * as logger from "firebase-functions/logger";
 import { JwtPayload, query, verifyToken } from "./helper";
 import { BookingForm } from "../../../shared-types/src/booking";
-import { mutateBookingState } from "./Booking";
+import { mutateBookingState } from "./booking";
 
 const corsHandler = cors({origin: true});
 
@@ -25,7 +25,7 @@ export const submitBooking = onRequest((request, response) => {
       response.status(403).send('Invalid token')
       return;
     }
-    logger.info("😈😈😈😈")  
+    logger.info("😈😈😈")  
     const payload = (verifiedToken as JwtPayload)
     let booking: BookingForm = JSON.parse(request.body)
     mutateBookingState(booking, payload.email).then(bookingId => {

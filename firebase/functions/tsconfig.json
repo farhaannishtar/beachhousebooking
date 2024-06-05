@@ -9,5 +9,5 @@
     "target": "es2017"
   },
   "compileOnSave": true,
-  "include": ["src", "../../shared-types/src/Booking.ts"]
+  "include": ["src", "../../shared-types/src/booking.ts"]
 }
