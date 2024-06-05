@@ -2,6 +2,7 @@ import {onRequest} from "firebase-functions/v2/https";
 import * as cors from 'cors';
 import * as logger from "firebase-functions/logger";
 import { JwtPayload, query, verifyToken } from "./helper";
+import { Booking } from "../../../shared-types/src/booking";
 
 const corsHandler = cors({origin: true});
 
@@ -24,15 +25,13 @@ export const authenticate = onRequest((request, response) => {
       return;
     }
     const payload = (verifiedToken as JwtPayload)
-    // const { content } = request.body;
-    logger.info("😈 ")
-    let body = JSON.parse(request.body)
-    logger.info(body)
-    logger.info(body["content"])
-    query('INSERT INTO notes(text, email) VALUES($1, $2)', [body["content"], payload.email]);
+    let booking: Booking = JSON.parse(request.body)
 
-    // Proceed with the verified JWT
-    logger.info("Verified JWT:", { verifiedToken });
+    createBooking(booking, payload.email);    
     response.send(`Hello from Firebase! User: ${payload.email}`);
   });
 });
+
+export function createBooking(booking: Booking, email: string) {
+    query('INSERT INTO bookings(email, json) VALUES($1, $2)', [email, [booking]]);
+}

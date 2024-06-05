@@ -2,6 +2,8 @@
 import * as dotenv from 'dotenv';
 // import { query } from './helper';
 import { insertEvent, listEvents, patchEvent } from './calendar';
+import { Booking } from '../../../shared-types/src/booking';
+import { createBooking } from '.';
 
 dotenv.config();
 
@@ -22,7 +24,7 @@ dotenv.config();
 
 
 
-async function main() {
+async function calendar() {
     // const notes = await query('SELECT * FROM notes');
     // console.log(notes);
     // const notes2 = await query('INSERT INTO notes(text) VALUES($1)', ["Hello"]);
@@ -54,6 +56,80 @@ async function main() {
             colorId: "11"
         })
     return;
+}
+
+async function main() {
+  let booking:Booking = {
+    encodingVersion: 1,
+    client: {
+      name: "Donald Trump",
+      email: "donald@trump.com",
+      phone: "123456789"
+    },
+    bookingName: "Wedding",
+    bookingType: "Event",
+    paymentMethod: "Cash",
+    notes: "note",
+    status: "Pending",
+    createdDateTime: "2024-06-09T09:00:00-07:00",
+    createdBy: "Nathik",
+    updatedDateTime: "2024-06-09T09:00:00-07:00",
+    updatedBy: "Nathik",
+    followUpDate: "2022-06-09",
+    events: [
+      {
+        eventName: "Mehendi",
+        notes: "This is a note",
+        startDateTime: "2024-06-09T09:00:00-07:00",
+        endDateTime: "2024-06-09T17:00:00-07:00",
+        numberOfGuests: 100,
+        properties: ["Property 1", "Property 2"],
+        valetService: true,
+        djService: true,
+        kitchenService: true,
+        overNightStay: true,
+        overNightGuests: 10
+      },
+      {
+        eventName: "Wedding",
+        notes: "This is a note",
+        startDateTime: "2024-06-09T09:00:00-07:00",
+        endDateTime: "2024-06-09T17:00:00-07:00",
+        numberOfGuests: 100,
+        properties: ["Property 1", "Property 2"],
+        valetService: true,
+        djService: true,
+        kitchenService: true,
+        overNightStay: true,
+        overNightGuests: 10
+      }
+    ],
+    costs: [
+      {
+        name: "Bluehouse",
+        amount: 1000
+      },
+      {
+        name: "Cleaning",
+        amount: 2000
+      },
+      {
+        name: "EB",
+        amount: 3000
+      }
+    ],
+    finalCost: 6000,
+    payments: [
+      {
+        date: "2022-06-09",
+        paymentMethod: "Cash",
+        amount: 3000,
+        receivedBy: "Nathik"
+      }
+    ]
+  }
+
+  createBooking(booking, "nathik@gmail.com");
 }
 
 main()
