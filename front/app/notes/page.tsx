@@ -23,13 +23,13 @@ export default async function Notes() {
       const response = await fetch(url, {
         method: "POST",
         headers: {
-          'Authorization': `Bearer ${token}` // Replace YOUR_TOKEN_HERE with your actual token
+          'Authorization': `Bearer ${token}` 
         },
         body: JSON.stringify({
           content: content
         })
       });
-      const data = await response.json(); // Assuming the response is JSON
+      const data = await response.json(); 
       console.log('Response from Firebase function:', data);
       // You might want to handle the data further or redirect the user based on the response
     } catch (error) {
