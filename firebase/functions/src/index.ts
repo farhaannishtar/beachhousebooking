@@ -95,7 +95,7 @@ async function modifyExistingBooking(newBooking: BookingDB) {
       if (event.calendarId) {
         let oldEvent = oldBooking.events.find(e => e.calendarId === event.calendarId);
         if (oldEvent && (event.startDateTime !== oldEvent.startDateTime || event.endDateTime !== oldEvent.endDateTime)) {
-          // update old event
+          // update old event start time and end time
         }
       } else {
         // insert into calendar

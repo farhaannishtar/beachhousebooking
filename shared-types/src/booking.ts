@@ -1,4 +1,14 @@
 
+// enum of colors for the calendar
+export enum Property {
+    Bluehouse = "Bluehouse",
+    Glasshouse = "Glasshouse",
+    Pod = "Pod",
+    LeChalet = "LeChalet",
+    VillaArmati = "VillaArmati",
+    Castle = "Castle"
+}
+
 export interface BookingForm {
     bookingId?: number | undefined
     client: {
@@ -15,7 +25,7 @@ export interface BookingForm {
     events: Event[]
     costs:  Cost[]
     finalCost: number
-    payments: Payments[]
+    payments: Payment[]
     refferral?: Refferal | undefined
 }
 
@@ -40,7 +50,7 @@ export interface Cost {
     amount: number
 }
 
-export interface Payments {
+export interface Payment {
     dateTime: string
     paymentMethod: string
     amount: number
@@ -54,7 +64,7 @@ export interface Event {
     startDateTime: string
     endDateTime: string
     numberOfGuests: number
-    properties: string[]
+    properties: Property[]
     valetService: boolean
     djService: boolean
     kitchenService: boolean

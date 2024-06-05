@@ -2,7 +2,7 @@
 import * as dotenv from 'dotenv';
 // import { query } from './helper';
 import { insertEvent, listEvents, patchEvent } from './calendar';
-import { Booking } from '../../../shared-types/src/booking';
+import { BookingDB, Property } from '../../../shared-types/src/booking';
 import { createBooking } from '.';
 
 dotenv.config();
@@ -59,7 +59,7 @@ async function calendar() {
 }
 
 async function main() {
-  let booking:Booking = {
+  let booking:BookingDB = {
     encodingVersion: 1,
     client: {
       name: "Donald Trump",
@@ -83,7 +83,7 @@ async function main() {
         startDateTime: "2024-06-09T09:00:00-07:00",
         endDateTime: "2024-06-09T17:00:00-07:00",
         numberOfGuests: 100,
-        properties: ["Property 1", "Property 2"],
+        properties: [Property.Bluehouse, Property.Glasshouse],
         valetService: true,
         djService: true,
         kitchenService: true,
@@ -96,7 +96,7 @@ async function main() {
         startDateTime: "2024-06-09T09:00:00-07:00",
         endDateTime: "2024-06-09T17:00:00-07:00",
         numberOfGuests: 100,
-        properties: ["Property 1", "Property 2"],
+        properties: [Property.Bluehouse, Property.Glasshouse],
         valetService: true,
         djService: true,
         kitchenService: true,
@@ -121,14 +121,13 @@ async function main() {
     finalCost: 6000,
     payments: [
       {
-        date: "2022-06-09",
+        dateTime: "2024-06-09T17:00:00-07:00",
         paymentMethod: "Cash",
         amount: 3000,
         receivedBy: "Nathik"
       }
     ]
   }
-
   createBooking(booking, "nathik@gmail.com");
 }
 

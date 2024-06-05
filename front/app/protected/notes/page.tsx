@@ -1,6 +1,6 @@
 import { createClient } from '@/utils/supabase/server';
 import { SubmitButton } from '../../login/submit-button';
-import { BookingForm } from "../../../../shared-types/src/booking";
+import { BookingForm, Property } from "../../../../shared-types/src/booking";
 
 export default async function Notes() {
   const supabase = createClient();
@@ -36,7 +36,7 @@ export default async function Notes() {
           startDateTime: "2024-06-09T09:00:00-07:00",
           endDateTime: "2024-06-09T17:00:00-07:00",
           numberOfGuests: 100,
-          properties: ["Property 1", "Property 2"],
+          properties: [Property.Bluehouse, Property.Glasshouse],
           valetService: true,
           djService: true,
           kitchenService: true,
@@ -49,7 +49,7 @@ export default async function Notes() {
           startDateTime: "2024-06-09T09:00:00-07:00",
           endDateTime: "2024-06-09T17:00:00-07:00",
           numberOfGuests: 100,
-          properties: ["Property 1", "Property 2"],
+          properties: [Property.Bluehouse, Property.Glasshouse],
           valetService: true,
           djService: true,
           kitchenService: true,
