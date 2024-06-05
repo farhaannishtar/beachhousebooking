@@ -1,6 +1,6 @@
 import { createClient } from '@/utils/supabase/server';
 import { SubmitButton } from '../../login/submit-button';
-import { Booking } from "../../../../shared-types/src/booking";
+import { BookingForm } from "../../../../shared-types/src/booking";
 
 export default async function Notes() {
   const supabase = createClient();
@@ -17,8 +17,7 @@ export default async function Notes() {
     const note = formData.get("content") as string;
 
 
-    let booking:Booking = {
-      encodingVersion: 1,
+    let booking:BookingForm = {
       client: {
         name: "Donald Trump",
         email: "donald@trump.com",
@@ -29,10 +28,6 @@ export default async function Notes() {
       paymentMethod: "Cash",
       notes: note,
       status: "Pending",
-      createdDateTime: "2024-06-09T09:00:00-07:00",
-      createdBy: "Nathik",
-      updatedDateTime: "2024-06-09T09:00:00-07:00",
-      updatedBy: "Nathik",
       followUpDate: "2022-06-09",
       events: [
         {
@@ -79,10 +74,9 @@ export default async function Notes() {
       finalCost: 6000,
       payments: [
         {
-          date: "2022-06-09",
+          dateTime: "2024-06-09T17:00:00-07:00",
           paymentMethod: "Cash",
-          amount: 3000,
-          receivedBy: "Nathik"
+          amount: 3000
         }
       ]
     }

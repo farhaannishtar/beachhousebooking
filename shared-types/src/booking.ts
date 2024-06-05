@@ -1,8 +1,6 @@
 
-export interface Booking {
+export interface BookingForm {
     bookingId?: number | undefined
-    calendarId?: string | undefined
-    encodingVersion: number
     client: {
         name: string
         email: string
@@ -13,16 +11,23 @@ export interface Booking {
     paymentMethod: string
     notes: string
     status: "Pending" | "Confirmed" | "Cancelled" | "Completed"
-    createdDateTime: string
-    createdBy: string
-    updatedDateTime: string
-    updatedBy: string
     followUpDate: string
     events: Event[]
     costs:  Cost[]
     finalCost: number
     payments: Payments[]
     refferral?: Refferal | undefined
+}
+
+
+export interface BookingDB extends BookingForm {
+    encodingVersion: number
+    createdDateTime: string
+    createdBy: string
+    updatedDateTime: string
+    updatedBy: string
+    confirmedDateTime?: string | undefined
+    confirmedBy?: string | undefined
 }
 
 export interface Refferal {
@@ -36,14 +41,15 @@ export interface Cost {
 }
 
 export interface Payments {
-    date: string
+    dateTime: string
     paymentMethod: string
     amount: number
-    receivedBy: string
+    receivedBy?: string | undefined
 }
 
 export interface Event {
     eventName: string
+    calendarId?: string | undefined
     notes: string
     startDateTime: string
     endDateTime: string
