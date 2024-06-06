@@ -88,9 +88,9 @@ export default async function Notes() {
         },
         body: JSON.stringify(booking)
       });
-      const data = await response.json(); 
-      const bookingId = data.bookingId;
-      console.log('Response from Firebase function:', data);
+      // const data = await response.json(); 
+      // const bookingId = data.bookingId;
+      // console.log('Response from Firebase function:', data);
 
     } catch (error) {
       console.error('Error calling Firebase function:', error);

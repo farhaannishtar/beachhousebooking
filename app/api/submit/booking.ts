@@ -1,4 +1,4 @@
-import { BookingDB, BookingForm } from "../types/bookingType";
+import { BookingDB, BookingForm } from "../../../utils/types/bookingType";
 import { insertEvent } from "./calendar";
 import { query } from "./helper";
 
@@ -42,7 +42,7 @@ export async function mutateBookingState(booking: BookingForm, email: string): P
     })
   }
   if(newBooking.bookingId) {
-    await modifyExistingBooking(newBooking);
+    await modifyExistingBooking(newBooking); 
     return newBooking.bookingId
   } else {
     console.log("mutateBookingState create booking")  
