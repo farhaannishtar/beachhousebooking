@@ -1,6 +1,6 @@
 import { createClient } from '@/utils/supabase/server';
 import { SubmitButton } from '../../login/submit-button';
-import { BookingForm, Property } from "../../../../shared-types/src/booking";
+import { BookingForm, Property } from "../../../utils/types/bookingType";
 
 export default async function Notes() {
   const supabase = createClient();
@@ -9,6 +9,7 @@ export default async function Notes() {
   
   const createNote = async (formData: FormData) => {
     "use server";
+    
     const supabase = createClient();
     let sesh = await supabase.auth.getSession()
     let token = sesh.data.session?.access_token;
@@ -24,7 +25,7 @@ export default async function Notes() {
       bookingType: "Event",
       paymentMethod: "Cash",
       notes: note,
-      status: "Pending",
+      status: "Confirmed",
       followUpDate: "2022-06-09",
       events: [
         {
@@ -79,7 +80,8 @@ export default async function Notes() {
     }
 
     try {
-      const response = await fetch("https://us-central1-beachhouse1370.cloudfunctions.net/submitBooking", {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+      const response = await fetch(`${apiUrl}/api/submit`, {
         method: "POST",
         headers: {
           'Authorization': `Bearer ${token}` 
@@ -89,7 +91,7 @@ export default async function Notes() {
       const data = await response.json(); 
       const bookingId = data.bookingId;
       console.log('Response from Firebase function:', data);
-      // You might want to handle the data further or redirect the user based on the response
+
     } catch (error) {
       console.error('Error calling Firebase function:', error);
     }

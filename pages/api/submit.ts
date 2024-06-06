@@ -1,15 +1,12 @@
-import {onRequest} from "firebase-functions/v2/https";
-import * as cors from 'cors';
-import * as logger from "firebase-functions/logger";
-import { JwtPayload, query, verifyToken } from "./helper";
-import { BookingForm } from "../../../shared-types/src/booking";
-import { mutateBookingState } from "./booking";
 
-const corsHandler = cors({origin: true});
+import { JwtPayload, query, verifyToken } from "../../utils/api/helper";
+import { BookingForm } from "../../utils/types/bookingType";
+import { mutateBookingState } from "../../utils/api/booking";
+import { VercelRequest, VercelResponse } from '@vercel/node';
 
 
-export const submitBooking = onRequest((request, response) => {
-  corsHandler(request, response, () => {
+
+export default (request: VercelRequest, response: VercelResponse) => {
     const header = request.headers.authorization;
     if (!header) {
       response.status(401).send('No token provided');
@@ -25,7 +22,7 @@ export const submitBooking = onRequest((request, response) => {
       response.status(403).send('Invalid token')
       return;
     }
-    logger.info("😈😈😈")  
+    console.log("😈😈😈")  
     const payload = (verifiedToken as JwtPayload)
     let booking: BookingForm = JSON.parse(request.body)
     mutateBookingState(booking, payload.email).then(bookingId => {
@@ -33,5 +30,4 @@ export const submitBooking = onRequest((request, response) => {
     }).finally(() => {
       response.status(500).send('Error')
     })
-  });
-});
+}

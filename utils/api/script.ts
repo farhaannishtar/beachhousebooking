@@ -1,11 +1,11 @@
 // import { verifyToken } from "./auth";
-import * as dotenv from 'dotenv';
+// import * as dotenv from 'dotenv';
 // import { query } from './helper';
 import { insertEvent, listEvents, patchEvent } from './calendar';
-import { BookingDB, Property } from '../../../shared-types/src/booking';
-import { createBooking } from './booking';
+import { BookingDB, Property } from '../types/bookingType';
+import { createBooking, insertToCalendarIfConfirmed } from './booking';
 
-dotenv.config();
+// dotenv.config();
 
 // const token = 'eyJhbGciOiJIUzI1NiIsImtpZCI6IjJFRWZoS0ZUZllTTHl5dXciLCJ0eXAiOiJKV1QifQ.eyJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzE3NTMyNDM3LCJpYXQiOjE3MTc1Mjg4MzcsImlzcyI6Imh0dHBzOi8vb2tmcnVxenVsanB4bXp3ZGV5bmouc3VwYWJhc2UuY28vYXV0aC92MSIsInN1YiI6ImExZWY0NDI0LTMzYWQtNGZjYi1iNDZlLWQwNGRhY2IwZDFkOSIsImVtYWlsIjoibmF0aGlrYXphZEBnbWFpbC5jb20iLCJwaG9uZSI6IiIsImFwcF9tZXRhZGF0YSI6eyJwcm92aWRlciI6ImVtYWlsIiwicHJvdmlkZXJzIjpbImVtYWlsIl19LCJ1c2VyX21ldGFkYXRhIjp7ImVtYWlsIjoibmF0aGlrYXphZEBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsInBob25lX3ZlcmlmaWVkIjpmYWxzZSwic3ViIjoiYTFlZjQ0MjQtMzNhZC00ZmNiLWI0NmUtZDA0ZGFjYjBkMWQ5In0sInJvbGUiOiJhdXRoZW50aWNhdGVkIiwiYWFsIjoiYWFsMSIsImFtciI6W3sibWV0aG9kIjoicGFzc3dvcmQiLCJ0aW1lc3RhbXAiOjE3MTc1Mjg4Mzd9XSwic2Vzc2lvbl9pZCI6IjQzMmJiNzgwLWNjNmMtNGQzMi05MDI2LTFkYTkxNjFjOGY0YSIsImlzX2Fub255bW91cyI6ZmFsc2V9.TqvxUYrSakGp5f9HqyUPBoMi1k_sT6sBbHBfxkFAO6c';
 // const result = verifyToken(token);
@@ -29,7 +29,8 @@ async function calendar() {
     // console.log(notes);
     // const notes2 = await query('INSERT INTO notes(text) VALUES($1)', ["Hello"]);
     // console.log(notes2);
-    let events = await listEvents('nathikazad@gmail.com', 1, (new Date()).toISOString())
+    let calendarId = "bluehouseecr@gmail.com"// process.env.CALENDAR_ID!;
+    let events = await listEvents(calendarId, 1, (new Date()).toISOString())
 
     events.forEach((event) => {
         const start = event.start?.dateTime || event.start?.date;
@@ -37,26 +38,27 @@ async function calendar() {
         console.log(event)
     });
 
-    insertEvent('nathikazad@gmail.com', {
-        summary: 'Google I/O 2022',
-        location: 'San Francisco',
-        description: 'A chance to hear more about Google\'s developer products.',
-        start: {
-          dateTime: '2024-06-09T09:00:00-07:00',
-          timeZone: 'America/Los_Angeles',
-        },
-        end: {
-          dateTime: '2024-06-09T17:00:00-07:00',
-          timeZone: 'America/Los_Angeles'
-        }
-      });
+    // insertEvent(process.env.CALENDAR_ID!, {
+    //     summary: 'Google I/O 2022',
+    //     location: 'San Francisco',
+    //     description: 'A chance to hear more about Google\'s developer products.',
+    //     start: {
+    //       dateTime: '2024-06-09T09:00:00-07:00',
+    //       timeZone: 'America/Los_Angeles',
+    //     },
+    //     end: {
+    //       dateTime: '2024-06-09T17:00:00-07:00',
+    //       timeZone: 'America/Los_Angeles'
+    //     }
+    //   });
 
-    patchEvent('nathikazad@gmail.com', "c5j3ae1n64q66bb465i32b9k6dh34b9ocks32b9jc5h3gphp65ij8cb2c4",
-        {
-            colorId: "11"
-        })
-    return;
+    // patchEvent('nathikazad@gmail.com', "c5j3ae1n64q66bb465i32b9k6dh34b9ocks32b9jc5h3gphp65ij8cb2c4",
+    //     {
+    //         colorId: "11"
+    //     })
+    // return;
 }
+// calendar()
 
 async function main() {
   let booking:BookingDB = {
@@ -70,11 +72,17 @@ async function main() {
     bookingType: "Event",
     paymentMethod: "Cash",
     notes: "note",
-    status: "Pending",
+    status: "Confirmed",
     createdDateTime: "2024-06-09T09:00:00-07:00",
-    createdBy: "Nathik",
+    createdBy: {
+      id: "xxx",
+      name: "Nathik"
+    },
     updatedDateTime: "2024-06-09T09:00:00-07:00",
-    updatedBy: "Nathik",
+    updatedBy: {
+      id: "xxx",
+      name: "Nathik"
+    },
     followUpDate: "2022-06-09",
     events: [
       {
@@ -124,12 +132,17 @@ async function main() {
         dateTime: "2024-06-09T17:00:00-07:00",
         paymentMethod: "Cash",
         amount: 3000,
-        receivedBy: "Nathik"
+        receivedBy: {
+          id: "xxx",
+          name: "Nathik"
+        },
       }
     ]
   }
-  let id = await createBooking(booking, "nathik@gmail.com");
-  console.log(id)
+  // let id = await createBooking(booking, "nathik@gmail.com");
+  // console.log(id)
+  let bk = await insertToCalendarIfConfirmed(booking);
+  console.log(JSON.stringify(bk, null, 2))
 }
 
 main()

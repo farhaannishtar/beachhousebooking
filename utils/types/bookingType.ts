@@ -9,6 +9,11 @@ export enum Property {
     Castle = "Castle"
 }
 
+export interface Employee {
+    id: string
+    name: string
+}
+
 export interface BookingForm {
     bookingId?: number | undefined
     client: {
@@ -33,11 +38,11 @@ export interface BookingForm {
 export interface BookingDB extends BookingForm {
     encodingVersion: number
     createdDateTime: string
-    createdBy: string
+    createdBy: Employee
     updatedDateTime: string
-    updatedBy: string
+    updatedBy: Employee
     confirmedDateTime?: string | undefined
-    confirmedBy?: string | undefined
+    confirmedBy?: Employee | undefined
 }
 
 export interface Refferal {
@@ -54,7 +59,7 @@ export interface Payment {
     dateTime: string
     paymentMethod: string
     amount: number
-    receivedBy?: string | undefined
+    receivedBy?: Employee | undefined
 }
 
 export interface Event {

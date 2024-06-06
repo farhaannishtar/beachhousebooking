@@ -1,7 +1,6 @@
-import { BookingDB, BookingForm } from "../../../shared-types/src/booking";
+import { BookingDB, BookingForm } from "../types/bookingType";
 import { insertEvent } from "./calendar";
 import { query } from "./helper";
-import * as logger from "firebase-functions/logger";
 
 export async function createBooking(booking: BookingDB, email: string): Promise<number> {
     let resp = await query('INSERT INTO bookings(email, json) VALUES($1, $2) RETURNING id', [email, [booking]]);
@@ -22,13 +21,23 @@ export async function mutateBookingState(booking: BookingForm, email: string): P
     ...booking,
     encodingVersion: 1,
     createdDateTime: new Date().toISOString(),
-    createdBy: email,
+    createdBy: {
+      id: email,
+      name: email
+    },
     updatedDateTime: new Date().toISOString(),
-    updatedBy: email,
+    updatedBy: {
+      id: email,
+      name: email
+    },
     payments: booking.payments.map(payment => {
       return {
         ...payment,
-        receivedBy: payment.receivedBy || email
+        receivedBy: payment.receivedBy || {
+          id: email,
+          name: email
+        },
+        dateTime: payment.dateTime || new Date().toISOString()
       }
     })
   }
@@ -36,22 +45,31 @@ export async function mutateBookingState(booking: BookingForm, email: string): P
     await modifyExistingBooking(newBooking);
     return newBooking.bookingId
   } else {
-    logger.info("mutateBookingState create booking")  
+    console.log("mutateBookingState create booking")  
     let bookingId = createBooking(newBooking, email)
-    // await insertToCalendarIfConfirmed(newBooking);
+    await insertToCalendarIfConfirmed(newBooking);
     return bookingId
   }
 }
 
-async function insertToCalendarIfConfirmed(newBooking: BookingDB) {
+export async function insertToCalendarIfConfirmed(newBooking: BookingDB): Promise<BookingDB> {
   if (newBooking.status === "Confirmed") {
-    for (let event of newBooking.events) {
-      event.calendarIds = {};
+    for(let i = 0; i < newBooking.events.length; i++) {
+      let event = newBooking.events[i];
+      newBooking.events[i].calendarIds = {};
+      let summary = `${newBooking.bookingName} for ${newBooking.client.name}(${event.numberOfGuests} pax) by ${newBooking.createdBy.name}`;
+      let description = `
+      Total Amount: ${newBooking.finalCost} 
+      Payment Method: ${newBooking.paymentMethod}
+      Paid Amount: ${newBooking.payments.reduce((acc, payment) => acc + payment.amount, 0)}
+      `;
+
+      
       for (let property of event.properties) {
         let id = await insertEvent(process.env.CALENDAR_ID!, {
-          summary: newBooking.bookingName,
+          summary: summary,
           location: property,
-          description: newBooking.notes,
+          description: description,
           start: {
             dateTime: event.startDateTime
           },
@@ -59,10 +77,11 @@ async function insertToCalendarIfConfirmed(newBooking: BookingDB) {
             dateTime: event.endDateTime
           }
         });
-        event.calendarIds[property] = id;
+        newBooking.events[i].calendarIds![property] = id;
       }
     }
   }
+  return newBooking;
 }
 
 async function modifyExistingBooking(newBooking: BookingDB) {
