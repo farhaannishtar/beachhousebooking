@@ -1,38 +1,95 @@
-import { SubmitButton } from '@/app/login/submit-button';
 import { createClient } from '@/utils/supabase/server';
+import { BookingForm, Property } from "../../../../utils/lib/bookingType";
+import Form from '@/components/Form';
 
-
-export default async function Notes() {
+export default async function Booking() {
   const supabase = createClient();
   const { data: bookings } = await supabase.from("bookings").select();
 
-
   const createBooking = async (formData: FormData) => {
-    // const testFunction = (event: React.FormEvent) => {
     "use server";
-    console.log('Test Function');
 
-    const url = 'https://authenticate-snss73hxzq-uc.a.run.app'; // Your Firebase function URL
     const supabase = createClient();
     let sesh = await supabase.auth.getSession()
-
-    //   console.log("session ", sesh.data.session?.access_token);
     let token = sesh.data.session?.access_token;
-    const content = formData.get("content") as string;
+    const note = formData.get("content") as string;
+
+    let booking: BookingForm = {
+      client: {
+        name: formData.get("clientName") as string,
+        phone: formData.get("clientPhoneNumber") as string
+      },
+      bookerName: formData.get("bookerName") as string,
+      bookingType: formData.get("bookingType") as "Stay" | "Event",
+      notes: formData.get("notes") as string,
+      status: formData.get("bookingStatus") as "Inquiry" | "Booking",
+      followUpDate: formData.get("followUpDate") as string,
+      events: [
+        {
+          eventName: "Mehendi",
+          notes: "This is a note",
+          startDateTime: "2024-06-09T09:00:00-07:00",
+          endDateTime: "2024-06-09T17:00:00-07:00",
+          numberOfGuests: 100,
+          properties: [Property.Bluehouse, Property.Glasshouse],
+          valetService: true,
+          djService: true,
+          kitchenService: true,
+          overNightStay: true,
+          overNightGuests: 10
+        },
+        {
+          eventName: "Wedding",
+          notes: "This is a note",
+          startDateTime: "2024-06-09T09:00:00-07:00",
+          endDateTime: "2024-06-09T17:00:00-07:00",
+          numberOfGuests: 100,
+          properties: [Property.Bluehouse, Property.Glasshouse],
+          valetService: true,
+          djService: true,
+          kitchenService: true,
+          overNightStay: true,
+          overNightGuests: 10
+        }
+      ],
+      costs: [
+        {
+          name: "Bluehouse",
+          amount: 1000
+        },
+        {
+          name: "Cleaning",
+          amount: 2000
+        },
+        {
+          name: "EB",
+          amount: 3000
+        }
+      ],
+      finalCost: 6000,
+      payments: [
+        {
+          dateTime: "2024-06-09T17:00:00-07:00",
+          paymentMethod: "Cash",
+          amount: 3000
+        }
+      ],
+      paymentMethod: formData.get("paymentMethod") as string,
+    }
 
     try {
-      const response = await fetch(url, {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+      const response = await fetch(`${apiUrl}/api/submit`, {
         method: "POST",
         headers: {
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({
-          content: content
-        })
+        body: JSON.stringify(booking)
       });
-      const data = await response.json();
-      console.log('Response from Firebase function:', data);
-      // You might want to handle the data further or redirect the user based on the response
+      // const data = await response.json(); 
+      // const bookingId = data.bookingId;
+      // console.log('Response from Firebase function:', data);
+
     } catch (error) {
       console.error('Error calling Firebase function:', error);
     }
@@ -48,141 +105,8 @@ export default async function Notes() {
           </li>
         ))}
       </ul> */}
-      <div className='min-h-screen flex items-center justify-center'>
-        <form>
-          <div className='flex flex-col gap-3 mb-6'>
-            <label className="flex items-center gap-2">
-              Client Name:
-              <input type="text" className="grow" placeholder="" />
-            </label>
-            <label className="flex items-center gap-2">
-              Email:
-              <input type="text" className="grow" placeholder="" />
-            </label>
-            <label className="flex items-center gap-2">
-              Phone Number:
-              <input type="text" className="grow" placeholder="" />
-            </label>
-            <label className="flex items-center gap-2">
-              Name of Booking:
-              <input type="text" className="w-1/2" placeholder="" />
-            </label>
-            <label className="flex items-center gap-2">
-              Type of Booking:
-              <select className="grow py-1">
-                <option value="">Select...</option>
-                <option value="Stay">Stay</option>
-                <option value="Event">Event</option>
-              </select>
-            </label>
-            <label className="flex items-center gap-2">
-              Payment Method:
-              <input type="text" className="w-1/2" placeholder="" />
-            </label>
-            <label className="flex items-start gap-2">
-              Notes:
-              <textarea className="grow" placeholder="" />
-            </label>
-            <label className="flex items-center gap-2">
-              Status:
-              <select className="grow py-1">
-                <option value="">Select...</option>
-                <option value="Inquiry">Inquiry</option>
-                <option value="Booking">Booking</option>
-              </select>
-            </label>
-            <label className="flex items-center gap-2 mb-2">
-              Follow up Date:
-              <input type="text" className="w-1/2" placeholder="" />
-            </label>
-            <label className="flex items-center gap-2">
-              Details:
-            </label>
-            <div className='flex flex-col gap-3 pl-4'>
-              <div>
-
-                <label className="flex items-center gap-2">
-                  Name of Event/Stay:
-                </label>
-                <input type="text" className="ml-6 mb-3" placeholder="" />
-              </div>
-              <label className="flex items-start gap-2">
-                Notes:
-                <textarea className="grow" placeholder="" />
-              </label>
-              <label className="flex items-center gap-2">
-                Start Time:
-                <input type="text" className="w-1/2" placeholder="" />
-              </label>
-              <label className="flex items-center gap-2">
-                End Time:
-                <input type="text" className="w-1/2" placeholder="" />
-              </label>
-              <label className="flex items-center gap-2">
-                Number of Guests:
-                <input type="text" className="w-1/2" placeholder="" />
-              </label>
-              <div>
-                {/* // TODO: not selecting multiple properties */}
-                <label className="flex items-center gap-2">
-                  Properties: (Select all that apply)
-                </label>
-                <select className="grow py-1" multiple size={4}>
-                  <option value="Bluehouse">Blue House</option>
-                  <option value="Meadowlane">Meadowlane</option>
-                  <option value="LeChalet">Le Chalet</option>
-                  <option value="ArmatiVilla">ArmatiVilla</option>
-                </select>
-              </div>
-              <label className="flex items-center gap-2">
-                Valet Service
-                <select className="grow py-1">
-                  <option value="">Select</option>
-                  <option value="true">Yes</option>
-                  <option value="false">No</option>
-                </select>
-              </label>
-              <label className="flex items-center gap-2">
-                DJ Service
-                <select className="grow py-1">
-                  <option value="">Select</option>
-                  <option value="true">Yes</option>
-                  <option value="false">No</option>
-                </select>
-              </label>
-              <label className="flex items-center gap-2">
-                Kitchen Service
-                <select className="grow py-1">
-                  <option value="">Select</option>
-                  <option value="true">Yes</option>
-                  <option value="false">No</option>
-                </select>
-              </label>
-              <label className="flex items-center gap-2">
-                Overnight stay
-                <select className="grow py-1">
-                  <option value="">Select</option>
-                  <option value="true">Yes</option>
-                  <option value="false">No</option>
-                </select>
-              </label>
-              <label className="flex items-center gap-2">
-                Number of Overnight Guests:
-                <input type="text" className="w-1/6" placeholder="" />
-              </label>
-            </div>
-          </div>
-          <div className='flex w-full justify-center'>
-
-            <SubmitButton
-              formAction={createBooking}
-              className="border border-foreground/20 rounded-md px-4 py-2 text-foreground mb-2 w-1/2 px-4 "
-              pendingText="Creating Booking..."
-            >
-              Create Booking
-            </SubmitButton>
-          </div>
-        </form>
+      <div className='min-h-screen flex items-center justify-center my-4'>
+        <Form onSubmit={createBooking} />
       </div>
     </div>
   );
