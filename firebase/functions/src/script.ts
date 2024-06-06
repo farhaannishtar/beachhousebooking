@@ -128,7 +128,8 @@ async function main() {
       }
     ]
   }
-  createBooking(booking, "nathik@gmail.com");
+  let id = await createBooking(booking, "nathik@gmail.com");
+  console.log(id)
 }
 
 main()

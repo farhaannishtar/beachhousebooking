@@ -87,6 +87,7 @@ export default async function Notes() {
         body: JSON.stringify(booking)
       });
       const data = await response.json(); 
+      const bookingId = data.bookingId;
       console.log('Response from Firebase function:', data);
       // You might want to handle the data further or redirect the user based on the response
     } catch (error) {
