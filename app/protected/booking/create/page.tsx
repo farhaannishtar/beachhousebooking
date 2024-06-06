@@ -1,5 +1,6 @@
+import { SubmitButton } from '@/app/login/submit-button';
 import { createClient } from '@/utils/supabase/server';
-import { SubmitButton } from '../../login/submit-button';
+
 
 export default async function Notes() {
   const supabase = createClient();
