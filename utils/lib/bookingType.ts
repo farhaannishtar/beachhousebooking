@@ -18,19 +18,18 @@ export interface BookingForm {
     bookingId?: number | undefined
     client: {
         name: string
-        email: string
         phone: string
     }
-    bookingName: string
+    bookerName: string
     bookingType: "Stay" | "Event"
-    paymentMethod: string
     notes: string
-    status: "Pending" | "Confirmed" | "Cancelled" | "Completed"
+    status: "Inquiry" | "Booking"
     followUpDate: string
     events: Event[]
     costs:  Cost[]
     finalCost: number
     payments: Payment[]
+    paymentMethod: string
     refferral?: Refferal | undefined
 }
 
