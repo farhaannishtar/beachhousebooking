@@ -9,13 +9,10 @@ export default async function Notes() {
   
   const createNote = async (formData: FormData) => {
     "use server";
-    
-    const url = 'https://authenticate-snss73hxzq-uc.a.run.app'; // Your Firebase function URL
     const supabase = createClient();
     let sesh = await supabase.auth.getSession()
     let token = sesh.data.session?.access_token;
     const note = formData.get("content") as string;
-
 
     let booking:BookingForm = {
       client: {
@@ -82,7 +79,7 @@ export default async function Notes() {
     }
 
     try {
-      const response = await fetch(url, {
+      const response = await fetch("https://us-central1-beachhouse1370.cloudfunctions.net/submitBooking", {
         method: "POST",
         headers: {
           'Authorization': `Bearer ${token}` 
