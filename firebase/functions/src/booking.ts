@@ -1,10 +1,11 @@
 import { BookingDB, BookingForm } from "../../../shared-types/src/booking";
 import { insertEvent } from "./calendar";
 import { query } from "./helper";
+import * as logger from "firebase-functions/logger";
 
 export async function createBooking(booking: BookingDB, email: string): Promise<number> {
-    let resp = await query('INSERT INTO bookings(email, json) VALUES($1, $2)', [email, [booking]]);
-    return resp.rows[0].id;
+    let resp = await query('INSERT INTO bookings(email, json) VALUES($1, $2) RETURNING id', [email, [booking]]);
+    return resp[0].id;
 }
 
 export function updateBooking(booking: BookingDB, id: number) {
@@ -35,8 +36,9 @@ export async function mutateBookingState(booking: BookingForm, email: string): P
     await modifyExistingBooking(newBooking);
     return newBooking.bookingId
   } else {
+    logger.info("mutateBookingState create booking")  
     let bookingId = createBooking(newBooking, email)
-    await insertToCalendarIfConfirmed(newBooking);
+    // await insertToCalendarIfConfirmed(newBooking);
     return bookingId
   }
 }
