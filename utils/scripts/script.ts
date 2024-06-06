@@ -1,9 +1,9 @@
 // import { verifyToken } from "./auth";
 // import * as dotenv from 'dotenv';
 // import { query } from './helper';
-import { insertEvent, listEvents, patchEvent } from '../../app/api/submit/calendar';
-import { BookingDB, Property } from '../types/bookingType';
-import { createBooking, insertToCalendarIfConfirmed } from '../../app/api/submit/booking';
+import { insertEvent, listEvents, patchEvent } from '../lib/calendar';
+import { BookingDB, Property } from '../lib/bookingType';
+import { createBooking, insertToCalendarIfConfirmed } from '../lib/booking';
 
 // dotenv.config();
 

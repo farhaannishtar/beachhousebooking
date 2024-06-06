@@ -1,6 +1,6 @@
 import { createClient } from '@/utils/supabase/server';
 import { SubmitButton } from '../../login/submit-button';
-import { BookingForm, Property } from "../../../utils/types/bookingType";
+import { BookingForm, Property } from "../../../utils/lib/bookingType";
 
 export default async function Notes() {
   const supabase = createClient();

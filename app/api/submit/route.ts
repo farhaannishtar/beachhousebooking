@@ -1,7 +1,7 @@
 
-import { JwtPayload, query, verifyToken } from "./helper";
-import { BookingForm } from "../../../utils/types/bookingType";
-import { mutateBookingState } from "./booking";
+import { JwtPayload, query, verifyToken } from "../../../utils/lib/helper";
+import { BookingForm } from "../../../utils/lib/bookingType";
+import { mutateBookingState } from "../../../utils/lib/booking";
 import { NextRequest, NextResponse } from "next/server";
 import { headers } from 'next/headers'
 

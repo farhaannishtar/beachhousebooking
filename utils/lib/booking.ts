@@ -1,4 +1,4 @@
-import { BookingDB, BookingForm } from "../../../utils/types/bookingType";
+import { BookingDB, BookingForm } from "./bookingType";
 import { insertEvent } from "./calendar";
 import { query } from "./helper";
 
