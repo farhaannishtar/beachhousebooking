@@ -72,9 +72,9 @@ export default function Form({ onSubmit }: any) {
           <input type="text" name="followUpDate" className="w-1/2" placeholder="" />
         </label>
         <label className="flex items-center gap-2">
-          Details:
+          Event Details
         </label>
-        <div className='flex flex-col gap-3 pl-4'>
+        <div className='flex flex-col gap-3 mx-1'>
           <EventForm events={events} setEvents={setEvents} />
         </div>
       </div>

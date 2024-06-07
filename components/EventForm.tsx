@@ -43,10 +43,10 @@ export default function EventForm({ events, setEvents }: { events: Event[], setE
       {events.map((event, index) => (
         <div className='flex flex-col gap-y-6' key={index}>
           <div className='flex flex-col gap-y-6'>
-            <label className="flex items-center gap-2">
-              Name of Event/Stay:
-            </label>
-            <input type="text" value={event.eventName} className="mb-3 input input-bordered input-md w-full max-w-xs" placeholder=""
+            <input
+              type="text" value={event.eventName}
+              className="mb-3 input input-bordered input-md w-full max-w-xs"
+              placeholder="Event Name"
               onChange={(e) => {
                 const newEvents = [...events];
                 newEvents[index].eventName = e.target.value;
@@ -54,22 +54,19 @@ export default function EventForm({ events, setEvents }: { events: Event[], setE
               }}
             />
           </div>
-          <label className="flex items-start gap-2">
-            Notes:
-            <textarea className="grow" placeholder="" />
-          </label>
-          <label className="flex items-center gap-2">
-            Start Time:
-            <input type="text" className="w-1/2 input input-bordered input-md w-full max-w-xs" placeholder="" />
-          </label>
-          <label className="flex items-center gap-2">
-            End Time:
-            <input type="text" className="input input-bordered input-md w-full max-w-xs w-1/2" placeholder="" />
-          </label>
-          <label className="flex items-center gap-2">
-            Number of Guests:
-            <input type="text" className="input input-bordered input-md w-full max-w-xs w-1/2" placeholder="" />
-          </label>
+          <textarea className="textarea textarea-bordered" placeholder="Notes" />
+          <input
+            type="text"
+            className="w-1/2 input input-bordered input-md w-full max-w-xs"
+            placeholder="Start Time" />
+          <input
+            type="text"
+            className="w-1/2 input input-bordered input-md w-full max-w-xs"
+            placeholder="End Time" />
+          <input
+            type="text"
+            className="input input-bordered input-md w-full max-w-xs w-1/2"
+            placeholder="Number of Guests" />
           <div>
             <label className="flex items-center gap-2">
               Properties: (Select all that apply)
@@ -82,42 +79,34 @@ export default function EventForm({ events, setEvents }: { events: Event[], setE
               classNamePrefix="select"
             />
           </div>
-          <label className="flex items-center gap-2">
-            Valet Service
-            <select className="grow py-1">
-              <option value="">Select</option>
-              <option value="true">Yes</option>
-              <option value="false">No</option>
-            </select>
-          </label>
-          <label className="flex items-center gap-2">
-            DJ Service
-            <select className="grow py-1">
-              <option value="">Select</option>
-              <option value="true">Yes</option>
-              <option value="false">No</option>
-            </select>
-          </label>
-          <label className="flex items-center gap-2">
-            Kitchen Service
-            <select className="grow py-1">
-              <option value="">Select</option>
-              <option value="true">Yes</option>
-              <option value="false">No</option>
-            </select>
-          </label>
-          <label className="flex items-center gap-2">
-            Overnight stay
-            <select className="grow py-1">
-              <option value="">Select</option>
-              <option value="true">Yes</option>
-              <option value="false">No</option>
-            </select>
-          </label>
-          <label className="flex items-center gap-2">
-            Number of Overnight Guests:
-            <input type="text" className="input input-bordered input-md w-full w-1/6" placeholder="" />
-          </label>
+          <div className="form-control">
+            <label className="label cursor-pointer">
+              <span className="label-text">Valet Service</span>
+              <input type="checkbox" className="checkbox" />
+            </label>
+          </div>
+          <div className="form-control">
+            <label className="label cursor-pointer">
+              <span className="label-text">Dj Service</span>
+              <input type="checkbox" className="checkbox" />
+            </label>
+          </div>
+          <div className="form-control">
+            <label className="label cursor-pointer">
+              <span className="label-text">Kitchen Service</span>
+              <input type="checkbox" className="checkbox" />
+            </label>
+          </div>
+          <div className="form-control">
+            <label className="label cursor-pointer">
+              <span className="label-text">Overnight stay</span>
+              <input type="checkbox" className="checkbox" />
+            </label>
+          </div>
+          <input
+            type="text"
+            className="input input-bordered input-md w-full max-w-xs w-1/2"
+            placeholder="Number of Overnight Guests" />
           <button
             onClick={(e) => deleteEvent(index, e)}
             className="btn btn-sm bg-red-500 text-black">
