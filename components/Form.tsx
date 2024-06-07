@@ -34,7 +34,7 @@ export default function Form({ onSubmit }: any) {
 
   return (
     <form>
-      <div className='flex flex-col gap-3 mb-6'>
+      <div className='flex flex-col gap-3 mb-6 w-full'>
         <label className="flex items-center gap-2">
           Client Name:
           <input type="text" name="clientName" className="grow" placeholder="" />

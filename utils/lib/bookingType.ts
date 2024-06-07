@@ -24,7 +24,7 @@ export interface BookingForm {
     bookingType: "Stay" | "Event"
     notes: string
     status: "Inquiry" | "Booking"
-    followUpDate: string
+    followUpDate?: string | undefined
     events: Event[]
     costs:  Cost[]
     finalCost: number

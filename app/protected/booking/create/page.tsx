@@ -96,18 +96,8 @@ export default async function Booking() {
   }
 
   return (
-    <div>
-      {/* <ul>
-        {bookings?.map(note => (
-          <li key={note.id}>
-            <strong>ID:</strong> {note.id} <br />
-            <strong>Text:</strong> {note.text}
-          </li>
-        ))}
-      </ul> */}
-      <div className='min-h-screen flex items-center justify-center my-4'>
-        <Form onSubmit={createBooking} />
-      </div>
+    <div className='min-h-screen flex items-center justify-center w-full'>
+      <Form onSubmit={createBooking} />
     </div>
   );
 }
