@@ -100,28 +100,26 @@ const BookingFormComponent: React.FC = () => {
             {state.showForm === ShowForm.Booking && (
                 <div>
                     <h1 className='text-xl font-bold w-full text-center'>Create Booking</h1>
-                    <div>
-                        <label>
-                            Client Name:
-                            <input
-                                type="text"
-                                name="name"
-                                value={state.form.client.name}
-                                onChange={handleClientChange}
-                            />
-                        </label>
-                    </div>
-                    <div>
-                        <label>
-                            Client Phone:
-                            <input
-                                type="text"
-                                name="phone"
-                                value={state.form.client.phone}
-                                onChange={handleClientChange}
-                            />
-                        </label>
-                    </div>
+                    <label className="form-control w-full max-w-xs">
+                        <input
+                            type="text"
+                            placeholder="Customer Name"
+                            className="input input-bordered w-full max-w-xs"
+                            name="name"
+                            value={state.form.client.name}
+                            onChange={handleClientChange} 
+                        />
+                    </label>
+                    <label className="form-control w-full max-w-xs">
+                        <input
+                            type="text"
+                            placeholder="Phone Number"
+                            className="input input-bordered w-full max-w-xs"
+                            name="phone"
+                            value={state.form.client.phone}
+                            onChange={handleClientChange}
+                        />
+                    </label>
                     <div>
                         <label>
                             Booking Type:

@@ -1,4 +1,4 @@
-import { GeistSans } from "geist/font/sans";
+import { Plus_Jakarta_Sans } from 'next/font/google'
 import "./globals.css";
 
 const defaultUrl = process.env.VERCEL_URL
@@ -11,13 +11,19 @@ export const metadata = {
   description: "The fastest way to build apps with Next.js and Supabase",
 };
 
+const plusJakartaSans = Plus_Jakarta_Sans({
+  weight: ["400", "700"],
+  subsets: ['latin'],
+  display: 'swap',
+})
+
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={GeistSans.className}>
+    <html lang="en" className={plusJakartaSans.className}>
       <body className="bg-background text-foreground">
         <main className="min-h-screen flex flex-col items-center">
           {children}
