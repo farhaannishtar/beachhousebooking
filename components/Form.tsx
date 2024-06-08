@@ -4,24 +4,6 @@ import React, { useState } from 'react';
 import EventForm from './EventForm';
 import { BookingForm, Event, Cost, Payment } from '@/utils/lib/bookingType';
 
-// const initialFormState: BookingForm = {
-//   client: {
-//     name: '',
-//     phone: ''
-//   },
-//   bookerName: '',
-//   bookingType: 'Stay',
-//   paymentMethod: '',
-//   notes: '',
-//   status: 'Pending',
-//   followUpDate: '',
-//   events: [],
-//   costs: [],
-//   finalCost: 0,
-//   payments: []
-// };
-
-
 export default function Form({ onSubmit }: any) {
   const [events, setEvents] = useState<Event[]>([]);
   

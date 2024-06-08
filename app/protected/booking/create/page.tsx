@@ -96,8 +96,11 @@ export default async function Booking() {
   }
 
   return (
-    <div className='min-h-screen flex items-center justify-center w-full'>
-      <Form onSubmit={createBooking} />
+    <div className='min-h-screen flex items-start justify-center mt-4 w-full'>
+      <div>
+        <h1 className='text-xl font-bold w-full text-center'>Create Booking</h1>
+        <Form onSubmit={createBooking} />
+      </div>
     </div>
   );
 }
