@@ -20,16 +20,14 @@ export interface BookingForm {
         name: string
         phone: string
     }
-    bookerName: string
     bookingType: "Stay" | "Event"
     notes: string
-    status: "Inquiry" | "Booking"
+    status: "Inquiry" | "Quotation" | "Booking"
     followUpDate?: string | undefined
     events: Event[]
     costs:  Cost[]
     finalCost: number
     payments: Payment[]
-    paymentMethod: string
     refferral?: Refferal | undefined
 }
 

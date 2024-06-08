@@ -1,33 +1,28 @@
-
-import { JwtPayload, query, verifyToken } from "../../utils/api/helper";
-import { BookingForm } from "../../utils/types/bookingType";
-import { mutateBookingState } from "../../utils/api/booking";
-import { VercelRequest, VercelResponse } from '@vercel/node';
+"use server";
+import { BookingForm } from "@/utils/lib/bookingType";;
+import { createClient } from "@/utils/supabase/server";
 
 
+export const createBooking = async (bookingForm: BookingForm) => {
 
-export default (request: VercelRequest, response: VercelResponse) => {
-    const header = request.headers.authorization;
-    if (!header) {
-      response.status(401).send('No token provided');
-      return;
-    }
+  const supabase = createClient();
+  let sesh = await supabase.auth.getSession()
+  let token = sesh.data.session?.access_token;
 
-    const bearer = header.split(' ');
-    const token = bearer[1]; // Assuming the Authorization header contains "Bearer [token]"
+  try {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+    const response = await fetch(`${apiUrl}/api/submit`, {
+      method: "POST",
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(bookingForm)
+    });
+    const data = await response.json(); 
+    const bookingId = data.bookingId;
+    console.log('Response from Firebase function:', data);
 
-    const verifiedToken = verifyToken(token);
-
-    if (verifiedToken == "Invalid token") { // Check if the returned value is the error message
-      response.status(403).send('Invalid token')
-      return;
-    }
-    console.log("😈😈😈")  
-    const payload = (verifiedToken as JwtPayload)
-    let booking: BookingForm = JSON.parse(request.body)
-    mutateBookingState(booking, payload.email).then(bookingId => {
-      response.json({bookingId: bookingId})
-    }).finally(() => {
-      response.status(500).send('Error')
-    })
+  } catch (error) {
+    console.error('Error calling Firebase function:', error);
+  }
 }
