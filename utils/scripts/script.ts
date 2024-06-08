@@ -65,11 +65,13 @@ async function main() {
     encodingVersion: 1,
     client: {
       name: "Donald Trump",
-      email: "donald@trump.com",
       phone: "123456789"
     },
-    bookingName: "Wedding",
+    numberOfEvents: 0,
+    numberOfGuests: 2,
     bookingType: "Event",
+    startDateTime: "2024-06-09T09:00:00-07:00",
+      endDateTime: "2024-06-09T17:00:00-07:00",
     paymentMethod: "Cash",
     notes: "note",
     status: "Confirmed",

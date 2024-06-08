@@ -21,14 +21,19 @@ export interface BookingForm {
         phone: string
     }
     bookingType: "Stay" | "Event"
+    numberOfEvents?: number | undefined
+    numberOfGuests: number
+    startDateTime: string
+    endDateTime: string
     notes: string
-    status: "Inquiry" | "Quotation" | "Booking"
+    status: "Inquiry" | "Quotation" | "Confirmed"
     followUpDate?: string | undefined
     events: Event[]
     costs:  Cost[]
     finalCost: number
     payments: Payment[]
-    refferral?: Refferal | undefined
+    refferral?: string | undefined
+    paymentMethod: "Cash" | "Card" | "GPay",
 }
 
 
@@ -54,7 +59,7 @@ export interface Cost {
 
 export interface Payment {
     dateTime: string
-    paymentMethod: string
+    paymentMethod: "Cash" | "Card" | "GPay",
     amount: number
     receivedBy?: Employee | undefined
 }

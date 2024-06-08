@@ -27,10 +27,14 @@ const BookingFormComponent: React.FC = () => {
                     name: '',
                     phone: '',
                 },
+                numberOfGuests: 2,
+                numberOfEvents: 1,
+                paymentMethod: "Cash",
                 bookingType: 'Stay',
                 notes: '',
                 status: 'Inquiry',
-                followUpDate: '',
+                startDateTime: (new Date()).toUTCString(),
+                endDateTime: (new Date()).toUTCString(),
                 events: [],
                 costs: [],
                 finalCost: 0,
@@ -131,6 +135,55 @@ const BookingFormComponent: React.FC = () => {
                             </select>
                         </label>
                     </div>
+
+                    <div>
+                        <label>
+                            Start Date:
+                            <input
+                                type="date"
+                                name="startDateTime"
+                                value={state.form.startDateTime}
+                                onChange={handleChange}
+                            />
+                        </label>
+                    </div>
+
+                    <div>
+                        <label>
+                            End Date:
+                            <input
+                                type="date"
+                                name="endDateTime"
+                                value={state.form.endDateTime}
+                                onChange={handleChange}
+                            />
+                        </label>
+                    </div>
+
+
+                    <div>
+                        <label>
+                            Number of events:
+                            <input
+                                type="text"
+                                name="numberOfEvents"
+                                value={state.form.numberOfEvents}
+                                onChange={handleChange}
+                            />
+                        </label>
+                    </div>
+                    <div>
+                        <label>
+                            Number of guests:
+                            <input
+                                type="text"
+                                name="numberOfGuests"
+                                value={state.form.numberOfGuests}
+                                onChange={handleChange}
+                            />
+                        </label>
+                    </div>
+
                     <div>
                         <label>
                             Notes:
@@ -155,50 +208,31 @@ const BookingFormComponent: React.FC = () => {
                             </select>
                         </label>
                     </div>
+
                     <div>
                         <label>
-                            Follow Up Date:
-                            <input
-                                type="date"
-                                name="followUpDate"
-                                value={state.form.followUpDate}
-                                onChange={handleChange}
-                            />
+                            Referral:
+                            <select
+                                name="refferral"
+                                value={state.form.refferral || ''}
+                                onChange={(e) =>
+                                    setState((prevState) => ({
+                                        showForm: prevState.showForm,
+                                        form: {
+                                            ...prevState.form,
+                                            refferral: e.target.value,
+                                        }
+                                    }))
+                                }
+                            >
+                                <option value="">Select</option>
+                                <option value="Google">Google</option>
+                                <option value="Facebook">Facebook</option>
+                                <option value="Instagram">Instagram</option>
+                                <option value="Influencer">Influencer</option>
+                            </select>
                         </label>
                     </div>
-                    {/* Add fields for events, costs, payments, etc. as needed */}
-                    <div>
-                        <label>
-                            Final Cost:
-                            <input
-                                type="number"
-                                name="finalCost"
-                                value={state.form.finalCost}
-                                onChange={handleChange}
-                            />
-                        </label>
-                    </div>
-                    <div>
-                <label>
-                    Referral:
-                    <select
-                        name="refferral"
-                        // value={form.refferral?.type || ''}
-                        // onChange={(e) =>
-                        //     setForm((prevForm) => ({
-                        //         ...prevForm,
-                        //         refferral: { type: e.target.value },
-                        //     }))
-                        // }
-                    >
-                        <option value="">Select</option>
-                        <option value="Google">Google</option>
-                        <option value="Facebook">Facebook</option>
-                        <option value="Instagram">Instagram</option>
-                        <option value="Influencer">Influencer</option>
-                    </select>
-                </label>
-            </div>
 
                     {state.form.status != "Inquiry" && (
                         <div>
