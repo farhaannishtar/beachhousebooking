@@ -36,7 +36,6 @@ const BookingFormComponent: React.FC = () => {
                 startDateTime: (new Date()).toUTCString(),
                 endDateTime: (new Date()).toUTCString(),
                 events: [],
-                costs: [],
                 finalCost: 0,
                 payments: [],
                 refferral: undefined,
@@ -54,6 +53,7 @@ const BookingFormComponent: React.FC = () => {
             form: {
                 ...prevState.form,
                 events: [...prevState.form.events, event],
+                finalCost: [...prevState.form.events, event].reduce((acc, event) => acc + event.finalCost, 0)
             }
         }));
     };
@@ -246,6 +246,10 @@ const BookingFormComponent: React.FC = () => {
                                     <button onClick={() => handleStateChange(ShowForm.Event)}>
                                         Add Event
                                     </button>
+
+                                    <label> Final cost: ${state.form.finalCost}</label>
+
+
                                 </div>
                             )}
                             {state.form.bookingType == "Stay" && (

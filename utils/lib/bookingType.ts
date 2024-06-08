@@ -29,7 +29,6 @@ export interface BookingForm {
     status: "Inquiry" | "Quotation" | "Confirmed"
     followUpDate?: string | undefined
     events: Event[]
-    costs:  Cost[]
     finalCost: number
     payments: Payment[]
     refferral?: string | undefined
@@ -51,6 +50,7 @@ export interface Refferal {
     type: "Google" | "Facebook" | "Instagram" | "Influencer"
     id?: string | undefined
 }
+
 
 export interface Cost {
     name: string
@@ -77,4 +77,6 @@ export interface Event {
     kitchenService: boolean
     overNightStay: boolean
     overNightGuests: number
+    costs:  Cost[]
+    finalCost: number
 }

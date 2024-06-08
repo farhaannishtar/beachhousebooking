@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useState, ChangeEvent, FormEvent } from 'react';
-import { Event } from '@/utils/lib/bookingType';
+import { Event, Property } from '@/utils/lib/bookingType';
 
+const properties = Object.values(Property)
 
 interface CreateEventFormProps {
     onAddEvent: (event: Event) => void;
@@ -23,15 +24,61 @@ const CreateEventComponent: React.FC<CreateEventFormProps> = ({ onAddEvent, canc
         kitchenService: false,
         overNightStay: false,
         overNightGuests: 0,
+        costs: [],
+        finalCost: 0
     });
 
 
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
+        const { name, type, checked, value } = e.target as HTMLInputElement;
+        if (["djService", "kitchenService", "valetService", "overNightStay"].includes(name)) {
+            setEvent((prevEvent) => ({
+                ...prevEvent,
+                [name]: checked,
+            }));
+        } else {
+            setEvent((prevEvent) => ({
+                ...prevEvent,
+                [name]: value,
+            }));
+        }
+    };
+
+    const handleCheckboxChange = (property: Property) => {
+        let updatedValues = [...event.properties];
+        if (updatedValues.includes(property)) {
+            updatedValues = updatedValues.filter((item) => item !== property);
+        } else {
+            updatedValues.push(property);
+        }
         setEvent((prevEvent) => ({
             ...prevEvent,
-            [name]: value,
+            properties: updatedValues
         }));
+    };
+
+    const handleCostsChange = (index: number, e: ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        const updatedCosts = [...event.costs];
+        updatedCosts[index] = {
+            ...updatedCosts[index],
+            [name]: name === 'amount' ? parseFloat(value) : value,
+        };
+        setEvent((prevEvent) => ({
+            ...prevEvent,
+            costs: updatedCosts,
+            finalCost: updatedCosts.reduce((acc, cost) => acc + cost.amount, 0)
+        }));
+    };
+
+    const addCost = () => {
+        let newCosts = event.costs
+        newCosts.push({name: "", amount: 0})
+        setEvent((prevEvent) => ({
+            ...prevEvent,
+            costs: newCosts
+        }));
+        
     };
 
     return (
@@ -50,10 +97,11 @@ const CreateEventComponent: React.FC<CreateEventFormProps> = ({ onAddEvent, canc
             </div>
             <div>
                 <label>
-                    Notes:
-                    <textarea
-                        name="notes"
-                        value={event.notes}
+                    Number of Guests:
+                    <input
+                        type="number"
+                        name="numberOfGuests"
+                        value={event.numberOfGuests}
                         onChange={handleChange}
                     />
                 </label>
@@ -82,20 +130,118 @@ const CreateEventComponent: React.FC<CreateEventFormProps> = ({ onAddEvent, canc
             </div>
             <div>
                 <label>
-                    Number of Guests:
-                    <input
-                        type="number"
-                        name="numberOfGuests"
-                        value={event.numberOfGuests}
+                    Notes:
+                    <textarea
+                        name="notes"
+                        value={event.notes}
                         onChange={handleChange}
                     />
                 </label>
             </div>
-            {/* Add fields for other properties as needed */}
-            <button type="submit" onClick={() => onAddEvent(event)}>
+
+            <div>
+                <label>Select properties:</label>
+                {properties.map((property) => (
+                    <div key={property}>
+                        <input
+                            type="checkbox"
+                            id={property}
+                            value={property}
+                            checked={event.properties.includes(property)}
+                            onChange={() => handleCheckboxChange(property)}
+                        />
+                        <label htmlFor={property}>{property}</label>
+                    </div>
+                ))}
+            </div>
+
+            <div>
+                <label>
+                    DJ:
+                    <input
+                        type="checkbox"
+                        name="djService"
+                        checked={event.djService}
+                        onChange={handleChange}
+                    />
+                </label>
+            </div>
+
+            <div>
+                <label>
+                    Kitchen:
+                    <input
+                        type="checkbox"
+                        name="kitchenService"
+                        checked={event.kitchenService}
+                        onChange={handleChange}
+                    />
+                </label>
+            </div>
+
+            <div>
+                <label>
+                    Valet:
+                    <input
+                        type="checkbox"
+                        name="valetService"
+                        checked={event.valetService}
+                        onChange={handleChange}
+                    />
+                </label>
+            </div>
+
+            <div>
+                <label>
+                    Overnight:
+                    <input
+                        type="checkbox"
+                        name="overNightStay"
+                        checked={event.overNightStay}
+                        onChange={handleChange}
+                    />
+                </label>
+
+                {event.overNightStay && (
+                    <input
+                        type="number"
+                        name="overNightGuests"
+                        value={event.overNightGuests}
+                        onChange={handleChange}
+                    />
+                )}
+            </div>
+
+            <div>
+                <h1>Costs</h1>
+                <ul>
+                    {event.costs.map((cost, index) => (
+                        <li key={index}>
+                            <input
+                                type="text"
+                                name="name"
+                                value={cost.name}
+                                onChange={(e) => handleCostsChange(index, e)}
+                                placeholder="Name"
+                            />
+                            <input
+                                type="number"
+                                name="amount"
+                                value={cost.amount}
+                                onChange={(e) => handleCostsChange(index, e)}
+                                placeholder="Amount"
+                            />
+                        </li>
+                    ))}
+                </ul>
+                <button onClick={addCost}>+</button>
+                <label> Final cost: ${event.finalCost}</label>
+            </div>
+
+            <button onClick={() => onAddEvent(event)}>
                 Add
             </button>
-            <button type="submit" onClick={() => cancelAddEvent()}>
+            <button onClick={() => cancelAddEvent()}>
                 Cancel
             </button>
         </div>

@@ -98,7 +98,22 @@ async function main() {
         djService: true,
         kitchenService: true,
         overNightStay: true,
-        overNightGuests: 10
+        overNightGuests: 10,
+        costs: [
+          {
+            name: "Bluehouse",
+            amount: 1000
+          },
+          {
+            name: "Cleaning",
+            amount: 2000
+          },
+          {
+            name: "EB",
+            amount: 3000
+          }
+        ],
+        finalCost: 6000
       },
       {
         eventName: "Wedding",
@@ -111,24 +126,25 @@ async function main() {
         djService: true,
         kitchenService: true,
         overNightStay: true,
-        overNightGuests: 10
+        overNightGuests: 10,
+        costs: [
+          {
+            name: "Bluehouse",
+            amount: 1000
+          },
+          {
+            name: "Cleaning",
+            amount: 2000
+          },
+          {
+            name: "EB",
+            amount: 3000
+          }
+        ],
+        finalCost: 6000
       }
     ],
-    costs: [
-      {
-        name: "Bluehouse",
-        amount: 1000
-      },
-      {
-        name: "Cleaning",
-        amount: 2000
-      },
-      {
-        name: "EB",
-        amount: 3000
-      }
-    ],
-    finalCost: 6000,
+    finalCost: 3000,
     payments: [
       {
         dateTime: "2024-06-09T17:00:00-07:00",
