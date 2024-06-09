@@ -6,6 +6,7 @@ import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation'
 import CreateEventComponent from './CreateEventForm';
 import StayFormComponent from './StayForm';
+import { EventStaySwitch } from './EventStaySwitch';
 
 enum ShowForm {
     Booking,
@@ -20,6 +21,21 @@ interface CreateBookingState {
 
 
 const BookingFormComponent: React.FC = () => {
+    const [isSwitchOn, setIsSwitchOn] = useState(false);
+
+    const handleSwitchChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+        console.log("isSwitchOn: ", isSwitchOn);
+
+        setState((prevState) => ({
+            showForm: prevState.showForm,
+            form: {
+                ...prevState.form,
+                bookingType: isSwitchOn ? "Stay" : "Event",
+            }
+        }));
+        setIsSwitchOn(!isSwitchOn);
+    };
+
     const [state, setState] = useState<CreateBookingState>(
         {
             form: {
@@ -46,6 +62,7 @@ const BookingFormComponent: React.FC = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
 
+    console.log(state)
 
     const handleAddEvent = (event: Event) => {
         setState((prevState) => ({
@@ -60,6 +77,7 @@ const BookingFormComponent: React.FC = () => {
 
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
+        console.log("name: ", name, "value: ", value);
         setState((prevState) => ({
             showForm: prevState.showForm,
             form: {
@@ -115,12 +133,26 @@ const BookingFormComponent: React.FC = () => {
                             <input
                                 type="text"
                                 placeholder="Phone Number"
-                               className="input w-full max-w-xs bg-inputBoxbg placeholder:text-placeHolderText placeholder:text-base placeholder:leading-6 placeholder:font-normal"
+                                className="input w-full max-w-xs bg-inputBoxbg placeholder:text-placeHolderText placeholder:text-base placeholder:leading-6 placeholder:font-normal"
                                 name="phone"
                                 value={state.form.client.phone}
                                 onChange={handleClientChange}
                             />
                         </label>
+                        <div className='w-full mt-2'>
+                            <EventStaySwitch handleToggle={handleSwitchChange} isOn={isSwitchOn} />
+                        </div>
+                        {/* <div>
+                            <label>
+                                Start Date:
+                                <input
+                                    type="date"
+                                    name="startDateTime"
+                                    value={state.form.startDateTime}
+                                    onChange={handleChange}
+                                />
+                            </label>
+                        </div> */}
                         <div>
                             <label>
                                 Booking Type:
@@ -134,19 +166,6 @@ const BookingFormComponent: React.FC = () => {
                                 </select>
                             </label>
                         </div>
-
-                        <div>
-                            <label>
-                                Start Date:
-                                <input
-                                    type="date"
-                                    name="startDateTime"
-                                    value={state.form.startDateTime}
-                                    onChange={handleChange}
-                                />
-                            </label>
-                        </div>
-
                         <div>
                             <label>
                                 End Date:
