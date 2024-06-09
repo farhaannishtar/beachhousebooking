@@ -19,6 +19,8 @@ const config = {
     },
     extend: {
       colors: {
+        placeHolderText: '#617A8A',
+        inputBoxbg: '#F0F2F5',
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
