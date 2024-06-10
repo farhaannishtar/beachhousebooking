@@ -25,7 +25,7 @@ export const EventStaySwitch: React.FC<EventStaySwitchProps> = ({
       style={{
         left: isOn ? "0" : "50%", // Dynamically set the left property based on isOn
       }}
-      className="absolute z-10 top-[5px] w-1/2 h-auto py-6 bg-selectedButton rounded-full transition-all duration-200 shadow-md" // Assume bg-blue-500 is the slider color
+      className="absolute z-10 top-[1.5px] w-1/2 h-full bg-selectedButton rounded-full transition-all duration-200 shadow-md" // Assume bg-blue-500 is the slider color
     />
     <div className="relative z-10 flex h-full">
       <span

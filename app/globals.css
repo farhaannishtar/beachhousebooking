@@ -2,10 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-.rs-calendar {
-  @apply text-black;
-}
-
 @layer base {
   * {
     @apply border-border;

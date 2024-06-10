@@ -31,7 +31,9 @@ export default function EventForm({ events, setEvents }: { events: Event[], setE
       djService: false,
       kitchenService: false,
       overNightStay: false,
-      overNightGuests: 0
+      overNightGuests: 0,
+      costs: [],
+      finalCost: 0
     }])
   };
 

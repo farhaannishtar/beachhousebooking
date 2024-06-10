@@ -7,6 +7,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import CreateEventComponent from './CreateEventForm';
 import StayFormComponent from './StayForm';
 import { EventStaySwitch } from './EventStaySwitch';
+import DateTimePickerInput from './DateTimePickerInput';
 
 enum ShowForm {
     Booking,
@@ -24,7 +25,6 @@ const BookingFormComponent: React.FC = () => {
     const [isSwitchOn, setIsSwitchOn] = useState(false);
 
     const handleSwitchChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-        console.log("isSwitchOn: ", isSwitchOn);
 
         setState((prevState) => ({
             showForm: prevState.showForm,
@@ -61,8 +61,6 @@ const BookingFormComponent: React.FC = () => {
 
     const router = useRouter();
     const searchParams = useSearchParams();
-
-    console.log(state)
 
     const handleAddEvent = (event: Event) => {
         setState((prevState) => ({
@@ -139,45 +137,13 @@ const BookingFormComponent: React.FC = () => {
                                 onChange={handleClientChange}
                             />
                         </label>
-                        <div className='w-full mt-2'>
+                        <div className='w-full'>
                             <EventStaySwitch handleToggle={handleSwitchChange} isOn={isSwitchOn} />
                         </div>
-                        {/* <div>
-                            <label>
-                                Start Date:
-                                <input
-                                    type="date"
-                                    name="startDateTime"
-                                    value={state.form.startDateTime}
-                                    onChange={handleChange}
-                                />
-                            </label>
-                        </div> */}
-                        <div>
-                            <label>
-                                Booking Type:
-                                <select
-                                    name="bookingType"
-                                    value={state.form.bookingType}
-                                    onChange={handleChange}
-                                >
-                                    <option value="Stay">Stay</option>
-                                    <option value="Event">Event</option>
-                                </select>
-                            </label>
+                        <div className='flex gap-x-3'>
+                            <DateTimePickerInput label={'Start Date'} />
+                            <DateTimePickerInput label={'End Date'} />
                         </div>
-                        <div>
-                            <label>
-                                End Date:
-                                <input
-                                    type="date"
-                                    name="endDateTime"
-                                    value={state.form.endDateTime}
-                                    onChange={handleChange}
-                                />
-                            </label>
-                        </div>
-
 
                         <div>
                             <label>
