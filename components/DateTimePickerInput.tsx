@@ -2,7 +2,7 @@ import 'rsuite/dist/rsuite.min.css';
 import { DatePicker, Stack, } from 'rsuite';
 import format from 'date-fns/format';
 import styles from './DateTimePickerInput.module.css';
-import { ChangeEvent, useState } from 'react';
+import { useState } from 'react';
 
 
 interface DateTimePickerInputProps {
