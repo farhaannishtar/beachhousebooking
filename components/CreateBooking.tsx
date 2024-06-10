@@ -193,13 +193,15 @@ const BookingFormComponent: React.FC = () => {
                                 </label>
                             </div>
                         </div>
+
                         <div>
                             <label>
-                                Notes:
                                 <textarea
                                     name="notes"
                                     value={state.form.notes}
+                                    placeholder="Notes"
                                     onChange={handleChange}
+                                    className='textarea w-full text-base font-normal leading-normal bg-inputBoxbg rounded-xl text-placeHolderText placeholder:text-placeHolderText placeholder:text-base placeholder:leading-normal placeholder:font-normal'
                                 />
                             </label>
                         </div>
