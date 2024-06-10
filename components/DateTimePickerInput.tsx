@@ -2,16 +2,19 @@ import 'rsuite/dist/rsuite.min.css';
 import { DatePicker, Stack, } from 'rsuite';
 import format from 'date-fns/format';
 import styles from './DateTimePickerInput.module.css';
-import { useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 
 
 interface DateTimePickerInputProps {
   label: string;
+  onChange: (name:string, value: string | null) => void;
+  name: string;
+  value: string | null;
 }
 
-export default function DateTimePickerInput({ label }: DateTimePickerInputProps) {
+export default function DateTimePickerInput({ label, onChange, name, value }: DateTimePickerInputProps) {
 
-  const [date, setDate] = useState<Date | null>(null);
+  const [date, setDate] = useState<Date | null>(value ? new Date(value) : null);
 
   return (
     <Stack spacing={10} direction="column">
@@ -31,7 +34,10 @@ export default function DateTimePickerInput({ label }: DateTimePickerInputProps)
         showMeridian
         placeholder={`${label}`}
         caretAs={date === null ? undefined : "div"}
-        onChange={(value) => setDate(value)}
+        onChange={(value) => {
+          setDate(value)
+          onChange(name, value ? value.toISOString() : null)
+        }}
         cleanable={false}
         placement={label === "End Date" ? "bottomEnd" : "bottomStart"}
         className={`${styles.customDatePicker} ${styles.customDatePickerInput} ${styles.customDatePickerPlaceholderText}`}

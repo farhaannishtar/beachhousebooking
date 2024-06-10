@@ -8,35 +8,18 @@ import CreateEventComponent from './CreateEventForm';
 import StayFormComponent from './StayForm';
 import { EventStaySwitch } from './EventStaySwitch';
 import DateTimePickerInput from './DateTimePickerInput';
-import { DatePicker, InputGroup } from 'rsuite';
 
 enum ShowForm {
     Booking,
     Event
 }
 
-
 interface CreateBookingState {
     form: BookingForm;
     showForm: ShowForm;
 }
 
-
 const BookingFormComponent: React.FC = () => {
-    const [isSwitchOn, setIsSwitchOn] = useState(false);
-
-    const handleSwitchChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-
-        setState((prevState) => ({
-            showForm: prevState.showForm,
-            form: {
-                ...prevState.form,
-                bookingType: isSwitchOn ? "Stay" : "Event",
-            }
-        }));
-        setIsSwitchOn(!isSwitchOn);
-    };
-
     const [state, setState] = useState<CreateBookingState>(
         {
             form: {
@@ -59,6 +42,28 @@ const BookingFormComponent: React.FC = () => {
             },
             showForm: ShowForm.Booking
         });
+    const [isSwitchOn, setIsSwitchOn] = useState<boolean>(false);
+    const [textareaHeight, setTextareaHeight] = useState<number>(40);
+
+    useEffect(() => {
+        // Calculate the new height based on the length of state.form.notes
+        // This is a simplistic calculation: adjust it based on your needs
+        const newHeight = Math.min(16, state.form.notes.length / 10 + 40);
+        setTextareaHeight(newHeight);
+    }, [state.form.notes]);
+
+
+    const handleSwitchChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+        setState((prevState) => ({
+            showForm: prevState.showForm,
+            form: {
+                ...prevState.form,
+                bookingType: isSwitchOn ? "Stay" : "Event",
+            }
+        }));
+        setIsSwitchOn(!isSwitchOn);
+    };
+
 
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -107,6 +112,16 @@ const BookingFormComponent: React.FC = () => {
         }));
     };
 
+    const handleDateChange = (name:string, value: string | null) => {
+        setState((prevState) => ({
+            showForm: prevState.showForm,
+            form: {
+                ...prevState.form,
+                [name]: value,
+            }
+        }));
+    };
+
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         await createBooking(state.form);
@@ -142,8 +157,8 @@ const BookingFormComponent: React.FC = () => {
                             <EventStaySwitch handleToggle={handleSwitchChange} isOn={isSwitchOn} />
                         </div>
                         <div className='flex gap-x-3 w-full'>
-                            <DateTimePickerInput label={'Start Date'} />
-                            <DateTimePickerInput label={'End Date'} />
+                            <DateTimePickerInput label={'Start Date'} onChange={handleDateChange} name="startDateTime" value={state.form.startDateTime} />
+                            <DateTimePickerInput label={'End Date'} onChange={handleDateChange} name="endDateTime" value={state.form.endDateTime} />
                         </div>
                         <div className='flex gap-x-3'>
                             <div className="w-1/2">
@@ -157,7 +172,7 @@ const BookingFormComponent: React.FC = () => {
                                             value={state.form.numberOfEvents}
                                             onChange={handleChange}
                                         />
-                                        <svg width="86" height="50" viewBox="0 0 96 56" fill="none"  className="absolute left-2 text-gray-700" xmlns="http://www.w3.org/2000/svg">
+                                        <svg width="86" height="50" viewBox="0 0 96 56" fill="none" className="absolute left-2 text-gray-700" xmlns="http://www.w3.org/2000/svg">
                                             <g id="Nubers">
                                                 <path id="Vector" d="M11.9107 32L11.0857 35.275C11.0357 35.4917 10.9274 35.6667 10.7607 35.8C10.594 35.9333 10.394 36 10.1607 36C9.84405 36 9.58571 35.875 9.38571 35.625C9.18571 35.375 9.12738 35.1 9.21072 34.8L9.91071 32H7.18572C6.85238 32 6.58571 31.871 6.38571 31.613C6.18571 31.3543 6.12738 31.0667 6.21071 30.75C6.26071 30.5167 6.37738 30.3333 6.56072 30.2C6.74405 30.0667 6.95238 30 7.18572 30H10.4107L11.4107 26H8.68571C8.35238 26 8.08571 25.871 7.88571 25.613C7.68571 25.3543 7.62738 25.0667 7.71072 24.75C7.76072 24.5167 7.87738 24.3333 8.06072 24.2C8.24405 24.0667 8.45238 24 8.68571 24H11.9107L12.7357 20.725C12.7857 20.5083 12.894 20.3333 13.0607 20.2C13.2274 20.0667 13.4274 20 13.6607 20C13.9774 20 14.2357 20.125 14.4357 20.375C14.6357 20.625 14.694 20.9 14.6107 21.2L13.9107 24H17.9107L18.7357 20.725C18.7857 20.5083 18.894 20.3333 19.0607 20.2C19.2274 20.0667 19.4274 20 19.6607 20C19.9774 20 20.2357 20.125 20.4357 20.375C20.6357 20.625 20.694 20.9 20.6107 21.2L19.9107 24H22.6357C22.969 24 23.2357 24.129 23.4357 24.387C23.6357 24.6457 23.694 24.9333 23.6107 25.25C23.5607 25.4833 23.444 25.6667 23.2607 25.8C23.0774 25.9333 22.869 26 22.6357 26H19.4107L18.4107 30H21.1357C21.469 30 21.7357 30.129 21.9357 30.387C22.1357 30.6457 22.194 30.9333 22.1107 31.25C22.0607 31.4833 21.944 31.6667 21.7607 31.8C21.5774 31.9333 21.369 32 21.1357 32H17.9107L17.0857 35.275C17.0357 35.4917 16.9274 35.6667 16.7607 35.8C16.594 35.9333 16.394 36 16.1607 36C15.844 36 15.5857 35.875 15.3857 35.625C15.1857 35.375 15.1274 35.1 15.2107 34.8L15.9107 32H11.9107ZM12.4107 30H16.4107L17.4107 26H13.4107L12.4107 30Z" fill="#676A6C" />
                                                 <path id="Vector_2" d="M41.8647 29H36.913V34H41.8647V29ZM40.8744 18V20H32.9517V18H30.971V20H29.9807C28.8814 20 28.0099 20.9 28.0099 22L28 36C28 37.1 28.8814 38 29.9807 38H43.8454C44.9348 38 45.8261 37.1 45.8261 36V22C45.8261 20.9 44.9348 20 43.8454 20H42.8551V18H40.8744ZM43.8454 36H29.9807V25H43.8454V36Z" fill="#676A6C" />
@@ -193,7 +208,6 @@ const BookingFormComponent: React.FC = () => {
                                 </label>
                             </div>
                         </div>
-
                         <div>
                             <label>
                                 <textarea
@@ -201,14 +215,19 @@ const BookingFormComponent: React.FC = () => {
                                     value={state.form.notes}
                                     placeholder="Notes"
                                     onChange={handleChange}
-                                    className='textarea w-full text-base font-normal leading-normal bg-inputBoxbg rounded-xl text-placeHolderText placeholder:text-placeHolderText placeholder:text-base placeholder:leading-normal placeholder:font-normal'
+                                    className={`textarea w-full text-base h-${textareaHeight} font-normal leading-normal bg-inputBoxbg rounded-xl text-placeHolderText placeholder:text-placeHolderText placeholder:text-base placeholder:leading-normal placeholder:font-normal`}
                                 />
                             </label>
                         </div>
                         <div>
-                            <label>
-                                Status:
+                            <label className='flex pl-20 gap-x-4'>
+                                <div className='flex items-center'>
+                                    <p className='text-base font-bold leading-normal'>
+                                        Status
+                                    </p>
+                                </div>
                                 <select
+                                    className="select select-bordered w-full bg-inputBoxbg"
                                     name="status"
                                     value={state.form.status}
                                     onChange={handleChange}
@@ -219,11 +238,15 @@ const BookingFormComponent: React.FC = () => {
                                 </select>
                             </label>
                         </div>
-
                         <div>
-                            <label>
-                                Referral:
+                            <label className='flex pl-16 gap-x-4'>
+                                <div className='flex items-center'>
+                                    <p className='text-base font-bold leading-normal'>
+                                        Referral
+                                    </p>
+                                </div>
                                 <select
+                                    className="select select-bordered w-full bg-inputBoxbg"
                                     name="refferral"
                                     value={state.form.refferral || ''}
                                     onChange={(e) =>
@@ -244,7 +267,6 @@ const BookingFormComponent: React.FC = () => {
                                 </select>
                             </label>
                         </div>
-
                         {state.form.status != "Inquiry" && (
                             <div>
                                 {state.form.bookingType == "Event" && (
@@ -280,7 +302,9 @@ const BookingFormComponent: React.FC = () => {
                     <CreateEventComponent onAddEvent={handleAddEvent} cancelAddEvent={() => handleStateChange(ShowForm.Booking)} />
                 )
             }
-            <button type="submit">Submit</button>
+            <div className='flex items-center justify-center w-full mt-6'>
+                <button type="submit" className='btn btn-wide bg-selectedButton text-center text-white text-base font-bold leading-normal'>Create</button>
+            </div>
         </form >
     );
 };
