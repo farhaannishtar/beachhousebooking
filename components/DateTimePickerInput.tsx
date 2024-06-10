@@ -22,7 +22,7 @@ export default function DateTimePickerInput({ label }: DateTimePickerInputProps)
           const currentYear = new Date().getFullYear();
           const year = value.getFullYear();
           if (year === currentYear) {
-            return format(value, "dd/MM hh:mmaa");
+            return format(value, "MMM d hh:mmaa");
           } 
           return format(value, "dd/MM/yy hh:mmaa");
         }}
