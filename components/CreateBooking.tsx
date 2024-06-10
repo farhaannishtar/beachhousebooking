@@ -8,6 +8,7 @@ import CreateEventComponent from './CreateEventForm';
 import StayFormComponent from './StayForm';
 import { EventStaySwitch } from './EventStaySwitch';
 import DateTimePickerInput from './DateTimePickerInput';
+import { DatePicker, InputGroup } from 'rsuite';
 
 enum ShowForm {
     Booking,
@@ -140,34 +141,41 @@ const BookingFormComponent: React.FC = () => {
                         <div className='w-full'>
                             <EventStaySwitch handleToggle={handleSwitchChange} isOn={isSwitchOn} />
                         </div>
-                        <div className='flex gap-x-3'>
+                        <div className='flex gap-x-3 w-full'>
                             <DateTimePickerInput label={'Start Date'} />
                             <DateTimePickerInput label={'End Date'} />
                         </div>
-
-                        <div>
-                            <label>
-                                Number of events:
-                                <input
-                                    type="text"
-                                    name="numberOfEvents"
-                                    value={state.form.numberOfEvents}
-                                    onChange={handleChange}
-                                />
-                            </label>
+                        <div className='flex gap-x-3'>
+                            <div className="w-1/2">
+                                <label className="w-full max-w-xs">
+                                    <input
+                                        type="text"
+                                        placeholder="Events"
+                                        className="input w-full max-w-xs bg-inputBoxbg placeholder:text-placeHolderText placeholder:text-base placeholder:leading-6 placeholder:font-normal"
+                                        name="numberOfEvents"
+                                        value={state.form.numberOfEvents}
+                                        onChange={handleChange}
+                                    />
+                                </label>
+                            </div>
                         </div>
-                        <div>
-                            <label>
-                                Number of guests:
-                                <input
-                                    type="text"
-                                    name="numberOfGuests"
-                                    value={state.form.numberOfGuests}
-                                    onChange={handleChange}
-                                />
-                            </label>
+                        <div className='flex gap-x-3 w-full'>
+                            <div className="w-1/2">
+                                <DateTimePickerInput label={'End Date'} />
+                            </div>
+                            <div className="w-1/2">
+                                <label className="w-full">
+                                    <input
+                                        type="text"
+                                        placeholder="People"
+                                        className="input w-full bg-inputBoxbg placeholder:text-placeHolderText placeholder:text-base placeholder:leading-6 placeholder:font-normal"
+                                        name="numberOfGuests"
+                                        value={state.form.numberOfGuests}
+                                        onChange={handleChange}
+                                    />
+                                </label>
+                            </div>
                         </div>
-
                         <div>
                             <label>
                                 Notes:
@@ -246,12 +254,15 @@ const BookingFormComponent: React.FC = () => {
                         )}
                     </div>
                 </div>
-            )}
-            {state.showForm === ShowForm.Event && (
-                <CreateEventComponent onAddEvent={handleAddEvent} cancelAddEvent={() => handleStateChange(ShowForm.Booking)} />
-            )}
+            )
+            }
+            {
+                state.showForm === ShowForm.Event && (
+                    <CreateEventComponent onAddEvent={handleAddEvent} cancelAddEvent={() => handleStateChange(ShowForm.Booking)} />
+                )
+            }
             <button type="submit">Submit</button>
-        </form>
+        </form >
     );
 };
 
