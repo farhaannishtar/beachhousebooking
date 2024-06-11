@@ -1,7 +1,7 @@
 "use client";
 
 import { createBooking } from '@/app/api/submit';
-import { BookingForm, Event } from '@/utils/lib/bookingType';
+import { BookingDB, BookingForm, Event } from '@/utils/lib/bookingType';
 import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation'
 import CreateEventComponent from './CreateEventForm';
@@ -19,10 +19,16 @@ interface CreateBookingState {
     showForm: ShowForm;
 }
 
-const BookingFormComponent: React.FC = () => {
+interface BookingFormProps {
+    booking?: BookingForm | undefined;
+}
+
+
+
+export default function BookingFormComponent({booking}: BookingFormProps) {
     const [state, setState] = useState<CreateBookingState>(
         {
-            form: {
+            form: booking || {
                 client: {
                     name: '',
                     phone: '',
@@ -131,7 +137,7 @@ const BookingFormComponent: React.FC = () => {
         <form onSubmit={handleSubmit}>
             {state.showForm === ShowForm.Booking && (
                 <div>
-                    <h1 className='text-lg font-bold leading-6 w-full text-center mt-2'>Create Booking</h1>
+                    <h1 className='text-lg font-bold leading-6 w-full text-center mt-2'>{booking ? booking.client.name : "Create Booking"}</h1>
                     <div className='flex flex-col gap-y-4 mt-6 mx-3'>
                         <label className="form-control w-full max-w-xs">
                             <input
@@ -311,4 +317,3 @@ const BookingFormComponent: React.FC = () => {
     );
 };
 
-export default BookingFormComponent;
