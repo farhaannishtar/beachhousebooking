@@ -25,7 +25,7 @@ interface BookingFormProps {
 
 
 
-export default function BookingFormComponent({booking}: BookingFormProps) {
+export default function BookingFormComponent({ booking }: BookingFormProps) {
     const [state, setState] = useState<CreateBookingState>(
         {
             form: booking || {
@@ -131,13 +131,25 @@ export default function BookingFormComponent({booking}: BookingFormProps) {
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         await createBooking(state.form);
-    };
+    }
 
     return (
         <form onSubmit={handleSubmit}>
             {state.showForm === ShowForm.Booking && (
                 <div>
-                    <h1 className='text-lg font-bold leading-6 w-full text-center mt-2'>{booking ? booking.client.name : "Create Booking"}</h1>
+                    <div className='flex items-center pt-2'>
+                        <div className='flex items-center pl-3'>
+                            <button
+                                className=""
+                                onClick={() => router.push('/protected/booking/list')}
+                            >
+                                <svg width="18" height="16" viewBox="0 0 18 16" fill="#fff" xmlns="http://www.w3.org/2000/svg">
+                                    <path id="Vector - 0" fill-rule="evenodd" clip-rule="evenodd" d="M18 8C18 8.41421 17.6642 8.75 17.25 8.75H2.56031L8.03063 14.2194C8.32368 14.5124 8.32368 14.9876 8.03063 15.2806C7.73757 15.5737 7.26243 15.5737 6.96937 15.2806L0.219375 8.53063C0.0785422 8.38995 -0.000590086 8.19906 -0.000590086 8C-0.000590086 7.80094 0.0785422 7.61005 0.219375 7.46937L6.96937 0.719375C7.26243 0.426319 7.73757 0.426319 8.03063 0.719375C8.32368 1.01243 8.32368 1.48757 8.03063 1.78062L2.56031 7.25H17.25C17.6642 7.25 18 7.58579 18 8Z" fill="#0D141C" />
+                                </svg>
+                            </button>
+                        </div>
+                        <h1 className='text-lg font-bold leading-6 w-full text-center'>{booking ? booking.client.name : "Create Booking"}</h1>
+                    </div>
                     <div className='flex flex-col gap-y-4 mt-6 mx-3'>
                         <label className="form-control w-full max-w-xs">
                             <input

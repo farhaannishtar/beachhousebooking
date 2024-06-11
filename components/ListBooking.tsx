@@ -35,11 +35,6 @@ export default function ListBooking({ bookingsFromParent }: BookingProps) {
     }));
   };
 
-  const routeToCreateBooking = (e: FormEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    router.push('/protected/booking/create');
-  }
-
   return (
     <div className="mx-2">
       <div className='flex'>
@@ -47,7 +42,7 @@ export default function ListBooking({ bookingsFromParent }: BookingProps) {
         <div className='flex items-center'>
           <button
             className="btn btn-sm bg-selectedButton text-white"
-            onClick={routeToCreateBooking}
+            onClick={() => router.push('/protected/booking/create')}
           >+</button>
         </div>
       </div>
