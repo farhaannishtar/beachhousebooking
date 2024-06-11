@@ -23,8 +23,6 @@ interface BookingFormProps {
     booking?: BookingForm | undefined;
 }
 
-
-
 export default function BookingFormComponent({ booking }: BookingFormProps) {
     const [state, setState] = useState<CreateBookingState>(
         {
@@ -130,7 +128,8 @@ export default function BookingFormComponent({ booking }: BookingFormProps) {
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
-        await createBooking(state.form);
+        const id = await createBooking(state.form);
+        router.push(`/protected/booking/${id}`);
     }
 
     return (

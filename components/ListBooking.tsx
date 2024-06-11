@@ -35,8 +35,6 @@ export default function ListBooking({ bookingsFromParent }: BookingProps) {
     }));
   };
 
-  console.log("bookingsFromParent: ", bookingsFromParent);
-
   return (
     <div className="mx-2">
       <div className='flex'>
