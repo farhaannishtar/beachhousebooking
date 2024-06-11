@@ -35,6 +35,8 @@ export default function ListBooking({ bookingsFromParent }: BookingProps) {
     }));
   };
 
+  console.log("bookingsFromParent: ", bookingsFromParent);
+
   return (
     <div className="mx-2">
       <div className='flex'>
@@ -62,10 +64,11 @@ export default function ListBooking({ bookingsFromParent }: BookingProps) {
       <p className="pl-1 mt-6 text-neutral-900 text-lg font-semibold leading-6">
         Today
       </p>
-
-
       {state.bookings?.map((booking) => (
-        <div className="flex mt-3 w-full justify-between">
+        <div 
+          className="flex mt-3 w-full justify-between"
+          onClick={() => router.push(`/protected/booking/${booking.bookingId}`)}
+        >
           <div className="pl-3">
             <p>
               <span className="text-neutral-900 text-base font-medium leading-6">{booking.client.name}</span> <span className="text-slate-500 text-sm font-normal leading-5">Inquiry</span>
