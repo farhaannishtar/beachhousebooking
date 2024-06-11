@@ -145,7 +145,7 @@ export default function BookingFormComponent({ booking }: BookingFormProps) {
                     <div className='flex items-center pt-2'>
                         <div className='flex items-center pl-3'>
                             <button
-                                className=""
+                                type="button"
                                 onClick={() => router.push('/protected/booking/list')}
                             >
                                 <svg width="18" height="16" viewBox="0 0 18 16" fill="#fff" xmlns="http://www.w3.org/2000/svg">
