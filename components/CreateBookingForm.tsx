@@ -1,6 +1,6 @@
 "use client";
 
-import { createBooking } from '@/app/api/submit';
+import { createBooking, deleteBooking } from '@/app/api/submit';
 import { BookingDB, BookingForm, Event } from '@/utils/lib/bookingType';
 import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -37,8 +37,8 @@ export default function BookingFormComponent({ booking }: BookingFormProps) {
                 bookingType: 'Stay',
                 notes: '',
                 status: 'Inquiry',
-                startDateTime: (new Date()).toUTCString(),
-                endDateTime: (new Date()).toUTCString(),
+                startDateTime: undefined,
+                endDateTime: undefined,
                 events: [],
                 finalCost: 0,
                 payments: [],
@@ -132,7 +132,13 @@ export default function BookingFormComponent({ booking }: BookingFormProps) {
         router.push(`/protected/booking/${id}`);
     }
 
+    const deleteThis = async () => {
+        console.log("deleting")
+        await deleteBooking(booking!.bookingId!);
+    }
+
     return (
+        <div>
         <form onSubmit={handleSubmit}>
             {state.showForm === ShowForm.Booking && (
                 <div>
@@ -322,9 +328,22 @@ export default function BookingFormComponent({ booking }: BookingFormProps) {
                 )
             }
             <div className='flex items-center justify-center w-full mt-6'>
-                <button type="submit" className='btn btn-wide bg-selectedButton text-center text-white text-base font-bold leading-normal'>Create</button>
+                <button type="submit" className='btn btn-wide bg-selectedButton text-center text-white text-base font-bold leading-normal'>
+                    {booking ? "Update" : "Create"}
+                </button>
             </div>
         </form >
+            {booking && (
+                <div className='flex items-center justify-center w-full mt-6'>
+                    <button
+                        className='btn btn-wide bg-selectedButton text-center text-white text-base font-bold leading-normal'
+                        onClick={() => deleteThis()}
+                    >
+                        Delete
+                    </button>
+                </div>
+            )}
+        </div>
     );
 };
 

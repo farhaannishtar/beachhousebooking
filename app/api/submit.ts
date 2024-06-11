@@ -28,3 +28,25 @@ export const createBooking = async (bookingForm: BookingForm) => {
   }
   return bookingId;
 }
+
+export const deleteBooking = async (bookingId: number) => {
+  console.log('Deleting booking id: ', bookingId)
+  const supabase = createClient();
+  let sesh = await supabase.auth.getSession()
+  let token = sesh.data.session?.access_token;
+
+  try {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+    const response = await fetch(`${apiUrl}/api/submit`, {
+      method: "DELETE",
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({bookingId})
+    });
+    console.log('Deleted id: ', bookingId);
+
+  } catch (error) {
+    console.error('Error calling Firebase function:', error);
+  }
+}

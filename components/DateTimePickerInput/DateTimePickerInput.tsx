@@ -13,7 +13,6 @@ interface DateTimePickerInputProps {
 }
 
 export default function DateTimePickerInput({ label, onChange, name, value }: DateTimePickerInputProps) {
-
   const [date, setDate] = useState<Date | null>(value ? new Date(value) : null);
 
   return (
@@ -29,6 +28,7 @@ export default function DateTimePickerInput({ label, onChange, name, value }: Da
           return format(value, "dd/MM/yy hh:mmaa");
         }}
         block
+        value={date}
         appearance="subtle"
         showMeridian
         placeholder={`${label}`}

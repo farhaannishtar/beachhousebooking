@@ -1,5 +1,5 @@
 import { BookingDB, BookingForm } from "./bookingType";
-import { insertEvent } from "./calendar";
+import { deleteEvent, insertEvent } from "./calendar";
 import { query } from "./helper";
 
 export async function createBooking(booking: BookingDB, email: string): Promise<number> {
@@ -16,9 +16,19 @@ export async function fetchBooking(id: number): Promise<BookingDB[]> {
     return result.rows[0];
 }
 
+function capitalizeString(str: string): string {
+  return str.replace(/\b\w/g, l => l.toUpperCase());
+}
+
 export async function mutateBookingState(booking: BookingForm, email: string): Promise<number> {
   let newBooking: BookingDB = {
     ...booking,
+    startDateTime: booking.startDateTime!,
+    endDateTime: booking.endDateTime!,
+    client: {
+      ...booking.client,
+      name: capitalizeString(booking.client.name)
+    },
     encodingVersion: 1,
     createdDateTime: new Date().toISOString(),
     createdBy: {
@@ -57,7 +67,7 @@ export async function insertToCalendarIfConfirmed(newBooking: BookingDB): Promis
     for(let i = 0; i < newBooking.events.length; i++) {
       let event = newBooking.events[i];
       newBooking.events[i].calendarIds = {};
-      let summary = `${newBooking.bookingName} for ${newBooking.client.name}(${event.numberOfGuests} pax) by ${newBooking.createdBy.name}`;
+      let summary = `${newBooking.client.name}(${newBooking.numberOfGuests} pax) by ${newBooking.createdBy.name}`;
       let description = `
       Total Amount: ${newBooking.finalCost} 
       Payment Method: ${newBooking.paymentMethod}
@@ -93,4 +103,19 @@ async function modifyExistingBooking(newBooking: BookingDB) {
   newBooking.createdBy = oldBooking.createdBy;
   newBooking.createdDateTime = oldBooking.createdDateTime;
   updateBooking(newBooking, newBooking.bookingId!);
+}
+
+export async function deleteBooking(bookingId: number) {
+  // first fetch
+  let bookings = await query('SELECT * FROM bookings WHERE id = $1', [bookingId]);
+  if (bookings.length === 0) {
+    throw new Error("Booking not found");
+  }
+  let booking = bookings[0].json[0] as BookingDB;
+  for (let event of booking.events) {
+    for (let property of event.properties) {
+      await deleteEvent(process.env.CALENDAR_ID!, event.calendarIds![property]);
+    }
+  }
+  query('DELETE FROM bookings WHERE id = $1', [bookingId]);
 }

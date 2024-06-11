@@ -23,8 +23,8 @@ export interface BookingForm {
     bookingType: "Stay" | "Event"
     numberOfEvents?: number | undefined
     numberOfGuests: number
-    startDateTime: string
-    endDateTime: string
+    startDateTime: string | undefined
+    endDateTime: string | undefined
     notes: string
     status: "Inquiry" | "Quotation" | "Confirmed"
     followUpDate?: string | undefined
@@ -37,6 +37,8 @@ export interface BookingForm {
 
 
 export interface BookingDB extends BookingForm {
+    startDateTime: string
+    endDateTime: string
     encodingVersion: number
     createdDateTime: string
     createdBy: Employee

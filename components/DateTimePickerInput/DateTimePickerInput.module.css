@@ -6,7 +6,7 @@
 
 .customDatePickerInput :global .rs-input {
   background-color: #F0F2F5; /* Example background color */
-  color: #617A8A; /* Example font color */
+  color: #000000; /* Example font color */
 }
 
 .customDatePickerPlaceholderText :global .rs-input-group::placeholder {
