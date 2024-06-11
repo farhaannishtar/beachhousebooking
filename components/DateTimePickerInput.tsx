@@ -7,9 +7,9 @@ import { useState } from 'react';
 
 interface DateTimePickerInputProps {
   label: string;
-  onChange: (name:string, value: string | null) => void;
-  name: string;
-  value: string | null;
+  onChange?: (name:string, value: string | null) => void;
+  name?: string;
+  value?: string | null;
 }
 
 export default function DateTimePickerInput({ label, onChange, name, value }: DateTimePickerInputProps) {
@@ -21,7 +21,6 @@ export default function DateTimePickerInput({ label, onChange, name, value }: Da
       <DatePicker
         format="dd/MM/yy hh:mmaa"
         renderValue={value => {
-          // check if year is same as current year
           const currentYear = new Date().getFullYear();
           const year = value.getFullYear();
           if (year === currentYear) {
@@ -36,7 +35,7 @@ export default function DateTimePickerInput({ label, onChange, name, value }: Da
         caretAs={date === null ? undefined : "div"}
         onChange={(value) => {
           setDate(value)
-          onChange(name, value ? value.toISOString() : null)
+          onChange!(name!, value ? value.toISOString() : null)
         }}
         cleanable={false}
         placement={label === "End Date" ? "bottomEnd" : "bottomStart"}

@@ -1,5 +1,5 @@
 import { createClient } from '@/utils/supabase/server';
-import BookingFormComponent from '@/components/CreateBooking';
+import BookingFormComponent from '@/components/CreateBookingForm';
 
 export default async function Booking() {
   const supabase = createClient();
