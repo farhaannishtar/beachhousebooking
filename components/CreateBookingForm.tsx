@@ -7,7 +7,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import CreateEventComponent from './CreateEventForm';
 import StayFormComponent from './StayForm';
 import { EventStaySwitch } from './EventStaySwitch';
-import DateTimePickerInput from './DateTimePickerInput';
+import DateTimePickerInput from './DateTimePickerInput/DateTimePickerInput';
 
 enum ShowForm {
     Booking,

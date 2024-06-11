@@ -3,7 +3,7 @@ import React from 'react';
 import Select from 'react-select';
 import { Event } from '@/utils/lib/bookingType';
 import { deleteEvent } from '@/utils/lib/calendar';
-import DateTimePickerInput from './DateTimePickerInput';
+import DateTimePickerInput from './DateTimePickerInput/DateTimePickerInput';
 import {
   Accordion,
   AccordionContent,

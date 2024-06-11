@@ -1,6 +1,6 @@
 'use client';
 
-import DateTimePickerInput from "./DateTimePickerInput";
+import DateTimePickerInput from "../DateTimePickerInput/DateTimePickerInput";
 import styles from './FilterButtonAndModal.module.css';
 
 const FilterButtonAndModal: React.FC = () => {
