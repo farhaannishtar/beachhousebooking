@@ -1,13 +1,14 @@
 "use client";
 
 import { createBooking, deleteBooking } from '@/app/api/submit';
-import { BookingDB, BookingForm, Event } from '@/utils/lib/bookingType';
+import { Property, BookingForm, Event } from '@/utils/lib/bookingType';
 import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation'
 import CreateEventComponent from './CreateEventForm';
 import StayFormComponent from './StayForm';
 import { EventStaySwitch } from './EventStaySwitch';
 import DateTimePickerInput from './DateTimePickerInput/DateTimePickerInput';
+import Properties from './Properties';
 
 enum ShowForm {
     Booking,
@@ -24,7 +25,8 @@ interface BookingFormProps {
 }
 
 export default function BookingFormComponent({ booking }: BookingFormProps) {
-    const [state, setState] = useState<CreateBookingState>(
+    const router = useRouter();
+    const [formState, setFormState] = useState<CreateBookingState>(
         {
             form: booking || {
                 client: {
@@ -36,6 +38,7 @@ export default function BookingFormComponent({ booking }: BookingFormProps) {
                 paymentMethod: "Cash",
                 bookingType: 'Stay',
                 notes: '',
+                properties: [],
                 status: 'Inquiry',
                 startDateTime: undefined,
                 endDateTime: undefined,
@@ -50,15 +53,12 @@ export default function BookingFormComponent({ booking }: BookingFormProps) {
     const [textareaHeight, setTextareaHeight] = useState<number>(40);
 
     useEffect(() => {
-        // Calculate the new height based on the length of state.form.notes
-        // This is a simplistic calculation: adjust it based on your needs
-        const newHeight = Math.min(16, state.form.notes.length / 10 + 40);
+        const newHeight = Math.min(16, formState.form.notes.length / 10 + 40);
         setTextareaHeight(newHeight);
-    }, [state.form.notes]);
-
+    }, [formState.form.notes]);
 
     const handleSwitchChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-        setState((prevState) => ({
+        setFormState((prevState) => ({
             showForm: prevState.showForm,
             form: {
                 ...prevState.form,
@@ -68,12 +68,8 @@ export default function BookingFormComponent({ booking }: BookingFormProps) {
         setIsSwitchOn(!isSwitchOn);
     };
 
-
-    const router = useRouter();
-    const searchParams = useSearchParams();
-
     const handleAddEvent = (event: Event) => {
-        setState((prevState) => ({
+        setFormState((prevState) => ({
             showForm: ShowForm.Booking,
             form: {
                 ...prevState.form,
@@ -86,7 +82,7 @@ export default function BookingFormComponent({ booking }: BookingFormProps) {
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         console.log("name: ", name, "value: ", value);
-        setState((prevState) => ({
+        setFormState((prevState) => ({
             showForm: prevState.showForm,
             form: {
                 ...prevState.form,
@@ -96,7 +92,7 @@ export default function BookingFormComponent({ booking }: BookingFormProps) {
     };
 
     const handleStateChange = (showForm: ShowForm) => {
-        setState((prevState) => ({
+        setFormState((prevState) => ({
             showForm,
             form: prevState.form,
         }));
@@ -104,7 +100,7 @@ export default function BookingFormComponent({ booking }: BookingFormProps) {
 
     const handleClientChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        setState((prevState) => ({
+        setFormState((prevState) => ({
             showForm: prevState.showForm,
             form: {
                 ...prevState.form,
@@ -117,7 +113,7 @@ export default function BookingFormComponent({ booking }: BookingFormProps) {
     };
 
     const handleDateChange = (name: string, value: string | null) => {
-        setState((prevState) => ({
+        setFormState((prevState) => ({
             showForm: prevState.showForm,
             form: {
                 ...prevState.form,
@@ -126,9 +122,28 @@ export default function BookingFormComponent({ booking }: BookingFormProps) {
         }));
     };
 
+    const handlePropertyChange = (property: Property) => {
+        setFormState((prevState) => {
+            const propertyIndex = prevState.form.properties.findIndex(p => p === property);
+            let newProperties = [...prevState.form.properties];
+            if (propertyIndex > -1) {
+                newProperties.splice(propertyIndex, 1);
+            } else {
+                newProperties.push(property);
+            }
+            return {
+                ...prevState,
+                form: {
+                    ...prevState.form,
+                    properties: newProperties,
+                },
+            };
+        });
+    }
+
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
-        const id = await createBooking(state.form);
+        const id = await createBooking(formState.form);
         router.push(`/protected/booking/${id}`);
     }
 
@@ -140,7 +155,7 @@ export default function BookingFormComponent({ booking }: BookingFormProps) {
     return (
         <div>
             <form onSubmit={handleSubmit}>
-                {state.showForm === ShowForm.Booking && (
+                {formState.showForm === ShowForm.Booking && (
                     <div>
                         <div className='flex items-center pt-2'>
                             <div className='flex items-center pl-3'>
@@ -162,7 +177,7 @@ export default function BookingFormComponent({ booking }: BookingFormProps) {
                                     placeholder="Customer Name"
                                     className="input w-full border border-fushsia-500 bg-inputBoxbg text-black text-base font-normal placeholder:text-placeHolderText placeholder:text-base placeholder:leading-normal placeholder:font-normal"
                                     name="name"
-                                    value={state.form.client.name}
+                                    value={formState.form.client.name}
                                     onChange={handleClientChange}
                                 />
                             </label>
@@ -172,7 +187,7 @@ export default function BookingFormComponent({ booking }: BookingFormProps) {
                                     placeholder="Phone Number"
                                     className="input w-full bg-inputBoxbg text-base font-normal placeholder:text-placeHolderText placeholder:text-base placeholder:leading-normal placeholder:font-normal"
                                     name="phone"
-                                    value={state.form.client.phone}
+                                    value={formState.form.client.phone}
                                     onChange={handleClientChange}
                                 />
                             </label>
@@ -180,20 +195,20 @@ export default function BookingFormComponent({ booking }: BookingFormProps) {
                                 <EventStaySwitch handleToggle={handleSwitchChange} isOn={isSwitchOn} />
                             </div>
                             <div className='flex gap-x-2 w-full'>
-                                <DateTimePickerInput label={'Start Date'} onChange={handleDateChange} name="startDateTime" value={state.form.startDateTime} />
-                                <DateTimePickerInput label={'End Date'} onChange={handleDateChange} name="endDateTime" value={state.form.endDateTime} />
+                                <DateTimePickerInput label={'Start Date'} onChange={handleDateChange} name="startDateTime" value={formState.form.startDateTime} />
+                                <DateTimePickerInput label={'End Date'} onChange={handleDateChange} name="endDateTime" value={formState.form.endDateTime} />
                             </div>
                             <div className='flex gap-x-3'>
                                 <div className="w-1/2">
                                     <label className="w-full">
-                                        {state.form.bookingType === "Event" &&
+                                        {formState.form.bookingType === "Event" &&
                                             <div className="relative flex items-center">
                                                 <input
                                                     type="text"
                                                     placeholder="Events"
                                                     className="pl-10 pr-3 py-2 w-full border rounded-lg text-base text-center font-normal font-normal placeholder:text-placeHolderText placeholder:text-base placeholder:leading-normal placeholder:font-normal"
                                                     name="numberOfEvents"
-                                                    value={state.form.numberOfEvents}
+                                                    value={formState.form.numberOfEvents}
                                                     onChange={handleChange}
                                                 />
                                                 <svg width="86" height="50" viewBox="0 0 96 56" fill="none" className="absolute left-2 text-gray-700" xmlns="http://www.w3.org/2000/svg">
@@ -214,7 +229,7 @@ export default function BookingFormComponent({ booking }: BookingFormProps) {
                                                 className="pl-10 pr-3 py-2 w-full border rounded-lg text-base text-center font-normal font-normal placeholder:text-placeHolderText placeholder:text-base placeholder:leading-normal placeholder:font-normal"
                                                 placeholder="Guests"
                                                 name="numberOfGuests"
-                                                value={state.form.numberOfGuests}
+                                                value={formState.form.numberOfGuests}
                                                 onChange={handleChange}
                                             />
                                             <svg
@@ -237,13 +252,14 @@ export default function BookingFormComponent({ booking }: BookingFormProps) {
                                 <label>
                                     <textarea
                                         name="notes"
-                                        value={state.form.notes}
+                                        value={formState.form.notes}
                                         placeholder="Notes"
                                         onChange={handleChange}
                                         className={`textarea w-full text-base h-${textareaHeight} font-normal leading-normal bg-inputBoxbg rounded-xl placeholder:text-placeHolderText placeholder:text-base placeholder:leading-normal placeholder:font-normal`}
                                     />
                                 </label>
                             </div>
+                            <Properties handlePropertyChange={handlePropertyChange} />
                             <div>
                                 <label className='flex pl-20 gap-x-4'>
                                     <div className='flex items-center'>
@@ -254,7 +270,7 @@ export default function BookingFormComponent({ booking }: BookingFormProps) {
                                     <select
                                         className="select select-bordered w-full bg-inputBoxbg"
                                         name="status"
-                                        value={state.form.status}
+                                        value={formState.form.status}
                                         onChange={handleChange}
                                     >
                                         <option value="Inquiry">Inquiry</option>
@@ -273,9 +289,9 @@ export default function BookingFormComponent({ booking }: BookingFormProps) {
                                     <select
                                         className="select select-bordered w-full bg-inputBoxbg"
                                         name="refferral"
-                                        value={state.form.refferral || ''}
+                                        value={formState.form.refferral || ''}
                                         onChange={(e) =>
-                                            setState((prevState) => ({
+                                            setFormState((prevState) => ({
                                                 showForm: prevState.showForm,
                                                 form: {
                                                     ...prevState.form,
@@ -292,12 +308,12 @@ export default function BookingFormComponent({ booking }: BookingFormProps) {
                                     </select>
                                 </label>
                             </div>
-                            {state.form.status != "Inquiry" && (
+                            {formState.form.status != "Inquiry" && (
                                 <div>
-                                    {state.form.bookingType == "Event" && (
+                                    {formState.form.bookingType == "Event" && (
                                         <div>
                                             <h2>Events:</h2>
-                                            {state.form.events.map((event, index) => (
+                                            {formState.form.events.map((event, index) => (
                                                 <div key={index}>{event.eventName}</div>
                                             ))}
 
@@ -305,12 +321,12 @@ export default function BookingFormComponent({ booking }: BookingFormProps) {
                                                 Add Event
                                             </button>
 
-                                            <label> Final cost: ${state.form.finalCost}</label>
+                                            <label> Final cost: ${formState.form.finalCost}</label>
 
 
                                         </div>
                                     )}
-                                    {state.form.bookingType == "Stay" && (
+                                    {formState.form.bookingType == "Stay" && (
                                         <div>
                                             <h2>Stay form:</h2>
                                             <StayFormComponent />
@@ -323,7 +339,7 @@ export default function BookingFormComponent({ booking }: BookingFormProps) {
                 )
                 }
                 {
-                    state.showForm === ShowForm.Event && (
+                    formState.showForm === ShowForm.Event && (
                         <CreateEventComponent onAddEvent={handleAddEvent} cancelAddEvent={() => handleStateChange(ShowForm.Booking)} />
                     )
                 }

@@ -3,7 +3,7 @@
 export enum Property {
     Bluehouse = "Bluehouse",
     Glasshouse = "Glasshouse",
-    Pod = "Pod",
+    MeadowLane = "Meadow Lane",
     LeChalet = "LeChalet",
     VillaArmati = "VillaArmati",
     Castle = "Castle"
@@ -26,6 +26,7 @@ export interface BookingForm {
     startDateTime: string | undefined
     endDateTime: string | undefined
     notes: string
+    properties: Property[]
     status: "Inquiry" | "Quotation" | "Confirmed"
     followUpDate?: string | undefined
     events: Event[]
