@@ -9,6 +9,7 @@ import StayFormComponent from './StayForm';
 import { EventStaySwitch } from './EventStaySwitch';
 import DateTimePickerInput from './DateTimePickerInput/DateTimePickerInput';
 import Properties from './Properties';
+import { createClient } from '@/utils/supabase/client';
 
 enum ShowForm {
     Booking,
@@ -26,6 +27,23 @@ interface BookingFormProps {
 
 export default function BookingFormComponent({ booking }: BookingFormProps) {
     const router = useRouter();
+
+    const supabase = createClient();
+    
+  
+    useEffect(() => {
+      console.log("useEffect")
+      supabase.from("bookings").select().eq("id", booking?.bookingId)
+        .then(( { data: bookingsData }) => {
+            if (!bookingsData) return;
+            const newData = bookingsData[0].json[bookingsData[0].json.length - 1];
+            setFormState((prevState) => ({
+                ...prevState,
+                form: newData,
+            }));
+        })
+    }, []);
+
     const [formState, setFormState] = useState<CreateBookingState>(
         {
             form: booking || {
