@@ -67,7 +67,7 @@ export default function BookingFormComponent({ booking }: BookingFormProps) {
             },
             showForm: ShowForm.Booking
         });
-    const [isSwitchOn, setIsSwitchOn] = useState<boolean>(false);
+    const [isSwitchOn, setIsSwitchOn] = useState<boolean>(formState.form.bookingType === "Stay" ? false : true);
     const [textareaHeight, setTextareaHeight] = useState<number>(40);
 
     useEffect(() => {
@@ -190,7 +190,7 @@ export default function BookingFormComponent({ booking }: BookingFormProps) {
                                     </svg>
                                 </button>
                             </div>
-                            <h1 className='text-lg font-bold leading-6 w-full text-center'>{booking ? booking.client.name : "Create Booking"}</h1>
+                            <h1 className='text-lg font-bold leading-6 w-full text-center'>{formState.form.bookingId ? formState.form.client.name : "Create Booking"}</h1>
                         </div>
                         <div className='flex flex-col gap-y-4 mt-6 mx-3'>
                             <label className="form-control w-full">
@@ -217,8 +217,12 @@ export default function BookingFormComponent({ booking }: BookingFormProps) {
                                 <EventStaySwitch handleToggle={handleSwitchChange} isOn={isSwitchOn} />
                             </div>
                             <div className='flex gap-x-2 w-full'>
+                            <div className="w-1/2">
                                 <DateTimePickerInput label={'Start Date'} onChange={handleDateChange} name="startDateTime" value={formState.form.startDateTime} />
+                            </div>
+                            <div className="w-1/2">
                                 <DateTimePickerInput label={'End Date'} onChange={handleDateChange} name="endDateTime" value={formState.form.endDateTime} />
+                                </div>
                             </div>
                             <div className='flex gap-x-3'>
                                 <div className="w-1/2">

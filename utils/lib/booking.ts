@@ -7,12 +7,12 @@ export async function createBooking(booking: BookingDB, email: string): Promise<
     return resp[0].id;
 }
 
-export function updateBooking(booking: BookingDB, id: number) {
-  query('UPDATE bookings SET json = $1 WHERE id = $2', [[booking], id]);
+export function updateBooking(booking: BookingDB[], id: number) {
+  query('UPDATE bookings SET json = $1 WHERE id = $2', [booking, id]);
 }
 
 export async function fetchBooking(id: number): Promise<BookingDB[]> {
-    const result = await query('SELECT * FROM bookings WHERE id = 180');
+    const result = await query('SELECT * FROM bookings WHERE id = $1', [id]);
     return result[0].json;
 }
 
@@ -102,7 +102,8 @@ async function modifyExistingBooking(newBooking: BookingDB) {
   let oldBooking = bookings[bookings.length - 1];
   newBooking.createdBy = oldBooking.createdBy;
   newBooking.createdDateTime = oldBooking.createdDateTime;
-  updateBooking(newBooking, newBooking.bookingId!);
+  bookings.push(newBooking);
+  updateBooking(bookings, newBooking.bookingId!);
 }
 
 export async function deleteBooking(bookingId: number) {
