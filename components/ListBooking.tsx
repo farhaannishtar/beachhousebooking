@@ -22,9 +22,7 @@ export default function ListBooking() {
 
 
   useEffect(() => {
-    console.log("useEffect")
     supabase.from("bookings").select().then(( { data: bookingsData }) => {
-      console.log("bookingsData")
       console.log(bookingsData)
       let bookings: BookingDB[] = []
       bookingsData?.forEach((booking) => {
@@ -41,7 +39,7 @@ export default function ListBooking() {
       }));
       filterBookings()
     })
-  });
+  }, []);
 
 
   const router = useRouter();
@@ -130,8 +128,8 @@ export default function ListBooking() {
               </p>
               <section>
                 <p className="text-slate-500 text-sm font-normal leading-5">{numOfDays(booking)} days, {booking.numberOfGuests} pax</p>
-                { properties(booking).length > 0 && (
-                  <p className="text-slate-500 text-sm font-normal leading-5">{properties(booking).join(", ")}</p>
+                { booking.properties?.length > 0 && (
+                  <p className="text-slate-500 text-sm font-normal leading-5">{booking.properties.join(", ")}</p>
                 )}
                 
                 {booking.refferral && (

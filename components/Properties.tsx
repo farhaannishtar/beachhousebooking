@@ -3,9 +3,10 @@ import { Property } from "@/utils/lib/bookingType";
 
 interface PropertiesProps {
   handlePropertyChange: (propertyName: Property) => void;
+  properties: Property[];
 }
 
-const Properties: React.FC<PropertiesProps> = ({ handlePropertyChange }) => {
+const Properties: React.FC<PropertiesProps> = ({ handlePropertyChange, properties }) => {
 
   return (
     <>
@@ -13,11 +14,11 @@ const Properties: React.FC<PropertiesProps> = ({ handlePropertyChange }) => {
         Properties
       </p>
       <div className='flex flex-wrap gap-3'>
-        <PropertyBadge propertyName={Property.Bluehouse} handlePropertyChange={handlePropertyChange}/>
-        <PropertyBadge propertyName={Property.MeadowLane} handlePropertyChange={handlePropertyChange}/>
-        <PropertyBadge propertyName={Property.Glasshouse} handlePropertyChange={handlePropertyChange}/>
-        <PropertyBadge propertyName={Property.VillaArmati} handlePropertyChange={handlePropertyChange}/>
-        <PropertyBadge propertyName={Property.LeChalet} handlePropertyChange={handlePropertyChange}/>
+        <PropertyBadge value={properties.includes(Property.Bluehouse)} propertyName={Property.Bluehouse} handlePropertyChange={handlePropertyChange}/>
+        <PropertyBadge value={properties.includes(Property.MeadowLane)} propertyName={Property.MeadowLane} handlePropertyChange={handlePropertyChange}/>
+        <PropertyBadge value={properties.includes(Property.Glasshouse)} propertyName={Property.Glasshouse} handlePropertyChange={handlePropertyChange}/>
+        <PropertyBadge value={properties.includes(Property.VillaArmati)} propertyName={Property.VillaArmati} handlePropertyChange={handlePropertyChange}/>
+        <PropertyBadge value={properties.includes(Property.LeChalet)} propertyName={Property.LeChalet} handlePropertyChange={handlePropertyChange}/>
       </div>
     </>
   )

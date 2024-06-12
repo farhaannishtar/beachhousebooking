@@ -4,18 +4,17 @@ import { Property } from "@/utils/lib/bookingType";
 type PropertyBadgeProps = {
   propertyName: Property;
   handlePropertyChange: (propertyName: Property) => void;
+  value: boolean;
 };
 
-const PropertyBadge: React.FC<PropertyBadgeProps> = ({ propertyName, handlePropertyChange }) => {
-  const [isSelected, setIsSelected] = useState(false);
+const PropertyBadge: React.FC<PropertyBadgeProps> = ({ propertyName, handlePropertyChange, value }) => {
 
   const toggleProperty = () => {
     handlePropertyChange(propertyName)
-    setIsSelected(!isSelected);
   };
 
-  const badgeClasses = `badge badge-lg text-center ${isSelected ? 'text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
-    } text-base font-medium leading-normal p-6`;
+  const badgeClasses = `badge badge-lg text-center ${value ? 'text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
+    } text-base font-medium leading-normal p-4`;
 
   return (
     <div

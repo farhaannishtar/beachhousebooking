@@ -263,7 +263,7 @@ export default function BookingFormComponent({ booking }: BookingFormProps) {
                                     />
                                 </label>
                             </div>
-                            <Properties handlePropertyChange={handlePropertyChange} />
+                            <Properties properties={formState.form.properties ?? []} handlePropertyChange={handlePropertyChange} />
                             <div>
                                 <label className='flex pl-20 gap-x-4'>
                                     <div className='flex items-center'>
