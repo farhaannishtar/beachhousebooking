@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Property } from "@/utils/lib/bookingType";
 
 type PropertyBadgeProps = {

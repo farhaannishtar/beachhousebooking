@@ -1,5 +1,5 @@
 import { createClient } from '@/utils/supabase/server';
-import BookingFormComponent from '@/components/CreateBookingForm';
+import BookingFormComponent from '@/components/BookingForm';
 import { BookingForm } from '@/utils/lib/bookingType';
 
 export default async function Booking({params}: {params: {id: string}}) {

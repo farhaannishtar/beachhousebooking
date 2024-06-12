@@ -1,4 +1,4 @@
-import BookingFormComponent from '@/components/CreateBookingForm';
+import BookingFormComponent from '@/components/BookingForm';
 
 export default async function Booking() {
   return (
