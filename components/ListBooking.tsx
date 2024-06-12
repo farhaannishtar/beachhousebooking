@@ -1,6 +1,6 @@
 "use client";
 
-import { BookingDB, BookingForm, Event } from '@/utils/lib/bookingType';
+import { BookingDB, BookingForm, Event, numOfDays, organizedByDate, properties } from '@/utils/lib/bookingType';
 import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client';
@@ -12,7 +12,6 @@ import { createClient } from '@/utils/supabase/client';
 interface ListBookingsState {
   searchText: string | null;
   date: Date | null;
-  filteredBookings: BookingDB[];
   dbBookings: BookingDB[];
 }
 
@@ -49,7 +48,6 @@ export default function ListBooking() {
   const [state, setState] = useState<ListBookingsState>({
     searchText: null,
     date: null,
-    filteredBookings: [],
     dbBookings: [],
   });
 
@@ -60,21 +58,39 @@ export default function ListBooking() {
       ...prevState,
       searchText: value,
     }));
-    filterBookings()
   };
 
-  const filterBookings = () => {
-    setState((prevState) => ({
-      ...prevState,
-      filteredBookings: prevState.dbBookings.filter((booking) => {
-        if (!prevState.searchText) return true;
-        return booking.client.name.toLowerCase().includes(prevState.searchText.toLowerCase()) || booking.client.phone.includes(prevState.searchText);
-      })
-    }));
+  const filterBookings = () : { [key: string]: BookingDB[] } => {
+    return organizedByDate(state.dbBookings.filter((booking) => {
+        if (!state.searchText) return true;
+        return booking.client.name.toLowerCase().includes(state.searchText.toLowerCase()) || booking.client.phone.includes(state.searchText);
+      }))
+  }
+
+  const dates = () : string[] => {
+    return Object.keys(filterBookings()).sort((a, b) => {
+      if (a == "Invalid Date") return 1
+      if (b == "Invalid Date") return -1
+      return new Date(a).getTime() - new Date(b).getTime()
+    })
+  }
+
+  const convertDate = (date: string) => {
+    if (new Date(date).toDateString() === new Date().toDateString()) {
+      return "Today"
+    }
+    else if (new Date(date).toDateString() === new Date(new Date().setDate(new Date().getDate() - 1)).toDateString()) {
+      return "Yesterday"
+    }
+    else if (new Date(date).toDateString() === new Date(new Date().setDate(new Date().getDate() + 1)).toDateString()) {
+      return "Tomorrow"
+    } else {
+      return date
+    }
   }
 
   return (
-    <div className="mx-2">
+    <div className="mx-2 w-full px-4">
       <div className='flex'>
         <h1 className='text-lg font-bold leading-6 w-full text-center mt-3'>Bookings</h1>
         <div className='flex items-center'>
@@ -97,50 +113,46 @@ export default function ListBooking() {
           {/* <FilterButtonAndModal /> */}
         </div>
       </div>
-      <p className="pl-1 mt-6 text-neutral-900 text-lg font-semibold leading-6">
-        Today
-      </p>
-      {state.filteredBookings?.map((booking) => (
-        <div 
-          className="flex mt-3 w-full justify-between"
-          key={booking.bookingId}
-          onClick={() => router.push(`/protected/booking/${booking.bookingId}`)}
-        >
-          <div className="pl-3">
-            <p>
-              <span className="text-neutral-900 text-base font-medium leading-6">{booking.client.name}</span> <span className="text-slate-500 text-sm font-normal leading-5">Inquiry</span>
-            </p>
-            <section>
-              <p className="text-slate-500 text-sm font-normal leading-5">3 days, 200 pax</p>
-              <p className="text-slate-500 text-sm font-normal leading-5">Bluehouse, Le Chalet, Glasshouse</p>
-              <p className="text-slate-500 text-sm font-normal leading-5">Referral: Google</p>
-            </section>
-          </div>
-          <div className="w-[84px] flex items-center">
-            <div className="w-[84px] h-9 px-5 bg-gray-100 rounded-[19px] justify-center items-center inline-flex items-center">
-              <div className="w-11 left-[20px] top-[6px] text-center text-sky-500 text-base font-medium leading-normal">
-                Event
+      {dates().map((date) => (
+        <React.Fragment key={date}>
+        <p className="pl-1 mt-6 text-neutral-900 text-lg font-semibold leading-6">
+          {convertDate(date)}
+        </p>
+        {filterBookings()[date].map((booking, index) => (
+          <div 
+            className="flex mt-3 w-full justify-between"
+            key={booking.bookingId}
+            onClick={() => router.push(`/protected/booking/${booking.bookingId}`)}
+          >
+            <div className="pl-3">
+              <p>
+                <span className="text-neutral-900 text-base font-medium leading-6">{booking.client.name}</span> <span className="text-slate-500 text-sm font-normal leading-5">{booking.status}</span>
+              </p>
+              <section>
+                <p className="text-slate-500 text-sm font-normal leading-5">{numOfDays(booking)} days, {booking.numberOfGuests} pax</p>
+                { properties(booking).length > 0 && (
+                  <p className="text-slate-500 text-sm font-normal leading-5">{properties(booking).join(", ")}</p>
+                )}
+                
+                {booking.refferral && (
+                  <p className="text-slate-500 text-sm font-normal leading-5">Referral: {booking.refferral}</p>
+                )}
+              </section>
+            </div>
+            <div className="w-[84px] flex items-center">
+              <div className="w-[74px] h-6 px-5 bg-gray-100 rounded-[19px] justify-center items-center inline-flex items-center">
+                <div className="w-11 left-[20px] top-[6px] text-center text-sky-500 text-base font-medium leading-normal">
+                  {booking.bookingType}
+                </div>
               </div>
             </div>
           </div>
-        </div>
+
+        ))}
+        </React.Fragment>
       ))}
+      
 
     </div>
   );
 };
-
-
-
-// <div>
-//     <input
-//         type="text"
-//         placeholder="Search"
-
-//     />
-//     <ul>
-//         {state.bookings?.map((booking) => (
-//             <li key={booking.bookingId}>{booking.bookingId} {booking.client.name}</li>
-//         ))}
-//     </ul>
-// </div>

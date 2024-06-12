@@ -33,7 +33,41 @@ export interface BookingForm {
     finalCost: number
     payments: Payment[]
     refferral?: string | undefined
-    paymentMethod: "Cash" | "Card" | "GPay",
+    paymentMethod: "Cash" | "Card" | "GPay"
+}
+
+export function numOfDays(bookingForm: BookingForm): number {
+    if(bookingForm.startDateTime && bookingForm.endDateTime) {
+        let start = new Date(bookingForm.startDateTime)
+        let end = new Date(bookingForm.endDateTime)
+        return Math.ceil((end.getTime() - start.getTime()) / (1000 * 3600 * 24))
+    } else {
+        return 0
+    }
+}
+
+export function properties(bookingForm: BookingForm): String[] {
+    let properties: String[] = []
+    for (let event of bookingForm.events) {
+        for (let property of event.properties) {
+            properties.push(property)
+        }
+    }
+    return properties
+}
+
+export function organizedByDate(bookings: BookingDB[]): { [key: string]: BookingDB[] } {
+    let organizedBookings: { [key: string]: BookingDB[] } = {}
+    
+    for (let booking of bookings) {
+        let date = new Date(booking.startDateTime).toDateString()
+        if (organizedBookings[date]) {
+            organizedBookings[date].push(booking)
+        } else {
+            organizedBookings[date] = [booking]
+        }
+    }
+    return organizedBookings
 }
 
 
