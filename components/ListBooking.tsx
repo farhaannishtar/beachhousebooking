@@ -3,24 +3,54 @@
 import { BookingDB, BookingForm, Event } from '@/utils/lib/bookingType';
 import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { useRouter } from 'next/navigation'
+import { createClient } from '@/utils/supabase/client';
 
-interface BookingProps {
-  bookingsFromParent: BookingDB[];
-}
+// interface BookingProps {
+//   bookingsFromParent: BookingDB[];
+// }
 
 interface ListBookingsState {
   searchText: string | null;
   date: Date | null;
-  bookings: BookingDB[];
+  filteredBookings: BookingDB[];
+  dbBookings: BookingDB[];
 }
 
-export default function ListBooking({ bookingsFromParent }: BookingProps) {
+export default function ListBooking() {
+  const supabase = createClient();
+  console.log("Booking page")
+  
+
+
+  useEffect(() => {
+    console.log("useEffect")
+    supabase.from("bookings").select().then(( { data: bookingsData }) => {
+      console.log("bookingsData")
+      console.log(bookingsData)
+      let bookings: BookingDB[] = []
+      bookingsData?.forEach((booking) => {
+        const lastIndex = booking.json.length - 1
+        const lastBooking = booking.json[lastIndex]
+        bookings.push({
+          ...lastBooking,
+          bookingId: booking.id,
+        })
+      })
+      setState((prevState) => ({
+        ...prevState,
+        dbBookings: bookings,
+      }));
+      filterBookings()
+    })
+  });
+
 
   const router = useRouter();
   const [state, setState] = useState<ListBookingsState>({
     searchText: null,
     date: null,
-    bookings: bookingsFromParent,
+    filteredBookings: [],
+    dbBookings: [],
   });
 
   const handleChangeSearch = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -29,11 +59,19 @@ export default function ListBooking({ bookingsFromParent }: BookingProps) {
     setState((prevState) => ({
       ...prevState,
       searchText: value,
-      bookings: bookingsFromParent.filter((booking) => {
-        return booking.client.name.toLowerCase().includes(value.toLowerCase()) || booking.client.phone.includes(value);
+    }));
+    filterBookings()
+  };
+
+  const filterBookings = () => {
+    setState((prevState) => ({
+      ...prevState,
+      filteredBookings: prevState.dbBookings.filter((booking) => {
+        if (!prevState.searchText) return true;
+        return booking.client.name.toLowerCase().includes(prevState.searchText.toLowerCase()) || booking.client.phone.includes(prevState.searchText);
       })
     }));
-  };
+  }
 
   return (
     <div className="mx-2">
@@ -62,9 +100,10 @@ export default function ListBooking({ bookingsFromParent }: BookingProps) {
       <p className="pl-1 mt-6 text-neutral-900 text-lg font-semibold leading-6">
         Today
       </p>
-      {state.bookings?.map((booking) => (
+      {state.filteredBookings?.map((booking) => (
         <div 
           className="flex mt-3 w-full justify-between"
+          key={booking.bookingId}
           onClick={() => router.push(`/protected/booking/${booking.bookingId}`)}
         >
           <div className="pl-3">

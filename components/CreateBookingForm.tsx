@@ -144,12 +144,16 @@ export default function BookingFormComponent({ booking }: BookingFormProps) {
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         const id = await createBooking(formState.form);
-        router.push(`/protected/booking/${id}`);
+        if (!booking) {
+            router.push(`/protected/booking/${id}`);
+            return;
+        }
     }
 
     const deleteThis = async () => {
         console.log("deleting")
         await deleteBooking(booking!.bookingId!);
+        router.push('/protected/booking/list')
     }
 
     return (

@@ -8,12 +8,12 @@ export async function createBooking(booking: BookingDB, email: string): Promise<
 }
 
 export function updateBooking(booking: BookingDB, id: number) {
-    query('UPDATE bookings SET json = $1 WHERE id = $2', [[booking], id]);
+  query('UPDATE bookings SET json = $1 WHERE id = $2', [[booking], id]);
 }
 
 export async function fetchBooking(id: number): Promise<BookingDB[]> {
-    const result = await query('SELECT * FROM bookings WHERE id = $1', [id]);
-    return result.rows[0];
+    const result = await query('SELECT * FROM bookings WHERE id = 180');
+    return result[0].json;
 }
 
 function capitalizeString(str: string): string {
