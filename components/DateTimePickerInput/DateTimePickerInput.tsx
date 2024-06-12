@@ -7,7 +7,7 @@ import { useState } from 'react';
 
 interface DateTimePickerInputProps {
   label: string;
-  onChange?: (name:string, value: string | null) => void;
+  onChange?: (name: string, value: string | null) => void;
   name?: string;
   value?: string | null;
 }
@@ -24,10 +24,13 @@ export default function DateTimePickerInput({ label, onChange, name, value }: Da
           const year = value.getFullYear();
           if (year === currentYear) {
             return format(value, "MMM d hh:mmaa");
-          } 
+          }
           return format(value, "dd/MM/yy hh:mmaa");
         }}
         block
+        onSelect={(date) => {
+          setDate(new Date(date));
+        }}
         value={date}
         appearance="subtle"
         showMeridian
