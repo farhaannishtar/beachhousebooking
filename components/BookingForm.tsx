@@ -18,14 +18,16 @@ enum ShowForm {
 
 interface CreateBookingState {
     form: BookingForm;
+    allData: BookingForm[];
     showForm: ShowForm;
+    currentIndex: number;
 }
 
 interface BookingFormProps {
-    booking?: BookingForm | undefined;
+    bookingId?: number | undefined;
 }
 
-export default function BookingFormComponent({ booking }: BookingFormProps) {
+export default function BookingFormComponent({ bookingId }: BookingFormProps) {
     const router = useRouter();
 
     const supabase = createClient();
@@ -33,20 +35,26 @@ export default function BookingFormComponent({ booking }: BookingFormProps) {
   
     useEffect(() => {
       console.log("useEffect")
-      supabase.from("bookings").select().eq("id", booking?.bookingId)
-        .then(( { data: bookingsData }) => {
-            if (!bookingsData) return;
-            const newData = bookingsData[0].json[bookingsData[0].json.length - 1];
-            setFormState((prevState) => ({
-                ...prevState,
-                form: newData,
-            }));
-        })
+        if (bookingId) {
+            supabase.from("bookings").select().eq("id", bookingId)
+                .then(({ data: bookingsData }) => {
+                    if (!bookingsData) return;
+                    const newData = bookingsData[0].json[bookingsData[0].json.length - 1];
+                    setFormState((prevState) => ({
+                        ...prevState,
+                        form: newData,
+                        allData: bookingsData[0].json,
+                        currentIndex: bookingsData[0].json.length - 1
+                    }));
+                })
+        }
     }, []);
 
     const [formState, setFormState] = useState<CreateBookingState>(
         {
-            form: booking || {
+            allData: [],
+            currentIndex: 0,
+            form: {
                 client: {
                     name: '',
                     phone: '',
@@ -77,7 +85,7 @@ export default function BookingFormComponent({ booking }: BookingFormProps) {
 
     const handleSwitchChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         setFormState((prevState) => ({
-            showForm: prevState.showForm,
+            ...prevState,
             form: {
                 ...prevState.form,
                 bookingType: isSwitchOn ? "Stay" : "Event",
@@ -88,7 +96,7 @@ export default function BookingFormComponent({ booking }: BookingFormProps) {
 
     const handleAddEvent = (event: Event) => {
         setFormState((prevState) => ({
-            showForm: ShowForm.Booking,
+            ...prevState,
             form: {
                 ...prevState.form,
                 events: [...prevState.form.events, event],
@@ -101,7 +109,7 @@ export default function BookingFormComponent({ booking }: BookingFormProps) {
         const { name, value } = e.target;
         console.log("name: ", name, "value: ", value);
         setFormState((prevState) => ({
-            showForm: prevState.showForm,
+            ...prevState,
             form: {
                 ...prevState.form,
                 [name]: value,
@@ -111,15 +119,15 @@ export default function BookingFormComponent({ booking }: BookingFormProps) {
 
     const handleStateChange = (showForm: ShowForm) => {
         setFormState((prevState) => ({
-            showForm,
-            form: prevState.form,
+            ...prevState,
+            showForm
         }));
     };
 
     const handleClientChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setFormState((prevState) => ({
-            showForm: prevState.showForm,
+            ...prevState,
             form: {
                 ...prevState.form,
                 client: {
@@ -132,7 +140,7 @@ export default function BookingFormComponent({ booking }: BookingFormProps) {
 
     const handleDateChange = (name: string, value: string | null) => {
         setFormState((prevState) => ({
-            showForm: prevState.showForm,
+            ...prevState,
             form: {
                 ...prevState.form,
                 [name]: value,
@@ -142,8 +150,8 @@ export default function BookingFormComponent({ booking }: BookingFormProps) {
 
     const handlePropertyChange = (property: Property) => {
         setFormState((prevState) => {
-            const propertyIndex = prevState.form.properties.findIndex(p => p === property);
-            let newProperties = [...prevState.form.properties];
+            const propertyIndex = prevState.form.properties?.findIndex(p => p === property);
+            let newProperties = [...(prevState.form.properties ?? [])];
             if (propertyIndex > -1) {
                 newProperties.splice(propertyIndex, 1);
             } else {
@@ -162,7 +170,7 @@ export default function BookingFormComponent({ booking }: BookingFormProps) {
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         const id = await createBooking(formState.form);
-        if (!booking) {
+        if (!bookingId) {
             router.push(`/protected/booking/${id}`);
             return;
         }
@@ -170,7 +178,7 @@ export default function BookingFormComponent({ booking }: BookingFormProps) {
 
     const deleteThis = async () => {
         console.log("deleting")
-        await deleteBooking(booking!.bookingId!);
+        await deleteBooking(bookingId!);
         router.push('/protected/booking/list')
     }
 
@@ -318,7 +326,7 @@ export default function BookingFormComponent({ booking }: BookingFormProps) {
                                         value={formState.form.refferral || ''}
                                         onChange={(e) =>
                                             setFormState((prevState) => ({
-                                                showForm: prevState.showForm,
+                                                ...prevState,
                                                 form: {
                                                     ...prevState.form,
                                                     refferral: e.target.value,
@@ -371,11 +379,11 @@ export default function BookingFormComponent({ booking }: BookingFormProps) {
                 }
                 <div className='flex items-center justify-center w-full mt-6'>
                     <button type="submit" className='btn btn-wide bg-selectedButton text-center text-white text-base font-bold leading-normal'>
-                        {booking ? "Update" : "Create"}
+                        {bookingId ? "Update" : "Create"}
                     </button>
                 </div>
             </form >
-            {booking && (
+            {bookingId && (
                 <div className='flex items-center justify-center w-full mt-6'>
                     <button
                         className='btn btn-wide bg-selectedButton text-center text-white text-base font-bold leading-normal'

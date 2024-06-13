@@ -4,6 +4,7 @@ import { BookingDB, BookingForm, Event, numOfDays, organizedByDate, properties }
 import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client';
+import AuthButton from './AuthButton';
 
 // interface BookingProps {
 //   bookingsFromParent: BookingDB[];
@@ -96,6 +97,15 @@ export default function ListBooking() {
             className="btn btn-sm bg-selectedButton text-white"
             onClick={() => router.push('/protected/booking/create')}
           >+</button>
+          <button
+            className="btn btn-sm bg-selectedButton text-white"
+            onClick={() => {
+              const supabase = createClient();
+              supabase.auth.signOut();
+              router.push('/login')
+            }}
+          >Logout</button>
+
         </div>
       </div>
       <div className="relative my-3 mb-4 flex w-full flex-wrap items-stretch bg-inputBoxbg rounded-xl">
@@ -126,7 +136,7 @@ export default function ListBooking() {
               <p>
                 <span className="text-neutral-900 text-base font-medium leading-6">{booking.client.name}</span> <span className="text-slate-500 text-sm font-normal leading-5">{booking.status}</span>
               </p>
-              <section>
+              <div>
                 <p className="text-slate-500 text-sm font-normal leading-5">{numOfDays(booking)} days, {booking.numberOfGuests} pax</p>
                 { booking.properties?.length > 0 && (
                   <p className="text-slate-500 text-sm font-normal leading-5">{booking.properties.join(", ")}</p>
@@ -135,7 +145,7 @@ export default function ListBooking() {
                 {booking.refferral && (
                   <p className="text-slate-500 text-sm font-normal leading-5">Referral: {booking.refferral}</p>
                 )}
-              </section>
+              </div>
             </div>
             <div className="w-[84px] flex items-center">
               <div className="w-[74px] h-6 px-5 bg-gray-100 rounded-[19px] justify-center items-center inline-flex items-center">

@@ -12,17 +12,33 @@ export default function Login({
   const signIn = async (formData: FormData) => {
     "use server";
 
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
+    const phone = formData.get("phone") as string;
     const supabase = createClient();
 
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    const { data, error } = await supabase.auth.signInWithOtp({
+      phone: phone
+    })
+    if (error) {
+      return redirect("/login?message=Could not authenticate user");
+    }
+  };
 
-    console.log(data.session?.access_token);
-    
+  const signUp = async (formData: FormData) => {
+    "use server";
+    const phone = formData.get("phone") as string;
+    const otp = formData.get("otp") as string;
+
+    const supabase = createClient();
+    const {
+      data: { session },
+      error,
+    } = await supabase.auth.verifyOtp({
+      phone: phone,
+      token: otp,
+      type: 'sms',
+    })
+
+    // console.log(session)
 
     if (error) {
       return redirect("/login?message=Could not authenticate user");
@@ -31,32 +47,9 @@ export default function Login({
     return redirect("/protected");
   };
 
-  const signUp = async (formData: FormData) => {
-    "use server";
-
-    const origin = headers().get("origin");
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
-    const supabase = createClient();
-
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: `${origin}/auth/callback`,
-      },
-    });
-
-    if (error) {
-      return redirect("/login?message=Could not authenticate user");
-    }
-
-    return redirect("/login?message=Check email to continue sign in process");
-  };
-
   return (
     <div className="flex-1 flex flex-col w-full px-8 sm:max-w-md justify-center gap-2">
-      <Link
+      {/* <Link
         href="/"
         className="absolute left-8 top-8 py-2 px-4 rounded-md no-underline text-foreground bg-btn-background hover:bg-btn-background-hover flex items-center group text-sm"
       >
@@ -75,41 +68,39 @@ export default function Login({
           <polyline points="15 18 9 12 15 6" />
         </svg>{" "}
         Back
-      </Link>
+      </Link> */}
 
       <form className="animate-in flex-1 flex flex-col w-full justify-center gap-2 text-foreground">
         <label className="text-md" htmlFor="email">
-          Email
+          Phone Number
         </label>
         <input
           className="rounded-md px-4 py-2 bg-inherit border mb-6"
-          name="email"
-          placeholder="you@example.com"
-          required
-        />
-        <label className="text-md" htmlFor="password">
-          Password
-        </label>
-        <input
-          className="rounded-md px-4 py-2 bg-inherit border mb-6"
-          type="password"
-          name="password"
-          placeholder="••••••••"
+          name="phone"
+          placeholder="+919841293731"
           required
         />
         <SubmitButton
           formAction={signIn}
           className="bg-green-700 rounded-md px-4 py-2 text-foreground mb-2"
-          pendingText="Signing In..."
+          pendingText="Sending OTP..."
         >
-          Sign In
+          Send OTP
         </SubmitButton>
+        <label className="text-md" htmlFor="password">
+          OTP
+        </label>
+        <input
+          className="rounded-md px-4 py-2 bg-inherit border mb-6"
+          name="otp"
+          placeholder="••••••••"
+        />
         <SubmitButton
           formAction={signUp}
           className="border border-foreground/20 rounded-md px-4 py-2 text-foreground mb-2"
-          pendingText="Signing Up..."
+          pendingText="Logging In..."
         >
-          Sign Up
+          Login
         </SubmitButton>
         {searchParams?.message && (
           <p className="mt-4 p-4 bg-foreground/10 text-foreground text-center">
