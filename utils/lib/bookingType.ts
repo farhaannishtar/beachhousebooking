@@ -53,7 +53,11 @@ export function properties(bookingForm: BookingForm): String[] {
             properties.push(property)
         }
     }
-    return properties
+    for (let property of bookingForm.properties) {
+        properties.push(property)
+    }
+    // remove duplicates
+    return properties.filter((value, index, self) => self.indexOf(value) === index)
 }
 
 export function organizedByDate(bookings: BookingDB[]): { [key: string]: BookingDB[] } {

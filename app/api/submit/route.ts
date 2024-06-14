@@ -4,7 +4,7 @@ import { BookingForm } from "@/utils/lib/bookingType";
 import { deleteBooking, mutateBookingState } from "@/utils/lib/booking";
 import { NextRequest, NextResponse } from "next/server";
 import { headers } from 'next/headers'
-import { verifyAndGetPayload } from "@/utils/lib/auth";
+import { fetchUser, verifyAndGetPayload } from "@/utils/lib/auth";
 
 
 export async function POST(request: NextRequest) {  
@@ -14,7 +14,8 @@ export async function POST(request: NextRequest) {
       return payload;
     }
     let booking: BookingForm = await request.json()
-    let bookingId = await mutateBookingState(booking, payload.email)
+    let user = await fetchUser(payload.sub)
+    let bookingId = await mutateBookingState(booking, user)
     try {
       return new NextResponse(JSON.stringify({bookingId: bookingId}), {
         status: 200,
