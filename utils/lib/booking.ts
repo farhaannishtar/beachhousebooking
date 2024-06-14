@@ -1,3 +1,4 @@
+import { User } from "./auth";
 import { BookingDB, BookingForm } from "./bookingType";
 import { deleteEvent, insertEvent } from "./calendar";
 import { query } from "./helper";
@@ -20,7 +21,7 @@ function capitalizeString(str: string): string {
   return str.replace(/\b\w/g, l => l.toUpperCase());
 }
 
-export async function mutateBookingState(booking: BookingForm, email: string): Promise<number> {
+export async function mutateBookingState(booking: BookingForm, user: User): Promise<number> {
   let newBooking: BookingDB = {
     ...booking,
     startDateTime: booking.startDateTime!,
@@ -32,20 +33,20 @@ export async function mutateBookingState(booking: BookingForm, email: string): P
     encodingVersion: 1,
     createdDateTime: new Date().toISOString(),
     createdBy: {
-      id: email,
-      name: email
+      id: user.id,
+      name: user.displayName || "Anonymous",
     },
     updatedDateTime: new Date().toISOString(),
     updatedBy: {
-      id: email,
-      name: email
+      id: user.id,
+      name: user.displayName || "Anonymous",
     },
     payments: booking.payments.map(payment => {
       return {
         ...payment,
         receivedBy: payment.receivedBy || {
-          id: email,
-          name: email
+          id: user.id,
+          name: user.displayName || "Anonymous",
         },
         dateTime: payment.dateTime || new Date().toISOString()
       }
@@ -56,7 +57,7 @@ export async function mutateBookingState(booking: BookingForm, email: string): P
     return newBooking.bookingId
   } else {
     console.log("mutateBookingState create booking")  
-    let bookingId = createBooking(newBooking, email)
+    let bookingId = createBooking(newBooking, user.displayName || "Anonymous")
     await insertToCalendarIfConfirmed(newBooking);
     return bookingId
   }

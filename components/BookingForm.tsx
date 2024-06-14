@@ -269,7 +269,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                                     </svg>
                                 </button>
                             </div>
-                            <h1 className='text-lg font-bold leading-6 w-full text-center'>{formState.form.bookingId ? formState.form.client.name : "Create Booking"}</h1>
+                            <h1 className='text-lg font-bold leading-6 w-full text-center'>{bookingId ? formState.form.client.name : "Create Booking"}</h1>
                         </div>
                         <div className='flex flex-col gap-y-4 mt-6 mx-3'>
                             <label className="form-control w-full">
