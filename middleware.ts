@@ -6,12 +6,13 @@ export async function middleware(request: NextRequest) {
   const supabase = createClient()
   const user = await supabase.auth.getUser()
   console.log("user: ", user.data.user?.id)
-
-  if (user.data.user && !request.nextUrl.pathname.startsWith('/protected')) {
-    return Response.redirect(new URL('/protected', request.url))
-  }
-  if (!user.data.user && !request.nextUrl.pathname.startsWith('/login')) {
-    return Response.redirect(new URL('/login', request.url))
+  if (!request.nextUrl.pathname.startsWith('/api')) {
+    if (user.data.user && !request.nextUrl.pathname.startsWith('/protected')) {
+      return Response.redirect(new URL('/protected', request.url))
+    }
+    if (!user.data.user && !request.nextUrl.pathname.startsWith('/login')) {
+      return Response.redirect(new URL('/login', request.url))
+    }
   }
 
   return await updateSession(request);
