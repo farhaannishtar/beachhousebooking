@@ -1,5 +1,7 @@
 "use client";
 
+import * as yup from 'yup';
+import moment from 'moment-timezone';
 import { createBooking, deleteBooking } from '@/app/api/submit';
 import { Property, BookingForm, Event } from '@/utils/lib/bookingType';
 import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
@@ -15,12 +17,17 @@ enum ShowForm {
     Booking,
     Event
 }
-
 interface CreateBookingState {
     form: BookingForm;
     allData: BookingForm[];
     showForm: ShowForm;
     currentIndex: number;
+}
+
+interface formDataToValidate {
+    name: string;
+    phone: string;
+    startDateTime: string | undefined;
 }
 
 interface BookingFormProps {
@@ -29,12 +36,11 @@ interface BookingFormProps {
 
 export default function BookingFormComponent({ bookingId }: BookingFormProps) {
     const router = useRouter();
-
     const supabase = createClient();
-    
-  
+    const [formDataToValidate, setFormDataToValidate] = useState<formDataToValidate>({} as formDataToValidate);
+    const [formErrors, setFormErrors] = useState({} as formDataToValidate);
+
     useEffect(() => {
-      console.log("useEffect")
         if (bookingId) {
             supabase.from("bookings").select().eq("id", bookingId)
                 .then(({ data: bookingsData }) => {
@@ -77,6 +83,13 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
         });
     const [isSwitchOn, setIsSwitchOn] = useState<boolean>(formState.form.bookingType === "Stay" ? false : true);
     const [textareaHeight, setTextareaHeight] = useState<number>(40);
+    useEffect(() => {
+        setFormDataToValidate({
+            name: formState.form.client.name,
+            phone: formState.form.client.phone,
+            startDateTime: formState.form.startDateTime,
+        });
+    }, [formState.form.client.name, formState.form.client.phone, formState.form.startDateTime]);
 
     useEffect(() => {
         const newHeight = Math.min(16, formState.form.notes.length / 10 + 40);
@@ -167,12 +180,50 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
         });
     }
 
+    const phoneRegExp = /^\+?(?:[0-9] ?){6,14}[0-9]$/;
+    const validationSchema = yup.object().shape({
+        name: yup.string().required('Name is required').min(2, 'Name must be at least 2 characters'),
+        phone: yup.string().required('Phone number is required').matches(phoneRegExp, 'Phone number is invalid'),
+        startDateTime: yup.string().required('Start date and time is required').matches(
+            /^\d{4}-[01]\d-[0-3]\d[T][0-2]\d:[0-5]\d:[0-5]\d.\d+Z$/,
+            'Start date and time must be in ISO format'
+        ).test(
+            'is-same-or-after-current-date',
+            'Start date and time must be the same as or after the current date and time',
+            value => {
+                const currentDateEST = moment().tz("America/New_York"); // Get current date in EST, accounting for DST
+                const twentyFourHoursBeforeCurrentDateEST = currentDateEST.clone().subtract(24, 'hours'); // Subtract 24 hours from the current date in EST
+                const startDate = moment(value).tz("America/New_York"); // Convert startDateTime to EST
+                return startDate.isSameOrAfter(twentyFourHoursBeforeCurrentDateEST);
+            }
+        ).test(
+            'is-before-end-date',
+            'Start date and time must be before the end date and time',
+            value => {
+                const endDate = moment(formState.form.endDateTime);
+                const startDate = moment(value);
+                return startDate.isBefore(endDate);
+            }
+        )
+    });
+
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
-        const id = await createBooking(formState.form);
-        if (!bookingId) {
-            router.push(`/protected/booking/${id}`);
-            return;
+        try {
+            await validationSchema.validate(formDataToValidate, { abortEarly: false });
+            // const id = await createBooking(formState.form);
+            // if (!bookingId) {
+            //     router.push(`/protected/booking/${id}`);
+            //     return;
+            // }
+        } catch (err: Error | any) {
+            const validationErrors: any = {};
+            err.inner.forEach((error: any) => {
+                console.log(error.path, error.message);
+                validationErrors[error.path] = error.message;
+            });
+            console.log(formErrors);
+            setFormErrors(validationErrors);
         }
     }
 
@@ -210,6 +261,11 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                                     value={formState.form.client.name}
                                     onChange={handleClientChange}
                                 />
+                                {formErrors.name &&
+                                    <div role="alert" className="alert alert-error p-1 mt-1">
+                                        <span>Name is invalid</span>
+                                    </div>
+                                }
                             </label>
                             <label className="form-control w-full">
                                 <input
@@ -220,16 +276,26 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                                     value={formState.form.client.phone}
                                     onChange={handleClientChange}
                                 />
+                                {formErrors.phone &&
+                                    <div role="alert" className="alert alert-error p-1 mt-1">
+                                        <span>Phone number is invalid</span>
+                                    </div>
+                                }
                             </label>
                             <div className='w-full'>
                                 <EventStaySwitch handleToggle={handleSwitchChange} isOn={isSwitchOn} />
                             </div>
                             <div className='flex gap-x-2 w-full'>
-                            <div className="w-1/2">
-                                <DateTimePickerInput label={'Start Date'} onChange={handleDateChange} name="startDateTime" value={formState.form.startDateTime} />
-                            </div>
-                            <div className="w-1/2">
-                                <DateTimePickerInput label={'End Date'} onChange={handleDateChange} name="endDateTime" value={formState.form.endDateTime} />
+                                <div className="w-1/2">
+                                    <DateTimePickerInput label={'Start Date'} onChange={handleDateChange} name="startDateTime" value={formState.form.startDateTime} />
+                                    {formErrors.startDateTime &&
+                                        <div role="alert" className="alert alert-error p-1 mt-1">
+                                            <span>Start Date is invalid</span>
+                                        </div>
+                                    }
+                                </div>
+                                <div className="w-1/2">
+                                    <DateTimePickerInput label={'End Date'} onChange={handleDateChange} name="endDateTime" value={formState.form.endDateTime} />
                                 </div>
                             </div>
                             <div className='flex gap-x-3'>
