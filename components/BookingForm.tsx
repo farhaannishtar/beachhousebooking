@@ -211,11 +211,11 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
         e.preventDefault();
         try {
             await validationSchema.validate(formDataToValidate, { abortEarly: false });
-            // const id = await createBooking(formState.form);
-            // if (!bookingId) {
-            //     router.push(`/protected/booking/${id}`);
-            //     return;
-            // }
+            const id = await createBooking(formState.form);
+            if (!bookingId) {
+                router.push(`/protected/booking/${id}`);
+                return;
+            }
         } catch (err: Error | any) {
             const validationErrors: any = {};
             err.inner.forEach((error: any) => {
