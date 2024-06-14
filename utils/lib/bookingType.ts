@@ -4,8 +4,8 @@ export enum Property {
     Bluehouse = "Bluehouse",
     Glasshouse = "Glasshouse",
     MeadowLane = "Meadow Lane",
-    LeChalet = "LeChalet",
-    VillaArmati = "VillaArmati",
+    LeChalet = "Le Chalet",
+    VillaArmati = "Villa Armati",
     Castle = "Castle"
 }
 

@@ -1,9 +1,9 @@
 'use client';
 
 import DateTimePickerInput from "../DateTimePickerInput/DateTimePickerInput";
-import styles from './FilterButtonAndModal.module.css';
+import styles from './FilterModal.module.css';
 
-const FilterButtonAndModal: React.FC = () => {
+const FilterModal: React.FC = () => {
 
   return (
     <>
@@ -29,4 +29,4 @@ const FilterButtonAndModal: React.FC = () => {
   )
 }
 
-export default FilterButtonAndModal
+export default FilterModal

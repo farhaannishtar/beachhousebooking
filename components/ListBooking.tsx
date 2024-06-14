@@ -118,7 +118,7 @@ export default function ListBooking() {
             value={state.searchText || undefined}
             onChange={handleChangeSearch}
           />
-          {/* <FilterButtonAndModal /> */}
+          {/* <FilterModal /> */}
         </div>
       </div>
       {dates().map((date) => (

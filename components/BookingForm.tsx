@@ -200,6 +200,9 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
             'is-before-end-date',
             'Start date and time must be before the end date and time',
             value => {
+                if (typeof formState.form.endDateTime === 'undefined') {
+                    return true;
+                }
                 const endDate = moment(formState.form.endDateTime);
                 const startDate = moment(value);
                 return startDate.isBefore(endDate);
@@ -211,18 +214,16 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
         e.preventDefault();
         try {
             await validationSchema.validate(formDataToValidate, { abortEarly: false });
-            // const id = await createBooking(formState.form);
-            // if (!bookingId) {
-            //     router.push(`/protected/booking/${id}`);
-            //     return;
-            // }
+            const id = await createBooking(formState.form);
+            if (!bookingId) {
+                router.push(`/protected/booking/${id}`);
+                return;
+            }
         } catch (err: Error | any) {
             const validationErrors: any = {};
             err.inner.forEach((error: any) => {
-                console.log(error.path, error.message);
                 validationErrors[error.path] = error.message;
             });
-            console.log(formErrors);
             setFormErrors(validationErrors);
         }
     }
@@ -288,7 +289,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                             <div className='flex gap-x-2 w-full'>
                                 <div className="w-1/2">
                                     <DateTimePickerInput label={'Start Date'} onChange={handleDateChange} name="startDateTime" value={formState.form.startDateTime} />
-                                    {formErrors.startDateTime &&
+                                    {formErrors.startDateTime === "Start date and time is required" &&
                                         <div role="alert" className="alert alert-error p-1 mt-1">
                                             <span>Start Date is invalid</span>
                                         </div>
@@ -296,6 +297,11 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                                 </div>
                                 <div className="w-1/2">
                                     <DateTimePickerInput label={'End Date'} onChange={handleDateChange} name="endDateTime" value={formState.form.endDateTime} />
+                                    {formErrors.startDateTime === "Start date and time must be before the end date and time" &&
+                                        <div role="alert" className="alert alert-error p-1 mt-1">
+                                            <span>End Date is invalid</span>
+                                        </div>
+                                    }
                                 </div>
                             </div>
                             <div className='flex gap-x-3'>
