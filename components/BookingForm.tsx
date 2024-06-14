@@ -84,11 +84,30 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
     const [isSwitchOn, setIsSwitchOn] = useState<boolean>(formState.form.bookingType === "Stay" ? false : true);
     const [textareaHeight, setTextareaHeight] = useState<number>(40);
     useEffect(() => {
-        setFormDataToValidate({
-            name: formState.form.client.name,
-            phone: formState.form.client.phone,
-            startDateTime: formState.form.startDateTime,
-        });
+        const validateForm = async () => {
+            const formDataToValidate = {
+                name: formState.form.client.name,
+                phone: formState.form.client.phone,
+                startDateTime: formState.form.startDateTime,
+            };
+
+            try {
+                await validationSchema.validate(formDataToValidate, { abortEarly: false });
+                setFormErrors({
+                    name: '',
+                    phone: '',
+                    startDateTime: '',
+                });
+            } catch (err: Error | any) {
+                const validationErrors: any = {};
+                err.inner.forEach((error: any) => {
+                    validationErrors[error.path] = error.message;
+                });
+                setFormErrors(validationErrors);
+            }
+        };
+
+        validateForm();
     }, [formState.form.client.name, formState.form.client.phone, formState.form.startDateTime]);
 
     useEffect(() => {
