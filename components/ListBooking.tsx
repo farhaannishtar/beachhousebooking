@@ -1,6 +1,6 @@
 "use client";
 
-import { BookingDB, BookingForm, Event, numOfDays, organizedByDate, properties } from '@/utils/lib/bookingType';
+import { BookingDB, numOfDays, organizedByDate } from '@/utils/lib/bookingType';
 import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client';

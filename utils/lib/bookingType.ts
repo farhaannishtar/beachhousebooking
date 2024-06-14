@@ -46,8 +46,8 @@ export function numOfDays(bookingForm: BookingForm): number {
     }
 }
 
-export function properties(bookingForm: BookingForm): String[] {
-    let properties: String[] = []
+export function getProperties(bookingForm: BookingForm): Property[] {
+    let properties: Property[] = []
     for (let event of bookingForm.events) {
         for (let property of event.properties) {
             properties.push(property)
@@ -58,6 +58,10 @@ export function properties(bookingForm: BookingForm): String[] {
     }
     // remove duplicates
     return properties.filter((value, index, self) => self.indexOf(value) === index)
+}
+
+export function getPropertiesForDb(bookingForm: BookingForm): string[] {
+    return getProperties(bookingForm).map(property => property.toLocaleLowerCase().replace(" ", ""))
 }
 
 export function organizedByDate(bookings: BookingDB[]): { [key: string]: BookingDB[] } {
