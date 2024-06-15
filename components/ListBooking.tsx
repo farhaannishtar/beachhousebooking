@@ -1,6 +1,6 @@
 "use client";
 
-import { BookingDB, numOfDays, organizedByDate } from '@/utils/lib/bookingType';
+import { BookingDB, Property, convertPropertiesForDb, numOfDays, organizedByDate } from '@/utils/lib/bookingType';
 import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client';
@@ -12,18 +12,56 @@ import AuthButton from './AuthButton';
 
 interface ListBookingsState {
   searchText: string | null;
+  filter: {
+    status: "Inquiry" | "Quotation" | "Confirmed" | null;
+    checkIn: Date | null;
+    properties: Property[] | null;
+  }
   date: Date | null;
   dbBookings: BookingDB[];
 }
 
 export default function ListBooking() {
-  const supabase = createClient();
-  console.log("Booking page")
+
+  const router = useRouter();
+  const [state, setState] = useState<ListBookingsState>({
+    searchText: null,
+    date: null,
+    dbBookings: [],
+    filter: {
+      status: null,
+      checkIn: null,
+      properties: null,
+    }
+  });
   
+  async function fetchData()   {
+    console.log("Fetching Data")
+    const supabase = createClient();
+    let bookingsData = supabase.from("bookings").select()
+    
+    
 
+    if(state.searchText) {
+      bookingsData = bookingsData
+      .or(`client_name.ilike.%${state.searchText}%,client_phone_number.ilike.%${state.searchText}%`)
+    } else if (state.filter.checkIn || state.filter.status || state.filter.properties) {
+      if(state.filter.checkIn) {
+        bookingsData = bookingsData.gte('check_in', state.filter.checkIn.toISOString())
+      } 
+      if(state.filter.status) {
+        bookingsData = bookingsData.eq('status', state.filter.status.toLocaleLowerCase())
+      }
+      if(state.filter.properties) {
+        bookingsData = bookingsData.contains('properties', convertPropertiesForDb(state.filter.properties))
+      }
+    } else {
+      bookingsData = bookingsData.gte('check_in', new Date(new Date().setDate(new Date().getDate() - 2)).toISOString())
+    }
 
-  useEffect(() => {
-    supabase.from("bookings").select().then(( { data: bookingsData }) => {
+    bookingsData = bookingsData.order('check_in', { ascending: true }).range(0, 10)
+    bookingsData
+    .then(( { data: bookingsData }) => {
       console.log(bookingsData)
       let bookings: BookingDB[] = []
       bookingsData?.forEach((booking) => {
@@ -38,36 +76,30 @@ export default function ListBooking() {
         ...prevState,
         dbBookings: bookings,
       }));
-      filterBookings()
     })
+  };
+
+
+  useEffect(() => {
+    fetchData()
   }, []);
 
+  useEffect(() => {
+    console.log('State has changed:', state);
+    fetchData()
+  }, [state.searchText])
 
-  const router = useRouter();
-  const [state, setState] = useState<ListBookingsState>({
-    searchText: null,
-    date: null,
-    dbBookings: [],
-  });
 
   const handleChangeSearch = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    console.log("name: ", name, "value: ", value);
     setState((prevState) => ({
       ...prevState,
-      searchText: value,
+      searchText: value.length > 0 ? value : null,
     }));
   };
 
-  const filterBookings = () : { [key: string]: BookingDB[] } => {
-    return organizedByDate(state.dbBookings.filter((booking) => {
-        if (!state.searchText) return true;
-        return booking.client.name.toLowerCase().includes(state.searchText.toLowerCase()) || booking.client.phone.includes(state.searchText);
-      }))
-  }
-
   const dates = () : string[] => {
-    return Object.keys(filterBookings()).sort((a, b) => {
+    return Object.keys(organizedByDate(state.dbBookings)).sort((a, b) => {
       if (a == "Invalid Date") return 1
       if (b == "Invalid Date") return -1
       return new Date(a).getTime() - new Date(b).getTime()
@@ -126,7 +158,7 @@ export default function ListBooking() {
         <p className="pl-1 mt-6 text-neutral-900 text-lg font-semibold leading-6">
           {convertDate(date)}
         </p>
-        {filterBookings()[date].map((booking, index) => (
+        {organizedByDate(state.dbBookings)[date].map((booking, index) => (
           <div 
             className="flex mt-3 w-full justify-between"
             key={booking.bookingId}

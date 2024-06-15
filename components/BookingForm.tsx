@@ -3,7 +3,7 @@
 import * as yup from 'yup';
 import moment from 'moment-timezone';
 import { createBooking, deleteBooking } from '@/app/api/submit';
-import { Property, BookingForm, Event } from '@/utils/lib/bookingType';
+import { Property, BookingForm, Event, defaultForm } from '@/utils/lib/bookingType';
 import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation'
 import CreateEventComponent from './CreateEventForm';
@@ -13,14 +13,15 @@ import DateTimePickerInput from './DateTimePickerInput/DateTimePickerInput';
 import Properties from './Properties';
 import { createClient } from '@/utils/supabase/client';
 
-enum ShowForm {
-    Booking,
-    Event
+enum Page {
+    BookingPage,
+    EventPage
 }
+
 interface CreateBookingState {
     form: BookingForm;
     allData: BookingForm[];
-    showForm: ShowForm;
+    pageToShow: Page;
     currentIndex: number;
 }
 
@@ -60,28 +61,10 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
         {
             allData: [],
             currentIndex: 0,
-            form: {
-                client: {
-                    name: '',
-                    phone: '',
-                },
-                numberOfGuests: 2,
-                numberOfEvents: 1,
-                paymentMethod: "Cash",
-                bookingType: 'Stay',
-                notes: '',
-                properties: [],
-                status: 'Inquiry',
-                startDateTime: undefined,
-                endDateTime: undefined,
-                events: [],
-                finalCost: 0,
-                payments: [],
-                refferral: undefined,
-            },
-            showForm: ShowForm.Booking
+            form: defaultForm(),
+            pageToShow: Page.BookingPage
         });
-    const [isSwitchOn, setIsSwitchOn] = useState<boolean>(formState.form.bookingType === "Stay" ? false : true);
+    const [EventStaySwitchValue, setIsSwitchOn] = useState<boolean>(formState.form.bookingType === "Stay" ? false : true);
     const [textareaHeight, setTextareaHeight] = useState<number>(40);
     useEffect(() => {
         setFormDataToValidate({
@@ -101,10 +84,10 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
             ...prevState,
             form: {
                 ...prevState.form,
-                bookingType: isSwitchOn ? "Stay" : "Event",
+                bookingType: EventStaySwitchValue ? "Stay" : "Event",
             }
         }));
-        setIsSwitchOn(!isSwitchOn);
+        setIsSwitchOn(!EventStaySwitchValue);
     };
 
     const handleAddEvent = (event: Event) => {
@@ -130,10 +113,10 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
         }));
     };
 
-    const handleStateChange = (showForm: ShowForm) => {
+    const handlePageChange = (showPage: Page) => {
         setFormState((prevState) => ({
             ...prevState,
-            showForm
+            pageToShow: showPage
         }));
     };
 
@@ -232,7 +215,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
         }
     }
 
-    const deleteThis = async () => {
+    const deleteCurrentBooking = async () => {
         console.log("deleting")
         await deleteBooking(bookingId!);
         router.push('/protected/booking/list')
@@ -241,7 +224,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
     return (
         <div>
             <form onSubmit={handleSubmit}>
-                {formState.showForm === ShowForm.Booking && (
+                {formState.pageToShow === Page.BookingPage && (
                     <div>
                         <div className='flex items-center pt-2'>
                             <div className='flex items-center pl-3'>
@@ -288,7 +271,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                                 }
                             </label>
                             <div className='w-full'>
-                                <EventStaySwitch handleToggle={handleSwitchChange} isOn={isSwitchOn} />
+                                <EventStaySwitch handleToggle={handleSwitchChange} isOn={EventStaySwitchValue} />
                             </div>
                             <div className='flex gap-x-2 w-full'>
                                 <div className="w-1/2">
@@ -427,7 +410,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                                                 <div key={index}>{event.eventName}</div>
                                             ))}
 
-                                            <button onClick={() => handleStateChange(ShowForm.Event)}>
+                                            <button onClick={() => handlePageChange(Page.EventPage)}>
                                                 Add Event
                                             </button>
 
@@ -449,8 +432,8 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                 )
                 }
                 {
-                    formState.showForm === ShowForm.Event && (
-                        <CreateEventComponent onAddEvent={handleAddEvent} cancelAddEvent={() => handleStateChange(ShowForm.Booking)} />
+                    formState.pageToShow === Page.EventPage && (
+                        <CreateEventComponent onAddEvent={handleAddEvent} cancelAddEvent={() => handlePageChange(Page.BookingPage)} />
                     )
                 }
                 <div className='flex items-center justify-center w-full mt-6'>
@@ -463,7 +446,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                 <div className='flex items-center justify-center w-full mt-6'>
                     <button
                         className='btn btn-wide bg-selectedButton text-center text-white text-base font-bold leading-normal'
-                        onClick={() => deleteThis()}
+                        onClick={() => deleteCurrentBooking()}
                     >
                         Delete
                     </button>

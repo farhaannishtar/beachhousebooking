@@ -14,6 +14,28 @@ export interface Employee {
     name: string
 }
 
+export function defaultForm(): BookingForm {
+    return {
+        client: {
+            name: '',
+            phone: '',
+        },
+        numberOfGuests: 2,
+        numberOfEvents: 1,
+        paymentMethod: "Cash",
+        bookingType: 'Stay',
+        notes: '',
+        properties: [],
+        status: 'Inquiry',
+        startDateTime: undefined,
+        endDateTime: undefined,
+        events: [],
+        finalCost: 0,
+        payments: [],
+        refferral: undefined,
+    }
+}
+
 export interface BookingForm {
     bookingId?: number | undefined
     client: {
@@ -60,8 +82,8 @@ export function getProperties(bookingForm: BookingForm): Property[] {
     return properties.filter((value, index, self) => self.indexOf(value) === index)
 }
 
-export function getPropertiesForDb(bookingForm: BookingForm): string[] {
-    return getProperties(bookingForm).map(property => property.toLocaleLowerCase().replace(" ", ""))
+export function convertPropertiesForDb(properties: Property[]): string[] {
+    return properties.map(property => property.toLocaleLowerCase().replace(" ", ""))
 }
 
 export function organizedByDate(bookings: BookingDB[]): { [key: string]: BookingDB[] } {

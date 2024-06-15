@@ -1,12 +1,12 @@
 import { User } from "./auth";
-import { BookingDB, BookingForm, getProperties, getPropertiesForDb } from "./bookingType";
+import { BookingDB, BookingForm, getProperties, convertPropertiesForDb } from "./bookingType";
 import { deleteEvent, insertEvent } from "./calendar";
 import { query } from "./helper";
 
 export async function createBooking(booking: BookingDB, email: string): Promise<number> {
     let resp = await query(`
-      INSERT INTO bookings(email, json, client_name, client_phone_number, referred_by, status, properties, check_in, check_out)
-      SET email = $1, json = $2, client_name = $3, client_phone_number = $4, referred_by = $5, status = $6, properties = $7, check_in = $8, check_out = $9
+      INSERT INTO bookings(email, json, client_name, client_phone_number, referred_by, status, properties, check_in, check_out, created_at, updated_at)
+      VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
       RETURNING id`, 
       [
         email, 
@@ -15,9 +15,11 @@ export async function createBooking(booking: BookingDB, email: string): Promise<
         booking.client.phone,
         booking.refferral,
         booking.status.toLocaleLowerCase(),
-        getPropertiesForDb(booking),
+        convertPropertiesForDb(getProperties(booking)),
         booking.startDateTime,
-        booking.endDateTime
+        booking.endDateTime,
+        booking.createdDateTime,
+        booking.updatedDateTime
       ]);
     return resp[0].id;
 }
@@ -44,7 +46,7 @@ export function updateBooking(booking: BookingDB[], id: number) {
         lastBooking.client.phone, 
         lastBooking.refferral, 
         lastBooking.status.toLocaleLowerCase(), 
-        getPropertiesForDb(lastBooking),
+        convertPropertiesForDb(getProperties(lastBooking)),
         lastBooking.updatedDateTime,
         lastBooking.startDateTime,
         lastBooking.endDateTime
