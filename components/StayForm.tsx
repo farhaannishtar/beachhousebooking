@@ -17,6 +17,8 @@ const StayFormComponent: React.FC = () => {
         kitchenService: false,
         overNightStay: false,
         overNightGuests: 0,
+        costs: [],
+        finalCost: 0,
     });
 
 

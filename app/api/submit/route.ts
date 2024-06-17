@@ -7,11 +7,11 @@ import { headers } from 'next/headers'
 import { fetchUser, verifyAndGetPayload } from "@/utils/lib/auth";
 
 
-export async function POST(request: NextRequest) {  
+export async function POST(request: NextRequest): Promise<NextResponse> {
   console.log('Post request')
     const payload = verifyAndGetPayload(request)
     if (payload instanceof NextResponse) {
-      return payload;
+      return payload as NextResponse;
     }
     let booking: BookingForm = await request.json()
     let user = await fetchUser(payload.sub)
@@ -21,18 +21,18 @@ export async function POST(request: NextRequest) {
         status: 200,
       });
     } catch (error) {
-      return new NextResponse('Error'), {
+      return new NextResponse(JSON.stringify({error: "Error creating booking"}), {
         status: 500,
-      };
+      });
     }
 }
 
 
-export async function DELETE(request: NextRequest) {  
+export async function DELETE(request: NextRequest): Promise<NextResponse> {
   console.log('Delete request')
   const payload = verifyAndGetPayload(request)
   if (payload instanceof NextResponse) {
-    return payload;
+    return payload as NextResponse;
   }
   let {bookingId} = await request.json()
   console.log('Booking id: ', bookingId)
@@ -42,8 +42,8 @@ export async function DELETE(request: NextRequest) {
       status: 200,
     });
   } catch (error) {
-    return new NextResponse('Error'), {
+    return new NextResponse(JSON.stringify({error: "Error deleting booking"}), {
       status: 500,
-    };
+    });
   }
 }

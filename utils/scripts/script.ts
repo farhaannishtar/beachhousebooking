@@ -155,7 +155,15 @@ async function main() {
           name: "Nathik"
         },
       }
-    ]
+    ],
+    confirmedDateTime: "2024-06-09T17:00:00-07:00",
+    confirmedBy: {
+      id: "xxx",
+      name: "Nathik"
+    },
+    properties: [Property.Bluehouse, Property.Glasshouse],
+    refferral: "Google",
+    bookingId: 0
   }
   // let id = await createBooking(booking, "nathik@gmail.com");
   // console.log(id)
