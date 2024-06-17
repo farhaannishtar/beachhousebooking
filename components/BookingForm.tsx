@@ -350,7 +350,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                                                 <input
                                                     type="text"
                                                     placeholder="Events"
-                                                    className="pl-10 pr-3 py-2 w-full border rounded-lg text-base text-center font-normal font-normal placeholder:text-placeHolderText placeholder:text-base placeholder:leading-normal placeholder:font-normal"
+                                                    className="pl-10 pr-3 py-2 w-full border rounded-lg text-base text-center font-normal placeholder:text-placeHolderText placeholder:text-base placeholder:leading-normal placeholder:font-normal"
                                                     name="numberOfEvents"
                                                     value={formState.form.numberOfEvents}
                                                     onChange={handleChange}
@@ -370,7 +370,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                                         <div className="relative flex items-center">
                                             <input
                                                 type="text"
-                                                className="pl-10 pr-3 py-2 w-full border rounded-lg text-base text-center font-normal font-normal placeholder:text-placeHolderText placeholder:text-base placeholder:leading-normal placeholder:font-normal"
+                                                className="pl-10 pr-3 py-2 w-full border rounded-lg text-base text-center font-normal placeholder:text-placeHolderText placeholder:text-base placeholder:leading-normal placeholder:font-normal"
                                                 placeholder="Guests"
                                                 name="numberOfGuests"
                                                 value={formState.form.numberOfGuests}
