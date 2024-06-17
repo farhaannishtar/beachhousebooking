@@ -58,6 +58,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                         allData: bookingsData[0].json,
                         currentIndex: bookingsData[0].json.length - 1,
                     }));
+                    setIsSwitchOn(newData.bookingType === "Stay" ? false : true);
                 });
         }
     }, []);
