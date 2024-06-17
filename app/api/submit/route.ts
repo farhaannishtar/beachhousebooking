@@ -8,6 +8,7 @@ import { fetchUser, verifyAndGetPayload } from "@/utils/lib/auth";
 
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
+  console.log('Get request')
   return new NextResponse(JSON.stringify({message: "Hello"}), {
     status: 200,
   });
