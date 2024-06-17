@@ -17,7 +17,6 @@ export default function DateTimePickerInput({ label, onChange, name, value }: Da
   if (value && date === null) {
     setDate(new Date(value))
   }
-  console.log("DateTimePickerInput", value, date, new Date(value!))
   return (
     <Stack spacing={10} direction="column">
       <DatePicker

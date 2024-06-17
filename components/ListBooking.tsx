@@ -56,7 +56,7 @@ export default function ListBooking() {
         bookingsData = bookingsData.contains('properties', convertPropertiesForDb(state.filter.properties))
       }
     } else {
-      bookingsData = bookingsData.gte('check_in', new Date(new Date().setDate(new Date().getDate() - 2)).toISOString())
+      bookingsData = bookingsData.gte('check_in', new Date(new Date().setDate(new Date().getDate() - 30)).toISOString())
     }
 
     bookingsData = bookingsData.order('check_in', { ascending: true }).range(0, 10)
