@@ -11,6 +11,7 @@ export const createBooking = async (bookingForm: BookingForm) => {
   let bookingId: string | null = null;
   try {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+    console.log('API URL: ', apiUrl);
     const response = await fetch(`${apiUrl}/api/submit`, {
       method: "POST",
       headers: {
