@@ -12,13 +12,16 @@ export const createBooking = async (bookingForm: BookingForm) => {
   try {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
     console.log('API URL: ', apiUrl);
+    const body = JSON.stringify(bookingForm);
+    console.log('Body: ', body);
     const response = await fetch(`${apiUrl}/api/submit`, {
       method: "POST",
       headers: {
         'Authorization': `Bearer ${token}`
       },
-      body: JSON.stringify(bookingForm)
+      body: body
     });
+    console.log('Response: ', response);
     const data = await response.json(); 
     bookingId = data.bookingId;
     console.log('Response from Firebase function:', data);
