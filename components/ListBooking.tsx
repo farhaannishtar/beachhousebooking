@@ -5,6 +5,7 @@ import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client';
 import AuthButton from './AuthButton';
+import SearchInput from './ui/SearchInput';
 
 // interface BookingProps {
 //   bookingsFromParent: BookingDB[];
@@ -121,10 +122,11 @@ export default function ListBooking() {
   }
 
   return (
-    <div className="mx-2 w-full px-4">
-      <div className='flex'>
-        <h1 className='text-lg font-bold leading-6 w-full text-center mt-3'>Bookings</h1>
-        <div className='flex items-center'>
+    <div className="w-full  ">
+      {/* Top Nav */}
+      <div className='flex items-center h-[72px]' >
+        <h1 className='text-lg font-bold leading-6 w-full text-center '>Bookings</h1>
+        {/* <div className='flex items-center'>
           <button
             className="btn btn-sm bg-selectedButton text-white"
             onClick={() => router.push('/protected/booking/create')}
@@ -138,10 +140,15 @@ export default function ListBooking() {
             }}
           >Logout</button>
 
-        </div>
+        </div> */}
+        <span className=" material-symbols-outlined cursor-pointer hover:text-selectedButton"  onClick={() => router.push('/protected/booking/create')}>add_circle</span>
       </div>
-      <div className="relative my-3 mb-4 flex w-full flex-wrap items-stretch bg-inputBoxbg rounded-xl">
-        <div className="relative flex items-center m-0 block w-full rounded-xl border border-solid border-neutral-300 bg-transparent px-3 text-base font-normal leading-[1.6] outline-none transition duration-200 ease-in-out focus-within:border-primary dark:border-neutral-600">
+       {/* Top Nav */}
+       <SearchInput  value={state.searchText || undefined}
+            onChange={handleChangeSearch}/>
+      {/* <div className="relative my-3 mb-4 flex w-full flex-wrap items-stretch bg-inputBoxbg rounded-xl">
+       
+         <div className="relative flex items-center m-0 block w-full rounded-xl border border-solid border-neutral-300 bg-transparent px-3 text-base font-normal leading-[1.6] outline-none transition duration-200 ease-in-out focus-within:border-primary dark:border-neutral-600">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="#617A8A" className="h-5 w-5 absolute z-50 left-3 pointer-events-none">
             <path fillRule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clipRule="evenodd" />
           </svg>
@@ -150,9 +157,9 @@ export default function ListBooking() {
             value={state.searchText || undefined}
             onChange={handleChangeSearch}
           />
-          {/* <FilterModal /> */}
-        </div>
-      </div>
+         
+        </div> 
+      </div> */}
       {dates().map((date) => (
         <React.Fragment key={date}>
         <p className="pl-1 mt-6 text-neutral-900 text-lg font-semibold leading-6">
