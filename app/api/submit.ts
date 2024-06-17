@@ -11,10 +11,7 @@ export const createBooking = async (bookingForm: BookingForm) => {
   let bookingId: string | null = null;
   try {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
-    let fullUrl = `${apiUrl}/api/submit`;
-    console.log('API URL: ', fullUrl, "https://beachhousebooking-hr.vercel.app/api/submit", fullUrl == "https://beachhousebooking-hr.vercel.app/api/submit");
     const body = JSON.stringify(bookingForm);
-    console.log('Body: ', body);
     const response = await fetch(`${apiUrl}/api/submit`, {
       method: "POST",
       headers: {
@@ -22,14 +19,13 @@ export const createBooking = async (bookingForm: BookingForm) => {
       },
       body: body
     });
-    console.log('Response: ', response);
     const data = await response.json(); 
     bookingId = data.bookingId;
-    console.log('Response from Firebase function:', data);
+    console.log('Response from POST function:', data);
     return bookingId;
 
   } catch (error) {
-    console.error('Error calling Firebase function:', error);
+    console.error('Error calling POST function:', error);
   }
   return bookingId;
 }
@@ -52,6 +48,6 @@ export const deleteBooking = async (bookingId: number) => {
     console.log('Deleted id: ', bookingId);
 
   } catch (error) {
-    console.error('Error calling Firebase function:', error);
+    console.error('Error calling GET function:', error);
   }
 }
