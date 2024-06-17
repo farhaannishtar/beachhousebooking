@@ -12,7 +12,7 @@ export const createBooking = async (bookingForm: BookingForm) => {
   try {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
     let fullUrl = `${apiUrl}/api/submit`;
-    console.log('API URL: ', fullUrl,"https://beachhousebooking-hr.vercel.app/api/submit", fullUrl == "https://beachhousebooking-hr.vercel.app/api/submit");
+    console.log('API URL: ', fullUrl, "https://beachhousebooking-hr.vercel.app/api/submit", fullUrl == "https://beachhousebooking-hr.vercel.app/api/submit");
     const body = JSON.stringify(bookingForm);
     console.log('Body: ', body);
     const response = await fetch(`${apiUrl}/api/submit`, {
