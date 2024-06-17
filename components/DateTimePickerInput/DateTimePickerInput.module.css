@@ -2,13 +2,16 @@
 .customDatePicker :global .rs-input-group {
   background-color: #F0F2F5; /* Example background color */
   color: #617A8A; /* Example font color */
+  height: inherit;
 }
 
 .customDatePickerInput :global .rs-input {
   background-color: #F0F2F5; /* Example background color */
   color: #000000; /* Example font color */
+  height: inherit;
 }
 
 .customDatePickerPlaceholderText :global .rs-input-group::placeholder {
   color: #617A8A; /* New placeholder text color */
+ 
 }

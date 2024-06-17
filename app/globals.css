@@ -83,12 +83,13 @@
   }
 }
 textarea:focus, input:focus{
-  outline: none;
+  outline: none !important;
 }
 
 .container{
   width: 390px;
   margin: auto;
+  padding: 0 !important;
 }
 .small-text{
   font-weight: 400;
