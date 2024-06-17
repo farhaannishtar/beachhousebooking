@@ -13,8 +13,11 @@ interface DateTimePickerInputProps {
 }
 
 export default function DateTimePickerInput({ label, onChange, name, value }: DateTimePickerInputProps) {
-  const [date, setDate] = useState<Date | null>(value ? new Date(value) : null);
-
+  const [date, setDate] = useState<Date | null>(null);
+  if (value && date === null) {
+    setDate(new Date(value))
+  }
+  console.log("DateTimePickerInput", value, date, new Date(value!))
   return (
     <Stack spacing={10} direction="column">
       <DatePicker

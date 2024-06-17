@@ -1,15 +1,56 @@
 import { User } from "./auth";
-import { BookingDB, BookingForm } from "./bookingType";
+import { BookingDB, BookingForm, getProperties, convertPropertiesForDb } from "./bookingType";
 import { deleteEvent, insertEvent } from "./calendar";
 import { query } from "./helper";
 
 export async function createBooking(booking: BookingDB, email: string): Promise<number> {
-    let resp = await query('INSERT INTO bookings(email, json) VALUES($1, $2) RETURNING id', [email, [booking]]);
+    let resp = await query(`
+      INSERT INTO bookings(email, json, client_name, client_phone_number, referred_by, status, properties, check_in, check_out, created_at, updated_at)
+      VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+      RETURNING id`, 
+      [
+        email, 
+        [booking],
+        booking.client.name,
+        booking.client.phone,
+        booking.refferral,
+        booking.status.toLocaleLowerCase(),
+        convertPropertiesForDb(getProperties(booking)),
+        booking.startDateTime,
+        booking.endDateTime,
+        booking.createdDateTime,
+        booking.updatedDateTime
+      ]);
     return resp[0].id;
 }
 
 export function updateBooking(booking: BookingDB[], id: number) {
-  query('UPDATE bookings SET json = $1 WHERE id = $2', [booking, id]);
+  console.log("updateBooking", booking[0].bookingType)
+  const lastBooking = booking[booking.length - 1];
+  query(`
+    UPDATE bookings 
+      SET 
+        json = $2,
+        client_name = $3,
+        client_phone_number = $4,
+        referred_by = $5,
+        status = $6,
+        properties = $7,
+        updated_at = $8,
+        check_in = $9,
+        check_out = $10
+      WHERE id = $1`, 
+      [id, 
+        booking, 
+        lastBooking.client.name, 
+        lastBooking.client.phone, 
+        lastBooking.refferral, 
+        lastBooking.status.toLocaleLowerCase(), 
+        convertPropertiesForDb(getProperties(lastBooking)),
+        lastBooking.updatedDateTime,
+        lastBooking.startDateTime,
+        lastBooking.endDateTime
+      ])
 }
 
 export async function fetchBooking(id: number): Promise<BookingDB[]> {
