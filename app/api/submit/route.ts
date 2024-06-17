@@ -7,6 +7,12 @@ import { headers } from 'next/headers'
 import { fetchUser, verifyAndGetPayload } from "@/utils/lib/auth";
 
 
+export async function GET(request: NextRequest): Promise<NextResponse> {
+  return new NextResponse(JSON.stringify({message: "Hello"}), {
+    status: 200,
+  });
+}
+
 export async function POST(request: NextRequest): Promise<NextResponse> {
   console.log('Post request')
     const payload = verifyAndGetPayload(request)
