@@ -82,3 +82,36 @@
     --radius: 0.5rem;
   }
 }
+textarea:focus, input:focus{
+  outline: none;
+}
+
+.container{
+  width: 390px;
+  margin: auto;
+}
+.small-text{
+  font-weight: 400;
+  font-size: 0.75rem;
+}
+.label{
+  font-weight: 400;
+  font-size: 1rem;
+}
+.subheading{
+  font-weight: 700;
+  font-size: 1.125rem;
+}
+.title{
+  font-weight: 700;
+  font-size: 1.25rem;
+}
+.title-xl{
+  font-weight: 700;
+  font-size: 1.5rem;
+}
+@media only screen and (max-width: 390px) {
+  .container{
+    width: 100%;
+  }
+}
