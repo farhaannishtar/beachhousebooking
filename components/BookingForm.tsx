@@ -26,58 +26,98 @@ interface CreateBookingState {
 }
 
 interface formDataToValidate {
-    name: string;
-    phone: string;
-    startDateTime: string | undefined;
+  name: string | undefined;
+  phone: string | undefined;
+  startDateTime: string | undefined;
 }
 
 interface BookingFormProps {
-    bookingId?: number | undefined;
+  bookingId?: number | undefined;
 }
 
 export default function BookingFormComponent({ bookingId }: BookingFormProps) {
-    const router = useRouter();
-    const supabase = createClient();
-    const [formDataToValidate, setFormDataToValidate] = useState<formDataToValidate>({} as formDataToValidate);
-    const [formErrors, setFormErrors] = useState({} as formDataToValidate);
+  const router = useRouter();
+  const supabase = createClient();
+  const [formDataToValidate, setFormDataToValidate] =
+    useState<formDataToValidate>({} as formDataToValidate);
+  const [formErrors, setFormErrors] = useState({} as formDataToValidate);
+  const [isFormSubmitted, setIsFormSubmitted] = useState<boolean>(false);
 
-    useEffect(() => {
-        if (bookingId) {
-            supabase.from("bookings").select().eq("id", bookingId)
-                .then(({ data: bookingsData }) => {
-                    if (!bookingsData) return;
-                    const newData = bookingsData[0].json[bookingsData[0].json.length - 1];
-                    setFormState((prevState) => ({
-                        ...prevState,
-                        form: newData,
-                        allData: bookingsData[0].json,
-                        currentIndex: bookingsData[0].json.length - 1
-                    }));
-                })
-        }
-    }, []);
+  useEffect(() => {
+    if (bookingId) {
+      supabase
+        .from("bookings")
+        .select()
+        .eq("id", bookingId)
+        .then(({ data: bookingsData }) => {
+          if (!bookingsData) return;
+          const newData = bookingsData[0].json[bookingsData[0].json.length - 1];
+          setFormState((prevState) => ({
+            ...prevState,
+            form: newData,
+            allData: bookingsData[0].json,
+            currentIndex: bookingsData[0].json.length - 1,
+          }));
+        });
+    }
+  }, []);
 
     const [formState, setFormState] = useState<CreateBookingState>(
         {
-            allData: [],
-            currentIndex: 0,
-            form: defaultForm(),
-            pageToShow: Page.BookingPage
+          allData: [],
+          currentIndex: 0,
+          form: defaultForm(),
+          pageToShow: Page.BookingPage
+
         });
-    const [EventStaySwitchValue, setIsSwitchOn] = useState<boolean>(formState.form.bookingType === "Stay" ? false : true);
-    const [textareaHeight, setTextareaHeight] = useState<number>(40);
-    useEffect(() => {
-        setFormDataToValidate({
+        const [EventStaySwitchValue, setIsSwitchOn] = useState<boolean>(formState.form.bookingType === "Stay" ? false : true);
+        const [textareaHeight, setTextareaHeight] = useState<number>(40);
+
+        const validateForm = async () => {
+          const formDataToValidate = {
             name: formState.form.client.name,
             phone: formState.form.client.phone,
             startDateTime: formState.form.startDateTime,
-        });
-    }, [formState.form.client.name, formState.form.client.phone, formState.form.startDateTime]);
+          };
+      
+          try {
+            await validationSchema.validate(formDataToValidate, {
+              abortEarly: false,
+            });
+            setFormErrors({
+              name: undefined,
+              phone: undefined,
+              startDateTime: undefined,
+            });
+            return true;
+          } catch (err: Error | any) {
+            console.log("err: in validateForm ");
+            const validationErrors: any = {};
+            err.inner.forEach((error: any) => {
+              console.log("error message", error.message);
+              validationErrors[error.path] = error.message;
+            });
+            setFormErrors(validationErrors);
+            return false;
+          }
+        };
+      
+        useEffect(() => {
+          // Only validate form if it has been submitted at least once
+          if (isFormSubmitted) {
+            validateForm();
+          }
+        }, [
+          formState.form.client.name,
+          formState.form.client.phone,
+          formState.form.startDateTime,
+          formState.form.endDateTime,
+        ]);
 
-    useEffect(() => {
-        const newHeight = Math.min(16, formState.form.notes.length / 10 + 40);
-        setTextareaHeight(newHeight);
-    }, [formState.form.notes]);
+  useEffect(() => {
+    const newHeight = Math.min(16, formState.form.notes.length / 10 + 40);
+    setTextareaHeight(newHeight);
+  }, [formState.form.notes]);
 
     const handleSwitchChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         setFormState((prevState) => ({
@@ -90,28 +130,33 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
         setIsSwitchOn(!EventStaySwitchValue);
     };
 
-    const handleAddEvent = (event: Event) => {
-        setFormState((prevState) => ({
-            ...prevState,
-            form: {
-                ...prevState.form,
-                events: [...prevState.form.events, event],
-                finalCost: [...prevState.form.events, event].reduce((acc, event) => acc + event.finalCost, 0)
-            }
-        }));
-    };
+  const handleAddEvent = (event: Event) => {
+    setFormState((prevState) => ({
+      ...prevState,
+      form: {
+        ...prevState.form,
+        events: [...prevState.form.events, event],
+        finalCost: [...prevState.form.events, event].reduce(
+          (acc, event) => acc + event.finalCost,
+          0
+        ),
+      },
+    }));
+  };
 
-    const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
-        console.log("name: ", name, "value: ", value);
-        setFormState((prevState) => ({
-            ...prevState,
-            form: {
-                ...prevState.form,
-                [name]: value,
-            }
-        }));
-    };
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    console.log("name: ", name, "value: ", value);
+    setFormState((prevState) => ({
+      ...prevState,
+      form: {
+        ...prevState.form,
+        [name]: value,
+      },
+    }));
+  };
 
     const handlePageChange = (showPage: Page) => {
         setFormState((prevState) => ({
@@ -120,100 +165,106 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
         }));
     };
 
-    const handleClientChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setFormState((prevState) => ({
-            ...prevState,
-            form: {
-                ...prevState.form,
-                client: {
-                    ...prevState.form.client,
-                    [name]: value,
-                }
-            }
-        }));
-    };
+  const handleClientChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormState((prevState) => ({
+      ...prevState,
+      form: {
+        ...prevState.form,
+        client: {
+          ...prevState.form.client,
+          [name]: value,
+        },
+      },
+    }));
+  };
 
-    const handleDateChange = (name: string, value: string | null) => {
-        setFormState((prevState) => ({
-            ...prevState,
-            form: {
-                ...prevState.form,
-                [name]: value,
-            }
-        }));
-    };
+  const handleDateChange = (name: string, value: string | null) => {
+    setFormState((prevState) => ({
+      ...prevState,
+      form: {
+        ...prevState.form,
+        [name]: value,
+      },
+    }));
+  };
 
-    const handlePropertyChange = (property: Property) => {
-        setFormState((prevState) => {
-            const propertyIndex = prevState.form.properties?.findIndex(p => p === property);
-            let newProperties = [...(prevState.form.properties ?? [])];
-            if (propertyIndex > -1) {
-                newProperties.splice(propertyIndex, 1);
-            } else {
-                newProperties.push(property);
-            }
-            return {
-                ...prevState,
-                form: {
-                    ...prevState.form,
-                    properties: newProperties,
-                },
-            };
-        });
-    }
-
-    const phoneRegExp = /^\+?(?:[0-9] ?){6,14}[0-9]$/;
-    const validationSchema = yup.object().shape({
-        name: yup.string().required('Name is required').min(2, 'Name must be at least 2 characters'),
-        phone: yup.string().required('Phone number is required').matches(phoneRegExp, 'Phone number is invalid'),
-        startDateTime: yup.string().required('Start date and time is required').matches(
-            /^\d{4}-[01]\d-[0-3]\d[T][0-2]\d:[0-5]\d:[0-5]\d.\d+Z$/,
-            'Start date and time must be in ISO format'
-        ).test(
-            'is-same-or-after-current-date',
-            'Start date and time must be the same as or after the current date and time',
-            value => {
-                const currentDateEST = moment().tz("America/New_York"); // Get current date in EST, accounting for DST
-                const twentyFourHoursBeforeCurrentDateEST = currentDateEST.clone().subtract(24, 'hours'); // Subtract 24 hours from the current date in EST
-                const startDate = moment(value).tz("America/New_York"); // Convert startDateTime to EST
-                return startDate.isSameOrAfter(twentyFourHoursBeforeCurrentDateEST);
-            }
-        ).test(
-            'is-before-end-date',
-            'Start date and time must be before the end date and time',
-            value => {
-                if (typeof formState.form.endDateTime === 'undefined') {
-                    return true;
-                }
-                const endDate = moment(formState.form.endDateTime);
-                const startDate = moment(value);
-                return startDate.isBefore(endDate);
-            }
-        )
+  const handlePropertyChange = (property: Property) => {
+    setFormState((prevState) => {
+      const propertyIndex = prevState.form.properties?.findIndex(
+        (p) => p === property
+      );
+      let newProperties = [...(prevState.form.properties ?? [])];
+      if (propertyIndex > -1) {
+        newProperties.splice(propertyIndex, 1);
+      } else {
+        newProperties.push(property);
+      }
+      return {
+        ...prevState,
+        form: {
+          ...prevState.form,
+          properties: newProperties,
+        },
+      };
     });
+  };
 
-    const handleSubmit = async (e: FormEvent) => {
-        e.preventDefault();
-        try {
-            await validationSchema.validate(formDataToValidate, { abortEarly: false });
-            const id = await createBooking(
-                {
-                    ...formState.form,
-                    bookingId: bookingId,
-                });
-            if (!bookingId && id != null && id != "null") {
-                router.push(`/protected/booking/${id}`);
-                return;
-            }
-        } catch (err: Error | any) {
-            const validationErrors: any = {};
-            err.inner.forEach((error: any) => {
-                validationErrors[error.path] = error.message;
-            });
-            setFormErrors(validationErrors);
+  const phoneRegExp = /^\+?(?:[0-9] ?){6,14}[0-9]$/;
+  const validationSchema = yup.object().shape({
+    name: yup
+      .string()
+      .required("Name is required")
+      .min(2, "Name must be at least 2 characters"),
+    phone: yup
+      .string()
+      .required("Phone number is required")
+      .matches(phoneRegExp, "Phone number is invalid"),
+    startDateTime: yup
+      .string()
+      .required("Start date and time is required")
+      .matches(
+        /^\d{4}-[01]\d-[0-3]\d[T][0-2]\d:[0-5]\d:[0-5]\d.\d+Z$/,
+        "Start date and time must be in ISO format"
+      )
+      .test(
+        "is-same-or-after-current-date",
+        "Start date and time must be the same as or after the current date and time",
+        (value) => {
+          const currentDateEST = moment().tz("America/New_York"); // Get current date in EST, accounting for DST
+          const twentyFourHoursBeforeCurrentDateEST = currentDateEST
+            .clone()
+            .subtract(24, "hours"); // Subtract 24 hours from the current date in EST
+          const startDate = moment(value).tz("America/New_York"); // Convert startDateTime to EST
+          return startDate.isSameOrAfter(twentyFourHoursBeforeCurrentDateEST);
         }
+      )
+      .test(
+        "is-before-end-date",
+        "Start date and time must be before the end date and time",
+        (value) => {
+          if (typeof formState.form.endDateTime === "undefined") {
+            return true;
+          }
+          const endDate = moment(formState.form.endDateTime);
+          const startDate = moment(value);
+          return startDate.isBefore(endDate);
+        }
+      ),
+  });
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setIsFormSubmitted(true); // Indicate that the form has been submitted
+    const isValid = await validateForm();
+    if (isValid) {
+      const id = await createBooking(formState.form);
+      if (!bookingId && id != null && id != "null") {
+        // Assuming `id` is the success condition
+        router.push(`/protected/booking/${id}`);
+      }
     }
+  };
 
     const deleteCurrentBooking = async () => {
         console.log("deleting")
@@ -224,7 +275,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
     return (
         <div>
             <form onSubmit={handleSubmit}>
-                {formState.pageToShow === Page.BookingPage && (
+            {formState.pageToShow === Page.BookingPage && (
                     <div>
                         <div className='flex items-center pt-2'>
                             <div className='flex items-center pl-3'>
@@ -299,7 +350,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                                                 <input
                                                     type="text"
                                                     placeholder="Events"
-                                                    className="pl-10 pr-3 py-2 w-full border rounded-lg text-base text-center font-normal font-normal placeholder:text-placeHolderText placeholder:text-base placeholder:leading-normal placeholder:font-normal"
+                                                    className="pl-10 pr-3 py-2 w-full border rounded-lg text-base text-center font-normal placeholder:text-placeHolderText placeholder:text-base placeholder:leading-normal placeholder:font-normal"
                                                     name="numberOfEvents"
                                                     value={formState.form.numberOfEvents}
                                                     onChange={handleChange}
@@ -319,7 +370,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                                         <div className="relative flex items-center">
                                             <input
                                                 type="text"
-                                                className="pl-10 pr-3 py-2 w-full border rounded-lg text-base text-center font-normal font-normal placeholder:text-placeHolderText placeholder:text-base placeholder:leading-normal placeholder:font-normal"
+                                                className="pl-10 pr-3 py-2 w-full border rounded-lg text-base text-center font-normal placeholder:text-placeHolderText placeholder:text-base placeholder:leading-normal placeholder:font-normal"
                                                 placeholder="Guests"
                                                 name="numberOfGuests"
                                                 value={formState.form.numberOfGuests}
