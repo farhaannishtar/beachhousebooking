@@ -344,7 +344,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                             </div>
                             <div className='flex gap-3 flex-wrap'>
                                 {formState.form.bookingType === "Event" &&
-                                    <BaseInput className="flex-1" preIcon='tag' name="numberOfEvents" placeholder="Events" value={formState.form.numberOfEvents}
+                                    <BaseInput className="flex-1" preIcon='tag' name="numberOfEvents" placeholder="Events" value={formState.form.numberOfEvents ?? 0}
                                         onChange={handleChange} />
 
                                 }

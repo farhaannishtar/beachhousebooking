@@ -86,11 +86,25 @@ export function convertPropertiesForDb(properties: Property[]): string[] {
     return properties.map(property => property.toLocaleLowerCase().replace(" ", ""))
 }
 
-export function organizedByDate(bookings: BookingDB[]): { [key: string]: BookingDB[] } {
+export function organizedByStartDate(bookings: BookingDB[]): { [key: string]: BookingDB[] } {
     let organizedBookings: { [key: string]: BookingDB[] } = {}
     
     for (let booking of bookings) {
-        let date = new Date(booking.startDateTime).toDateString()
+        let date = new Date(booking.startDateTime).toLocaleDateString()
+        if (organizedBookings[date]) {
+            organizedBookings[date].push(booking)
+        } else {
+            organizedBookings[date] = [booking]
+        }
+    }
+    return organizedBookings
+}
+
+export function organizedByUpdateDate(bookings: BookingDB[]): { [key: string]: BookingDB[] } {
+    let organizedBookings: { [key: string]: BookingDB[] } = {}
+    
+    for (let booking of bookings) {
+        let date = new Date(booking.updatedDateTime).toLocaleDateString()
         if (organizedBookings[date]) {
             organizedBookings[date].push(booking)
         } else {

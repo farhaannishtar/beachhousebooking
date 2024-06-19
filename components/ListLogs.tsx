@@ -1,6 +1,6 @@
 "use client";
 
-import { BookingDB, Property, convertPropertiesForDb, numOfDays, organizedByStartDate } from '@/utils/lib/bookingType';
+import { BookingDB, Property, convertPropertiesForDb, numOfDays, organizedByUpdateDate } from '@/utils/lib/bookingType';
 import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client';
@@ -11,44 +11,41 @@ import SearchInput from './ui/SearchInput';
 //   bookingsFromParent: BookingDB[];
 // }
 
-interface ListBookingsState {
+interface ListLogsState {
   searchText: string | null;
   filter: {
     status: "Inquiry" | "Quotation" | "Confirmed" | null;
-    checkIn: Date | null;
+    updatedTime: Date | null;
     properties: Property[] | null;
   }
   date: Date | null;
   dbBookings: BookingDB[];
 }
 
-export default function ListBooking() {
+export default function ListLogs() {
 
   const router = useRouter();
-  const [state, setState] = useState<ListBookingsState>({
+  const [state, setState] = useState<ListLogsState>({
     searchText: null,
     date: null,
     dbBookings: [],
     filter: {
       status: null,
-      checkIn: null,
+      updatedTime: null,
       properties: null,
     }
   });
   
   async function fetchData()   {
-    console.log("Fetching Data")
     const supabase = createClient();
     let bookingsData = supabase.from("bookings").select()
-    
-    
 
     if(state.searchText) {
       bookingsData = bookingsData
       .or(`client_name.ilike.%${state.searchText}%,client_phone_number.ilike.%${state.searchText}%`)
-    } else if (state.filter.checkIn || state.filter.status || state.filter.properties) {
-      if(state.filter.checkIn) {
-        bookingsData = bookingsData.gte('check_in', state.filter.checkIn.toISOString())
+    } else if (state.filter.updatedTime || state.filter.status || state.filter.properties) {
+      if(state.filter.updatedTime) {
+        bookingsData = bookingsData.gte('updated_at', state.filter.updatedTime.toISOString())
       } 
       if(state.filter.status) {
         bookingsData = bookingsData.eq('status', state.filter.status.toLocaleLowerCase())
@@ -57,17 +54,17 @@ export default function ListBooking() {
         bookingsData = bookingsData.contains('properties', convertPropertiesForDb(state.filter.properties))
       }
     } else {
-      bookingsData = bookingsData.gte('check_in', new Date(new Date().setDate(new Date().getDate() - 30)).toISOString())
+      bookingsData = bookingsData.gte('updated_at', new Date(new Date().setDate(new Date().getDate() - 30)).toISOString())
     }
 
-    bookingsData = bookingsData.order('check_in', { ascending: true }).range(0, 10)
+    bookingsData = bookingsData.order('updated_at', { ascending: true }).range(0, 10)
     bookingsData
     .then(( { data: bookingsData }) => {
       console.log(bookingsData)
       let bookings: BookingDB[] = []
       bookingsData?.forEach((booking) => {
         const lastIndex = booking.json.length - 1
-        const lastBooking = booking.json[lastIndex]
+        const lastBooking:BookingDB = booking.json[lastIndex]
         bookings.push({
           ...lastBooking,
           bookingId: booking.id,
@@ -100,7 +97,7 @@ export default function ListBooking() {
   };
 
   const dates = () : string[] => {
-    return Object.keys(organizedByStartDate(state.dbBookings)).sort((a, b) => {
+    return Object.keys(organizedByUpdateDate(state.dbBookings)).sort((a, b) => {
       if (a == "Invalid Date") return 1
       if (b == "Invalid Date") return -1
       return new Date(a).getTime() - new Date(b).getTime()
@@ -121,11 +118,17 @@ export default function ListBooking() {
     }
   }
 
+  const convertTimeToDateTime = (time: string) => {
+    // 2024-06-28T18:30:00.000Z to Jun 28, 24
+    const date = new Date(time)
+    return date.toDateString().slice(4, 10) + ", " + date.toDateString().slice(11, 15)
+  }
+
   return (
     <div className="w-full  ">
       {/* Top Nav */}
       <div className='flex items-center h-[72px]' >
-        <h1 className='text-lg font-bold leading-6 w-full text-center '>Bookings</h1>
+        <h1 className='text-lg font-bold leading-6 w-full text-center '>Logs</h1>
         {/* <div className='flex items-center'>
           <button
             className="btn btn-sm bg-selectedButton text-white"
@@ -165,7 +168,7 @@ export default function ListBooking() {
         <p className="pl-1 mt-6 text-neutral-900 text-lg font-semibold leading-6">
           {convertDate(date)}
         </p>
-        {organizedByStartDate(state.dbBookings)[date].map((booking, index) => (
+        {organizedByUpdateDate(state.dbBookings)[date].map((booking, index) => (
           <div 
             className="flex mt-3 w-full justify-between"
             key={booking.bookingId}
@@ -175,6 +178,9 @@ export default function ListBooking() {
               <p>
                 <span className="text-neutral-900 text-base font-medium leading-6">{booking.client.name}</span> <span className="text-slate-500 text-sm font-normal leading-5">{booking.status}</span>
               </p>
+              <p>
+                <span className="text-slate-500 text-sm font-normal leading-5">{convertTimeToDateTime(booking.startDateTime)} - {convertTimeToDateTime(booking.endDateTime)}</span> 
+              </p>
               <div>
                 <p className="text-slate-500 text-sm font-normal leading-5">{numOfDays(booking)} days, {booking.numberOfGuests} pax</p>
                 { booking.properties?.length > 0 && (
@@ -183,6 +189,10 @@ export default function ListBooking() {
                 
                 {booking.refferral && (
                   <p className="text-slate-500 text-sm font-normal leading-5">Referral: {booking.refferral}</p>
+                )}
+
+                {booking.updatedBy.name && (
+                  <p className="text-slate-500 text-sm font-normal leading-5">@{booking.updatedBy.name}</p>
                 )}
               </div>
             </div>
