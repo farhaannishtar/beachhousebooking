@@ -3,13 +3,13 @@ import { BookingDB, BookingForm, getProperties, convertPropertiesForDb } from ".
 import { deleteEvent, insertEvent } from "./calendar";
 import { query } from "./helper";
 
-export async function createBooking(booking: BookingDB, email: string): Promise<number> {
+export async function createBooking(booking: BookingDB, userInfo: string): Promise<number> {
     let resp = await query(`
       INSERT INTO bookings(email, json, client_name, client_phone_number, referred_by, status, properties, check_in, check_out, created_at, updated_at)
       VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
       RETURNING id`, 
       [
-        email, 
+        userInfo, 
         [booking],
         booking.client.name,
         booking.client.phone,
@@ -98,7 +98,7 @@ export async function mutateBookingState(booking: BookingForm, user: User): Prom
     return newBooking.bookingId
   } else {
     console.log("mutateBookingState create booking")  
-    let bookingId = createBooking(newBooking, user.displayName || "Anonymous")
+    let bookingId = createBooking(newBooking, user.displayName || user.id)
     await insertToCalendarIfConfirmed(newBooking);
     return bookingId
   }
