@@ -13,6 +13,7 @@ import DateTimePickerInput from './DateTimePickerInput/DateTimePickerInput';
 import Properties from './Properties';
 import { createClient } from '@/utils/supabase/client';
 import BaseInput from './ui/BaseInput';
+import BaseInput from './ui/BaseInput';
 
 enum Page {
     BookingPage,
@@ -334,7 +335,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                                     }
                                 </div>
                                 <div className="w-1/2">
-                                    <DateTimePickerInput label={'End Date'} onChange={handleDateChange} name="endDateTime" value={formState.form.endDateTime} />
+                                    <DateTimePickerInput label={'End Date'} onChange={handleDateChange} name="endDateTime" value={formState.form.endDateTime}  />
                                     {formErrors.startDateTime === "Start date and time must be before the end date and time" &&
                                         <div role="alert" className="text-red-500 p-1 mt-1">
                                             <span>End Date is invalid</span>

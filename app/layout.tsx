@@ -1,6 +1,7 @@
 import { Plus_Jakarta_Sans } from 'next/font/google'
 import "./globals.css";
 import "./globalIcon.css";
+import "./globalIcon.css";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
