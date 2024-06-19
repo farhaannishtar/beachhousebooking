@@ -3,13 +3,13 @@ import { BookingDB, BookingForm, getProperties, convertPropertiesForDb } from ".
 import { deleteEvent, insertEvent } from "./calendar";
 import { query } from "./helper";
 
-export async function createBooking(booking: BookingDB, email: string): Promise<number> {
+export async function createBooking(booking: BookingDB, name: string): Promise<number> {
     let resp = await query(`
-      INSERT INTO bookings(email, json, client_name, client_phone_number, referred_by, status, properties, check_in, check_out, created_at, updated_at)
-      VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+      INSERT INTO bookings(email, json, client_name, client_phone_number, referred_by, status, properties, check_in, check_out, created_at, updated_at, starred)
+      VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
       RETURNING id`, 
       [
-        email, 
+        name, 
         [booking],
         booking.client.name,
         booking.client.phone,
@@ -19,7 +19,8 @@ export async function createBooking(booking: BookingDB, email: string): Promise<
         booking.startDateTime,
         booking.endDateTime,
         booking.createdDateTime,
-        booking.updatedDateTime
+        booking.updatedDateTime,
+        booking.starred
       ]);
     return resp[0].id;
 }
@@ -38,7 +39,8 @@ export function updateBooking(booking: BookingDB[], id: number) {
         properties = $7,
         updated_at = $8,
         check_in = $9,
-        check_out = $10
+        check_out = $10,
+        starred = $11
       WHERE id = $1`, 
       [id, 
         booking, 
@@ -49,7 +51,8 @@ export function updateBooking(booking: BookingDB[], id: number) {
         convertPropertiesForDb(getProperties(lastBooking)),
         lastBooking.updatedDateTime,
         lastBooking.startDateTime,
-        lastBooking.endDateTime
+        lastBooking.endDateTime,
+        lastBooking.starred
       ])
 }
 
@@ -98,7 +101,7 @@ export async function mutateBookingState(booking: BookingForm, user: User): Prom
     return newBooking.bookingId
   } else {
     console.log("mutateBookingState create booking")  
-    let bookingId = createBooking(newBooking, user.displayName || "Anonymous")
+    let bookingId = createBooking(newBooking, user.displayName ?? user.id)
     await insertToCalendarIfConfirmed(newBooking);
     return bookingId
   }

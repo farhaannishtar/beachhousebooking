@@ -33,6 +33,7 @@ export function defaultForm(): BookingForm {
         finalCost: 0,
         payments: [],
         refferral: undefined,
+        starred: false
     }
 }
 
@@ -56,6 +57,7 @@ export interface BookingForm {
     payments: Payment[]
     refferral?: string | undefined
     paymentMethod: "Cash" | "Card" | "GPay"
+    starred: boolean
 }
 
 export function numOfDays(bookingForm: BookingForm): number {
