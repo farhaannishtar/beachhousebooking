@@ -83,9 +83,16 @@ const CreateEventComponent: React.FC<CreateEventFormProps> = ({ onAddEvent, canc
         setEvent((prevEvent) => ({
             ...prevEvent,
             costs: newCosts
-        }));
-
+        }));  
     };
+
+    const handleDateChange = (name: string, value: string | null) => {
+        setEvent((prevEvent) => ({
+            ...prevEvent,
+            [name]: value,
+        }));
+    };
+
     const removeEventCost = (costIndex: number) => {
         const updatedCosts = event.costs.filter((_, i) => i !== costIndex)
         setEvent((prevEvent) => ({
@@ -119,15 +126,17 @@ const CreateEventComponent: React.FC<CreateEventFormProps> = ({ onAddEvent, canc
             {/* Start and End  Date */}
             <div className='flex gap-x-2 w-full'>
                 <div className="w-1/2">
-                    <DateTimePickerInput label={'Start Date'} name="startDateTime"
+                    <DateTimePickerInput label={'Start Date'} 
+                        name="startDateTime"
                         value={event.startDateTime}
-                        onChange={handleChange} />
+                        onChange={handleDateChange} />
 
                 </div>
                 <div className="w-1/2">
-                    <DateTimePickerInput label={'End Date'} name="endDateTime"
+                    <DateTimePickerInput label={'End Date'} 
+                        name="endDateTime"
                         value={event.endDateTime}
-                        onChange={handleChange} />
+                        onChange={handleDateChange} />
 
                 </div>
             </div>
