@@ -24,9 +24,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={plusJakartaSans.className + ' container'}>
+    <html lang="en" className={plusJakartaSans.className}>
       <body className="bg-background text-foreground w-full">
-        <main className="min-h-screen flex flex-col items-center w-full">
+        <main className="min-h-screen flex flex-col items-center w-full container">
           {children}
         </main>
       </body>

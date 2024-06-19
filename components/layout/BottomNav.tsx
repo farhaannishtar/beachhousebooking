@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 export default function BottomNav() {
     const currentPath = usePathname();
   return (
-    <nav className=" h-[4.5rem] px-4 py-2 flex border-t-[1px] border-typo_light-100 items-center">
+    <nav className=" h-[4.5rem] px-4 py-2 flex border-t-[1px] border-typo_light-100 items-center bottom-0 bg-white mt-8 sticky">
         <Link href="/protected/booking/list" className="flex flex-col flex-1 gap-2 justify-between items-center group ">
         <span className={`${currentPath.includes('/protected/booking')?'!text-selectedButton':''} material-symbols-outlined text-typo_light-200 group-hover:!text-selectedButton`}>calendar_month</span>
         <h4 className={`${currentPath.includes('/protected/booking')?'!text-selectedButton':''} small-text text-link group-hover:!text-selectedButton`}>Booking</h4>

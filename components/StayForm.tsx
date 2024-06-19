@@ -3,7 +3,10 @@
 import React, { useState, ChangeEvent } from 'react';
 import { Event } from '@/utils/lib/bookingType';
 
-const StayFormComponent: React.FC = () => {
+type StayFormProps = {
+    status: string;
+  };
+const StayFormComponent: React.FC<StayFormProps> = ({ status })=> {
     const [event, setEvent] = useState<Event>({
         eventName: '',
         calendarIds: {},

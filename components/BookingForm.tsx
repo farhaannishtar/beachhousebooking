@@ -165,10 +165,12 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
             ...prevState,
             pageToShow: showPage
         }));
+        console.log(formState.form.events)
     };
 
     const handleClientChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
+
         setFormState((prevState) => ({
             ...prevState,
             form: {
@@ -296,36 +298,29 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                             <h1 className='text-lg font-bold leading-6 w-full text-center'>{bookingId ? formState.form.client.name : "Create Booking"}</h1>
                         </div>
                         <div className='flex flex-col gap-y-4 mt-6 mx-3'>
-                            <label className="form-control w-full">
-                                <input
-                                    type="text"
-                                    placeholder="Customer Name"
-                                    className="input w-full h-14 border border-fushsia-500 bg-inputBoxbg text-black text-base font-normal placeholder:text-placeHolderText placeholder:text-base placeholder:leading-normal placeholder:font-normal"
-                                    name="name"
-                                    value={formState.form.client.name}
-                                    onChange={handleClientChange}
-                                />
+                            {/* Name Input */}
+                            <div className='w-full'>
+                                <BaseInput className="flex-1 h-14" type="text" placeholder="Name"
+                                    name="name"  value={formState.form.client.name}
+                                    onChange={handleClientChange} />
                                 {formErrors.name &&
-                                    <div role="alert" className="alert alert-error p-1 mt-1">
+                                    <div role="alert" className="text-red-500  p-1 mt-1">
                                         <span>Name is invalid</span>
                                     </div>
                                 }
-                            </label>
-                            <label className="form-control w-full">
-                                <input
-                                    type="text"
-                                    placeholder="Phone Number"
-                                    className="input w-full h-14 bg-inputBoxbg text-base font-normal placeholder:text-placeHolderText placeholder:text-base placeholder:leading-normal placeholder:font-normal"
+                            </div>
+                            {/* Phone Input */}
+                            <div className='w-full'>
+                                <BaseInput className="flex-1 h-14" type="text" placeholder="Phone Number"
                                     name="phone"
                                     value={formState.form.client.phone}
-                                    onChange={handleClientChange}
-                                />
+                                    onChange={handleClientChange} />
                                 {formErrors.phone &&
-                                    <div role="alert" className="alert alert-error p-1 mt-1">
+                                    <div role="alert" className="text-red-500 p-1 mt-1">
                                         <span>Phone number is invalid</span>
                                     </div>
                                 }
-                            </label>
+                            </div>
                             <div className='w-full'>
                                 <EventStaySwitch handleToggle={handleSwitchChange} isOn={EventStaySwitchValue} />
                             </div>
@@ -333,42 +328,30 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                                 <div className="w-1/2">
                                     <DateTimePickerInput label={'Start Date'} onChange={handleDateChange} name="startDateTime" value={formState.form.startDateTime} />
                                     {formErrors.startDateTime === "Start date and time is required" &&
-                                        <div role="alert" className="alert alert-error p-1 mt-1">
+                                        <div role="alert" className="text-red-500 p-1 mt-1">
                                             <span>Start Date is invalid</span>
                                         </div>
                                     }
                                 </div>
                                 <div className="w-1/2">
-                                    <DateTimePickerInput label={'End Date'} onChange={handleDateChange} name="endDateTime" value={formState.form.endDateTime}  />
+                                    <DateTimePickerInput label={'End Date'} onChange={handleDateChange} name="endDateTime" value={formState.form.endDateTime} />
                                     {formErrors.startDateTime === "Start date and time must be before the end date and time" &&
-                                        <div role="alert" className="alert alert-error p-1 mt-1">
+                                        <div role="alert" className="text-red-500 p-1 mt-1">
                                             <span>End Date is invalid</span>
                                         </div>
                                     }
                                 </div>
                             </div>
-                            <div className='flex gap-x-3'>
-                            {formState.form.bookingType === "Event" &&
-                                         <BaseInput className="flex-1" preIcon='tag' value={formState.form.numberOfEvents}
-                                         onChange={handleChange}/>
-                                            // <div className="relative flex items-center">
-                                               
-                                            //     <span className=" material-symbols-outlined cursor-pointer "  >tag</span>
-                                            //     <input
-                                            //         type="text"
-                                            //         placeholder="Events"
-                                            //         className="pl-10 h-14  w-full border rounded-lg text-base text-center font-normal font-normal placeholder:text-placeHolderText placeholder:text-base placeholder:leading-normal placeholder:font-normal"
-                                            //         name="numberOfEvents"
-                                            //         value={formState.form.numberOfEvents}
-                                            //         onChange={handleChange}
-                                            //     />
-                                               
-                                            // </div>
-                                        }
-                                         <BaseInput className="flex-1" type="text" placeholder="Guests"
-                                                name="numberOfGuests" preIcon='tag'  value={formState.form.numberOfGuests}
-                                                onChange={handleChange}/>
-                               
+                            <div className='flex gap-3 flex-wrap'>
+                                {formState.form.bookingType === "Event" &&
+                                    <BaseInput className="flex-1" preIcon='tag' name="numberOfEvents" placeholder="Events" value={formState.form.numberOfEvents}
+                                        onChange={handleChange} />
+
+                                }
+                                <BaseInput className="flex-1" type="text" placeholder="Guests"
+                                    name="numberOfGuests" preIcon='group' value={formState.form.numberOfGuests}
+                                    onChange={handleChange} />
+
                             </div>
                             <div>
                                 <label>
@@ -430,28 +413,37 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                                     </select>
                                 </label>
                             </div>
+                            {/* Inquiry option */}
                             {formState.form.status != "Inquiry" && (
                                 <div>
+                                    {/* Event option */}
                                     {formState.form.bookingType == "Event" && (
-                                        <div>
-                                            <h2>Events:</h2>
+                                        <div className='flex flex-col gap-4'>
+                                            <p className='text-base font-bold leading-normal '>
+                                                Events
+                                            </p>
                                             {formState.form.events.map((event, index) => (
-                                                <div key={index}>{event.eventName}</div>
+                                                <div key={index} className='flex items-center justify-between rounded-xl bg-typo_light-100 px-4 cursor-pointer'>
+                                                    <h3 className='label p-0'>{`${event.eventName}  (${event.numberOfGuests})`}</h3>
+                                                    <span className='material-symbols-outlined '>chevron_right</span>
+                                                </div>
                                             ))}
+                                            <div className='flex items-center justify-center w-full my-5' onClick={() => handlePageChange(Page.EventPage)}>
+                                                <button type="submit" className='btn btn-wide bg-selectedButton text-center text-white text-base font-bold leading-normal '>
+                                                    Add Event </button>
+                                            </div>
 
-                                            <button onClick={() => handlePageChange(Page.EventPage)}>
-                                                Add Event
-                                            </button>
 
-                                            <label> Final cost: ${formState.form.finalCost}</label>
+                                            <h3 className='title text-right'> Final cost: ${formState.form.finalCost}</h3>
 
 
                                         </div>
                                     )}
+                                    {/* Stay options */}
                                     {formState.form.bookingType == "Stay" && (
                                         <div>
                                             <h2>Stay form:</h2>
-                                            <StayFormComponent />
+                                            <StayFormComponent status="inquiry"/>
                                         </div>
                                     )}
                                 </div>
@@ -462,11 +454,11 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                 }
                 {
                     formState.pageToShow === Page.EventPage && (
-                        <CreateEventComponent onAddEvent={handleAddEvent} cancelAddEvent={() => handlePageChange(Page.BookingPage)} />
+                        <CreateEventComponent onAddEvent={handleAddEvent} cancelAddEvent={() => handlePageChange(Page.BookingPage)} status={formState.form.status} />
                     )
                 }
                 <div className='flex items-center justify-center w-full mt-6'>
-                    <button type="submit" className='btn btn-wide bg-selectedButton text-center text-white text-base font-bold leading-normal'>
+                    <button type="submit" className='btn btn-wide bg-selectedButton text-center text-white text-base font-bold leading-normal flex-1'>
                         {bookingId ? "Update" : "Create"}
                     </button>
                 </div>
