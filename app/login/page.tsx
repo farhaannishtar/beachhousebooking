@@ -12,7 +12,11 @@ export default function Login({
   const signIn = async (formData: FormData) => {
     "use server";
 
-    const phone = formData.get("phone") as string;
+    let phone = formData.get("phone") as string;
+    if (!phone.startsWith("+")) {
+      phone = "+91" + phone;
+    }
+    phone = phone.replace(/\s/g, "");
     const supabase = createClient();
 
     const { data, error } = await supabase.auth.signInWithOtp({
@@ -25,9 +29,13 @@ export default function Login({
 
   const signUp = async (formData: FormData) => {
     "use server";
-    const phone = formData.get("phone") as string;
+    let phone = formData.get("phone") as string;
     const otp = formData.get("otp") as string;
 
+    if (!phone.startsWith("+")) {
+      phone = "+91" + phone;
+    }
+    phone = phone.replace(/\s/g, "");
     const supabase = createClient();
     const {
       data: { session },
