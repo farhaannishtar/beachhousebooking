@@ -13,7 +13,6 @@ import DateTimePickerInput from './DateTimePickerInput/DateTimePickerInput';
 import Properties from './Properties';
 import { createClient } from '@/utils/supabase/client';
 import BaseInput from './ui/BaseInput';
-import BaseInput from './ui/BaseInput';
 
 enum Page {
     BookingPage,
