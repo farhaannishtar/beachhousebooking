@@ -163,7 +163,8 @@ async function main() {
     },
     properties: [Property.Bluehouse, Property.Glasshouse],
     refferral: "Google",
-    bookingId: 0
+    bookingId: 0,
+    starred: false
   }
   // let id = await createBooking(booking, "nathik@gmail.com");
   // console.log(id)

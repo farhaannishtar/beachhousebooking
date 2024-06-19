@@ -1,5 +1,5 @@
-interface searchInputProps {
-    value: string,
+interface SearchInputProps {
+    value: string | undefined,
     onChange:(event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 const SearchInput: React.FC<SearchInputProps> = ({ value, onChange }) => {

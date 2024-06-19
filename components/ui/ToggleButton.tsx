@@ -14,14 +14,32 @@ const ToggleButton: React.FC<ToggleButtonProps> = ({ checked, onChange, classNam
     const handleClick = () => {
         if (inputRef.current) {
             const syntheticEvent = {
-                ...new Event('change', { bubbles: true }),
                 target: {
-                    ...inputRef.current, checked: !checked,
+                    ...inputRef.current,
+                    checked: !checked,
                     name: inputRef.current.name,
                     type: inputRef.current.type,
-                }
+                },
+                currentTarget: {
+                    ...inputRef.current,
+                    checked: !checked,
+                    name: inputRef.current.name,
+                    type: inputRef.current.type,
+                },
+                bubbles: true,
+                cancelable: false,
+                defaultPrevented: false,
+                eventPhase: 0,
+                isTrusted: true,
+                nativeEvent: new Event('change', { bubbles: true }),
+                preventDefault: () => {},
+                isDefaultPrevented: () => false,
+                stopPropagation: () => {},
+                isPropagationStopped: () => false,
+                persist: () => {},
+                timeStamp: Date.now(),
+                type: 'change',
             } as React.ChangeEvent<HTMLInputElement>;
-            console.log(syntheticEvent);
 
             onChange(syntheticEvent);
         }
