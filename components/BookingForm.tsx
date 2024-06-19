@@ -235,7 +235,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                 "is-same-or-after-current-date",
                 "Start date and time must be the same as or after the current date and time",
                 (value) => {
-                    if(bookingId) return true;
+                    if (bookingId) return true;
                     const currentDateEST = moment().tz("America/New_York"); // Get current date in EST, accounting for DST
                     const twentyFourHoursBeforeCurrentDateEST = currentDateEST
                         .clone()
@@ -301,7 +301,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                             {/* Name Input */}
                             <div className='w-full'>
                                 <BaseInput className="flex-1 h-14" type="text" placeholder="Name"
-                                    name="name"  value={formState.form.client.name}
+                                    name="name" value={formState.form.client.name}
                                     onChange={handleClientChange} />
                                 {formErrors.name &&
                                     <div role="alert" className="text-red-500  p-1 mt-1">
@@ -443,7 +443,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                                     {formState.form.bookingType == "Stay" && (
                                         <div>
                                             <h2>Stay form:</h2>
-                                            <StayFormComponent status="inquiry"/>
+                                            <StayFormComponent status="inquiry" />
                                         </div>
                                     )}
                                 </div>
