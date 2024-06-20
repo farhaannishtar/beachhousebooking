@@ -59,8 +59,7 @@ export default function ListBooking() {
       bookingsData = bookingsData.gte('check_in', new Date(new Date().setDate(new Date().getDate() - 30)).toISOString())
     }
 
-    bookingsData = bookingsData.order('check_in', { ascending: true }).range(0, 10)
-    bookingsData
+    bookingsData = bookingsData.order('check_in', { ascending: true })
     .then(( { data: bookingsData }) => {
       console.log(bookingsData)
       let bookings: BookingDB[] = []
