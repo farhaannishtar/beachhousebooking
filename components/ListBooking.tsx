@@ -35,25 +35,25 @@ export default function ListBooking() {
       properties: null,
     }
   });
-  
-  async function fetchData()   {
+
+  async function fetchData() {
     console.log("Fetching Data")
     const supabase = createClient();
     let bookingsData = supabase.from("bookings").select()
-    
-    
 
-    if(state.searchText) {
+
+
+    if (state.searchText) {
       bookingsData = bookingsData
-      .or(`client_name.ilike.%${state.searchText}%,client_phone_number.ilike.%${state.searchText}%`)
+        .or(`client_name.ilike.%${state.searchText}%,client_phone_number.ilike.%${state.searchText}%`)
     } else if (state.filter.checkIn || state.filter.status || state.filter.properties) {
-      if(state.filter.checkIn) {
+      if (state.filter.checkIn) {
         bookingsData = bookingsData.gte('check_in', state.filter.checkIn.toISOString())
-      } 
-      if(state.filter.status) {
+      }
+      if (state.filter.status) {
         bookingsData = bookingsData.eq('status', state.filter.status.toLocaleLowerCase())
       }
-      if(state.filter.properties) {
+      if (state.filter.properties) {
         bookingsData = bookingsData.contains('properties', convertPropertiesForDb(state.filter.properties))
       }
     } else {
@@ -62,22 +62,22 @@ export default function ListBooking() {
 
     bookingsData = bookingsData.order('check_in', { ascending: true }).range(0, 10)
     bookingsData
-    .then(( { data: bookingsData }) => {
-      console.log(bookingsData)
-      let bookings: BookingDB[] = []
-      bookingsData?.forEach((booking) => {
-        const lastIndex = booking.json.length - 1
-        const lastBooking = booking.json[lastIndex]
-        bookings.push({
-          ...lastBooking,
-          bookingId: booking.id,
+      .then(({ data: bookingsData }) => {
+        console.log(bookingsData)
+        let bookings: BookingDB[] = []
+        bookingsData?.forEach((booking) => {
+          const lastIndex = booking.json.length - 1
+          const lastBooking = booking.json[lastIndex]
+          bookings.push({
+            ...lastBooking,
+            bookingId: booking.id,
+          })
         })
+        setState((prevState) => ({
+          ...prevState,
+          dbBookings: bookings,
+        }));
       })
-      setState((prevState) => ({
-        ...prevState,
-        dbBookings: bookings,
-      }));
-    })
   };
 
 
@@ -99,7 +99,7 @@ export default function ListBooking() {
     }));
   };
 
-  const dates = () : string[] => {
+  const dates = (): string[] => {
     return Object.keys(organizedByStartDate(state.dbBookings)).sort((a, b) => {
       if (a == "Invalid Date") return 1
       if (b == "Invalid Date") return -1
@@ -141,11 +141,11 @@ export default function ListBooking() {
           >Logout</button>
 
         </div> */}
-        <span className=" material-symbols-outlined cursor-pointer hover:text-selectedButton"  onClick={() => router.push('/protected/booking/create')}>add_circle</span>
+        <span className=" material-symbols-outlined cursor-pointer hover:text-selectedButton" onClick={() => router.push('/protected/booking/create')}>add_circle</span>
       </div>
-       {/* Top Nav */}
-       <SearchInput  value={state.searchText || undefined}
-            onChange={handleChangeSearch}/>
+      {/* Top Nav */}
+      <SearchInput value={state.searchText || undefined}
+        onChange={handleChangeSearch} />
       {/* <div className="relative my-3 mb-4 flex w-full flex-wrap items-stretch bg-inputBoxbg rounded-xl">
        
          <div className="relative flex items-center m-0 block w-full rounded-xl border border-solid border-neutral-300 bg-transparent px-3 text-base font-normal leading-[1.6] outline-none transition duration-200 ease-in-out focus-within:border-primary dark:border-neutral-600">
@@ -162,43 +162,43 @@ export default function ListBooking() {
       </div> */}
       {dates().map((date) => (
         <React.Fragment key={date}>
-        <p className="pl-1 mt-6 text-neutral-900 text-lg font-semibold leading-6">
-          {convertDate(date)}
-        </p>
-        {organizedByStartDate(state.dbBookings)[date].map((booking, index) => (
-          <div 
-            className="flex mt-3 w-full justify-between"
-            key={booking.bookingId}
-            onClick={() => router.push(`/protected/booking/${booking.bookingId}`)}
-          >
-            <div className="pl-3">
-              <p>
-                <span className="text-neutral-900 text-base font-medium leading-6">{booking.client.name}</span> <span className="text-slate-500 text-sm font-normal leading-5">{booking.status}</span>
-              </p>
-              <div>
-                <p className="text-slate-500 text-sm font-normal leading-5">{numOfDays(booking)} days, {booking.numberOfGuests} pax</p>
-                { booking.properties?.length > 0 && (
-                  <p className="text-slate-500 text-sm font-normal leading-5">{booking.properties.join(", ")}</p>
-                )}
-                
-                {booking.refferral && (
-                  <p className="text-slate-500 text-sm font-normal leading-5">Referral: {booking.refferral}</p>
-                )}
+          <p className="pl-1 mt-6 text-neutral-900 text-lg font-semibold leading-6">
+            {convertDate(date)}
+          </p>
+          {organizedByStartDate(state.dbBookings)[date].map((booking, index) => (
+            <div
+              className="flex mt-3 w-full justify-between"
+              key={booking.bookingId}
+              onClick={() => router.push(`/protected/booking/${booking.bookingId}`)}
+            >
+              <div className="pl-3">
+                <p>
+                  <span className="text-neutral-900 text-base font-medium leading-6">{booking.client.name}</span> <span className="text-slate-500 text-sm font-normal leading-5">{booking.status}</span>
+                </p>
+                <div>
+                  <p className="text-slate-500 text-sm font-normal leading-5">{numOfDays(booking)} days, {booking.numberOfGuests} pax</p>
+                  {booking.properties?.length > 0 && (
+                    <p className="text-slate-500 text-sm font-normal leading-5">{booking.properties.join(", ")}</p>
+                  )}
+
+                  {booking.refferral && (
+                    <p className="text-slate-500 text-sm font-normal leading-5">Referral: {booking.refferral}</p>
+                  )}
+                </div>
               </div>
-            </div>
-            <div className="w-[84px] flex items-center">
-              <div className="w-[74px] h-6 px-5 bg-gray-100 rounded-[19px] justify-center items-center inline-flex items-center">
-                <div className="w-11 left-[20px] top-[6px] text-center text-sky-500 text-base font-medium leading-normal">
-                  {booking.bookingType}
+              <div className="w-[84px] flex items-center">
+                <div className="w-[74px] h-8 px-5 bg-gray-100 rounded-[19px] justify-center items-center inline-flex items-center">
+                  <div className="w-11 label !font-medium left-[20px] top-[6px] text-center text-sky-500 text-base font-medium leading-normal">
+                    {booking.bookingType}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-        ))}
+          ))}
         </React.Fragment>
       ))}
-      
+
 
     </div>
   );

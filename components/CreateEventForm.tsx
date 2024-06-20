@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, ChangeEvent, FormEvent } from 'react';
+import React, { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 import { Event, Property } from '@/utils/lib/bookingType';
 import BaseInput from './ui/BaseInput';
 import DateTimePickerInput from './DateTimePickerInput/DateTimePickerInput';
@@ -12,10 +12,11 @@ const properties = Object.values(Property)
 interface CreateEventFormProps {
     onAddEvent: (event: Event) => void;
     cancelAddEvent: () => void;
-    status?: string
+    status?: string,
+    selectedEvent?: Event
 }
 
-const CreateEventComponent: React.FC<CreateEventFormProps> = ({ onAddEvent, cancelAddEvent, status }) => {
+const CreateEventComponent: React.FC<CreateEventFormProps> = ({ onAddEvent, cancelAddEvent, status, selectedEvent }) => {
     const [event, setEvent] = useState<Event>({
         eventName: '',
         calendarIds: {},
@@ -32,11 +33,15 @@ const CreateEventComponent: React.FC<CreateEventFormProps> = ({ onAddEvent, canc
         costs: [],
         finalCost: 0
     });
+    useEffect(() => {
+        console.log({ selectedEvent });
 
+        selectedEvent ? setEvent(selectedEvent) : null
+    }, [])
 
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, type, checked, value } = e.target as HTMLInputElement;
-        console.log({ name, type, checked, value })
+
         if (["djService", "kitchenService", "valetService", "overNightStay"].includes(name)) {
             setEvent((prevEvent) => ({
                 ...prevEvent,
@@ -83,7 +88,7 @@ const CreateEventComponent: React.FC<CreateEventFormProps> = ({ onAddEvent, canc
         setEvent((prevEvent) => ({
             ...prevEvent,
             costs: newCosts
-        }));  
+        }));
     };
 
     const handleDateChange = (name: string, value: string | null) => {
@@ -126,14 +131,14 @@ const CreateEventComponent: React.FC<CreateEventFormProps> = ({ onAddEvent, canc
             {/* Start and End  Date */}
             <div className='flex gap-x-2 w-full'>
                 <div className="w-1/2">
-                    <DateTimePickerInput label={'Start Date'} 
+                    <DateTimePickerInput label={'Start Date'}
                         name="startDateTime"
                         value={event.startDateTime}
                         onChange={handleDateChange} />
 
                 </div>
                 <div className="w-1/2">
-                    <DateTimePickerInput label={'End Date'} 
+                    <DateTimePickerInput label={'End Date'}
                         name="endDateTime"
                         value={event.endDateTime}
                         onChange={handleDateChange} />
