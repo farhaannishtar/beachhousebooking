@@ -60,6 +60,7 @@ export default function ListBooking() {
     }
 
     bookingsData = bookingsData.order('check_in', { ascending: true })
+    bookingsData
     .then(( { data: bookingsData }) => {
       console.log(bookingsData)
       let bookings: BookingDB[] = []
