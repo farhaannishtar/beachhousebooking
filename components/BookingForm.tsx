@@ -131,7 +131,8 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
         }));
         setIsSwitchOn(!EventStaySwitchValue);
     };
-
+    //********************** Payment Params and methods **********************
+    const [selectedEvent, setSelectedEvent] = useState({} as Event);
     const handleAddEvent = (event: Event) => {
         setFormState((prevState) => ({
             ...prevState,
@@ -145,12 +146,66 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
             },
         }));
     };
+    //**********************End Events settings **********************
 
+    //********************** Payment Params and methods **********************
+    const addPayment = () => {
+        let newPayments = formState.form.payments
+        newPayments.push({ paymentMethod: "Cash", amount: 0, dateTime: '' });
+        setFormState((prevState) => ({
+            ...prevState,
+            form: {
+                ...prevState.form,
+                payments: [...newPayments],
+            },
+        }));
+    }
+    const removePayment = (index: Number) => {
+        const updatedPayments = formState.form.payments.filter((p, i) => i != index);
+        const updatedPaid = [...updatedPayments].reduce(
+            (acc, payment) => acc + payment.amount,
+            0
+        )
+        setFormState((prevState) => ({
+            ...prevState,
+            form: {
+                ...prevState.form,
+                payments: updatedPayments,
+                paid: updatedPaid,
+                outstanding: prevState.form.finalCost - updatedPaid
+            },
+        }));
+    }
+    const handlePaymentChange = (index: Number, e: ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+
+        const updatedPayments = [...formState.form.payments];
+        updatedPayments[index] = {
+            ...updatedPayments[index],
+            [name]: name === 'amount' ? (value ? parseFloat(value) : 0) : value,
+        };
+        const updatedPaid = name === 'amount' ? ([...updatedPayments].reduce(
+            (acc, payment) => acc + payment.amount,
+            0
+        )) : formState.form.paid
+
+        setFormState((prevState) => ({
+            ...prevState,
+            form: {
+                ...prevState.form,
+                payments: updatedPayments,
+                paid: updatedPaid,
+                outstanding: prevState.form.finalCost - updatedPaid
+            },
+
+        }));
+    }
+
+    //********************** End Payment settings **********************
     const handleChange = (
         e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
     ) => {
         const { name, value } = e.target;
-        console.log("name: ", name, "value: ", value);
         setFormState((prevState) => ({
             ...prevState,
             form: {
@@ -214,7 +269,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
         });
     };
 
-    const phoneRegExp = /^\+?(?:[0-9] ?){6,14}[0-9]$/;
+    const phoneRegExp = /^\+?(?:[0-9]\s?){6,14}[0-9]$/;
     const validationSchema = yup.object().shape({
         name: yup
             .string()
@@ -380,7 +435,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                                     >
                                         <option value="Inquiry">Inquiry</option>
                                         <option value="Quotation">Quotation</option>
-                                        <option value="Booking">Booking</option>
+                                        <option value="Confirmed">Confirmed</option>
                                     </select>
                                 </label>
                             </div>
@@ -413,7 +468,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                                     </select>
                                 </label>
                             </div>
-                            {/* Inquiry option */}
+                            {/*Not Inquiry options */}
                             {formState.form.status != "Inquiry" && (
                                 <div>
                                     {/* Event option */}
@@ -423,18 +478,86 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                                                 Events
                                             </p>
                                             {formState.form.events.map((event, index) => (
-                                                <div key={index} className='flex items-center justify-between rounded-xl bg-typo_light-100 px-4 cursor-pointer'>
+                                                <div key={index} className='flex items-center justify-between rounded-xl bg-typo_light-100 px-4 cursor-pointer' onClick={() => {
+                                                    setSelectedEvent(event)
+                                                    handlePageChange(Page.EventPage)
+                                                }}>
                                                     <h3 className='label p-0'>{`${event.eventName}  (${event.numberOfGuests})`}</h3>
                                                     <span className='material-symbols-outlined '>chevron_right</span>
                                                 </div>
                                             ))}
-                                            <div className='flex items-center justify-center w-full my-5' onClick={() => handlePageChange(Page.EventPage)}>
+                                            <div className='flex items-center justify-center w-full my-5' onClick={() => {
+                                                setSelectedEvent(null)
+                                                handlePageChange(Page.EventPage)
+                                            }
+                                            }>
                                                 <button type="submit" className='btn btn-wide bg-selectedButton text-center text-white text-base font-bold leading-normal '>
                                                     Add Event </button>
                                             </div>
 
 
-                                            <h3 className='title text-right'> Final cost: ${formState.form.finalCost}</h3>
+                                            <h3 className='subheading text-right'> Final cost: ${formState.form.finalCost}</h3>
+
+
+                                        </div>
+                                    )}
+                                    {/* Stay options */}
+                                    {formState.form.bookingType == "Stay" && (
+                                        <div>
+                                            <h2>Stay form:</h2>
+                                            <StayFormComponent status="inquiry" />
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                            {/*Confirmed option */}
+                            {formState.form.status == "Confirmed" && (
+                                <div>
+                                    {/* Event option */}
+                                    {formState.form.bookingType == "Event" && (
+                                        <div className='flex flex-col gap-4'>
+                                            <p className='text-base font-bold leading-normal '>
+                                                Payments
+                                            </p>
+                                            <div className='cost-list flex flex-col gap-4'>
+                                                {formState.form.payments.map((payment, index) => (
+                                                    <div className='flex items-center gap-4 justify-between' key={index}>
+                                                        <div className='flex flex-wrap items-center gap-2'>
+                                                            <DateTimePickerInput label="Date"
+                                                                name="dateTime"
+                                                                value={payment.dateTime}
+                                                                onChange={(e) => handlePaymentChange(index, e)}
+                                                            />
+                                                            <div className='flex items-center gap-2 w-full'>
+                                                                <BaseInput type="number"
+                                                                    name="amount"
+                                                                    value={payment.amount}
+                                                                    className='!flex-1'
+                                                                    placeholder="Amount"
+                                                                    onChange={(e) => handlePaymentChange(index, e)}
+                                                                />
+                                                                <BaseInput type="text"
+                                                                    name="paymentMethod"
+                                                                    value={payment.paymentMethod}
+                                                                    className='!flex-1'
+                                                                    placeholder="Method"
+                                                                    onChange={(e) => handlePaymentChange(index, e)}
+                                                                />
+                                                            </div>
+
+                                                        </div>
+                                                        <span className=" material-symbols-outlined cursor-pointer hover:text-red-500" onClick={() => { removePayment(index) }} >delete</span>
+                                                    </div>
+                                                ))}
+                                                <div className='flex items-center justify-end'>
+                                                    <button onClick={addPayment} className='bg-typo_light-100 text-center rounded-xl py-2 px-6 title w-20'>+</button>
+                                                </div>
+                                            </div>
+
+
+
+                                            <h3 className='subheading text-right'> Paid: ${formState.form.paid}</h3>
+                                            <h3 className='title text-right'> Outstanding: ${formState.form.outstanding}</h3>
 
 
                                         </div>
@@ -454,26 +577,28 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                 }
                 {
                     formState.pageToShow === Page.EventPage && (
-                        <CreateEventComponent onAddEvent={handleAddEvent} cancelAddEvent={() => handlePageChange(Page.BookingPage)} status={formState.form.status} />
+                        <CreateEventComponent onAddEvent={handleAddEvent} cancelAddEvent={() => handlePageChange(Page.BookingPage)} status={formState.form.status} selectedEvent={selectedEvent} />
                     )
                 }
-                <div className='flex items-center justify-center w-full mt-6'>
-                    <button type="submit" className='btn btn-wide bg-selectedButton text-center text-white text-base font-bold leading-normal flex-1'>
-                        {bookingId ? "Update" : "Create"}
-                    </button>
-                </div>
+                {
+                    formState.pageToShow === Page.BookingPage && (<div className='flex items-center justify-center w-full mt-6'>
+                        <button type="submit" className='btn btn-wide bg-selectedButton text-center text-white text-base font-bold leading-normal flex-1'>
+                            {bookingId ? "Update" : "Create"}
+                        </button>
+                    </div>)
+                }
             </form >
-            {bookingId && (
+            {bookingId && formState.pageToShow === Page.BookingPage && (
                 <div className='flex items-center justify-center w-full mt-6'>
                     <button
-                        className='btn btn-wide bg-selectedButton text-center text-white text-base font-bold leading-normal'
+                        className='btn btn-wide bg-error text-center text-white text-base font-bold leading-normal w-full'
                         onClick={() => deleteCurrentBooking()}
                     >
                         Delete
                     </button>
                 </div>
             )}
-        </div>
+        </div >
     );
 };
 
