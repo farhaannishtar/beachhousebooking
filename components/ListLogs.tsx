@@ -57,7 +57,7 @@ export default function ListLogs() {
       bookingsData = bookingsData.gte('updated_at', new Date(new Date().setDate(new Date().getDate() - 30)).toISOString())
     }
 
-    bookingsData = bookingsData.order('updated_at', { ascending: true }).range(0, 10)
+    bookingsData = bookingsData.order('updated_at', { ascending: true })
     bookingsData
     .then(( { data: bookingsData }) => {
       console.log(bookingsData)
@@ -192,7 +192,7 @@ export default function ListLogs() {
                 )}
 
                 {booking.updatedBy.name && (
-                  <p className="text-slate-500 text-sm font-normal leading-5">@{booking.updatedBy.name}</p>
+                  <p className="text-slate-500 text-sm font-normal leading-5">@{booking.createdBy.name}</p>
                 )}
               </div>
             </div>
