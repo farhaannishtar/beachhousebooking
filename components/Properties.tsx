@@ -1,32 +1,49 @@
 import { CreateBookingState } from "./BookingForm";
 import PropertyBadge from "./PropertyBadge";
-import { Property } from "@/utils/lib/bookingType";
+import { Event, Property } from "@/utils/lib/bookingType";
 
 interface PropertiesProps {
-  setFormState: React.Dispatch<React.SetStateAction<CreateBookingState>>
+  setFormState?: React.Dispatch<React.SetStateAction<CreateBookingState>> | undefined
+  setEventState?: React.Dispatch<React.SetStateAction<Event>> | undefined
   properties: Property[];
 }
 
-const Properties: React.FC<PropertiesProps> = ({ setFormState, properties }) => {
+const Properties: React.FC<PropertiesProps> = ({ setFormState, setEventState, properties }) => {
   const handlePropertyChange = (property: Property) => {
-    setFormState((prevState: CreateBookingState) => {
-      const propertyIndex = prevState.form.properties?.findIndex(
-        (p) => p === property
-      );
-      let newProperties = [...(prevState.form.properties ?? [])];
-      if (propertyIndex > -1) {
-        newProperties.splice(propertyIndex, 1);
-      } else {
-        newProperties.push(property);
-      }
-      return {
-        ...prevState,
-        form: {
-          ...prevState.form,
-          properties: newProperties,
-        },
-      };
-    });
+    if (setFormState) {
+      setFormState((prevState: CreateBookingState) => {
+        const propertyIndex = prevState.form.properties?.findIndex(
+          (p) => p === property
+        );
+        let newProperties = [...(prevState.form.properties ?? [])];
+        if (propertyIndex > -1) {
+          newProperties.splice(propertyIndex, 1);
+        } else {
+          newProperties.push(property);
+        }
+        return {
+          ...prevState,
+          form: {
+            ...prevState.form,
+            properties: newProperties,
+          },
+        };
+      });
+    }
+    if (setEventState) {
+      setEventState((prevEvent) => {
+        let updatedValues = [...prevEvent.properties];
+        if (updatedValues.includes(property)) {
+            updatedValues = updatedValues.filter((item) => item !== property);
+        } else {
+            updatedValues.push(property);
+        }
+        return {
+            ...prevEvent,
+            properties: updatedValues
+        };
+      })
+    }
   };
 
   return (

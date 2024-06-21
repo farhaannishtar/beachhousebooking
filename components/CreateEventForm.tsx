@@ -55,19 +55,6 @@ const CreateEventComponent: React.FC<CreateEventFormProps> = ({ onAddEvent, canc
         }
     };
 
-    const handleCheckboxChange = (property: Property) => {
-        let updatedValues = [...event.properties];
-        if (updatedValues.includes(property)) {
-            updatedValues = updatedValues.filter((item) => item !== property);
-        } else {
-            updatedValues.push(property);
-        }
-        setEvent((prevEvent) => ({
-            ...prevEvent,
-            properties: updatedValues
-        }));
-    };
-
     const handleCostsChange = (index: number, e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         const updatedCosts = [...event.costs];
@@ -159,7 +146,7 @@ const CreateEventComponent: React.FC<CreateEventFormProps> = ({ onAddEvent, canc
                 </label>
             </div>
 
-            <Properties properties={event.properties ?? []} handlePropertyChange={handleCheckboxChange} />
+            <Properties properties={event.properties ?? []} setEventState={setEvent} />
             {/* Toggle buttons group */}
             <p className='text-base font-bold leading-normal my-4'>
                 Additional services
