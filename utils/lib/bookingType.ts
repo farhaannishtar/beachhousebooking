@@ -30,9 +30,12 @@ export function defaultForm(): BookingForm {
         startDateTime: undefined,
         endDateTime: undefined,
         events: [],
-        finalCost: 0,
+        totalCost: 0,
         payments: [],
         refferral: undefined,
+        starred: false,
+        outstanding: 0,
+        paid: 0
     }
 }
 
@@ -52,10 +55,13 @@ export interface BookingForm {
     status: "Inquiry" | "Quotation" | "Confirmed"
     followUpDate?: string | undefined
     events: Event[]
-    finalCost: number
+    totalCost: number
     payments: Payment[]
     refferral?: string | undefined
     paymentMethod: "Cash" | "Card" | "GPay"
+    starred: boolean
+    paid:number
+    outstanding:number
 }
 
 export function numOfDays(bookingForm: BookingForm): number {
@@ -86,11 +92,25 @@ export function convertPropertiesForDb(properties: Property[]): string[] {
     return properties.map(property => property.toLocaleLowerCase().replace(" ", ""))
 }
 
-export function organizedByDate(bookings: BookingDB[]): { [key: string]: BookingDB[] } {
+export function organizedByStartDate(bookings: BookingDB[]): { [key: string]: BookingDB[] } {
     let organizedBookings: { [key: string]: BookingDB[] } = {}
     
     for (let booking of bookings) {
-        let date = new Date(booking.startDateTime).toDateString()
+        let date = new Date(booking.startDateTime).toLocaleDateString()
+        if (organizedBookings[date]) {
+            organizedBookings[date].push(booking)
+        } else {
+            organizedBookings[date] = [booking]
+        }
+    }
+    return organizedBookings
+}
+
+export function organizedByUpdateDate(bookings: BookingDB[]): { [key: string]: BookingDB[] } {
+    let organizedBookings: { [key: string]: BookingDB[] } = {}
+    
+    for (let booking of bookings) {
+        let date = new Date(booking.updatedDateTime).toLocaleDateString()
         if (organizedBookings[date]) {
             organizedBookings[date].push(booking)
         } else {
@@ -120,11 +140,13 @@ export interface Refferal {
 
 
 export interface Cost {
+    costId?: number | undefined
     name: string
     amount: number
 }
 
 export interface Payment {
+    paymentId?: number | undefined
     dateTime: string
     paymentMethod: "Cash" | "Card" | "GPay",
     amount: number
@@ -132,6 +154,7 @@ export interface Payment {
 }
 
 export interface Event {
+    eventId?: number | undefined
     eventName: string
     calendarIds?: { [key: string]: string } | undefined
     notes: string

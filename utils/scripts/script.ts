@@ -144,7 +144,7 @@ async function main() {
         finalCost: 6000
       }
     ],
-    finalCost: 3000,
+    totalCost: 3000,
     payments: [
       {
         dateTime: "2024-06-09T17:00:00-07:00",
@@ -163,7 +163,10 @@ async function main() {
     },
     properties: [Property.Bluehouse, Property.Glasshouse],
     refferral: "Google",
-    bookingId: 0
+    bookingId: 0,
+    starred: false,
+    outstanding: 0,
+    paid: 0,
   }
   // let id = await createBooking(booking, "nathik@gmail.com");
   // console.log(id)

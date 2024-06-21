@@ -44,7 +44,7 @@ export default function DateTimePickerInput({ label, onChange, name, value }: Da
         }}
         cleanable={false}
         placement={label === "End Date" ? "bottomEnd" : "bottomStart"}
-        className={`${styles.customDatePicker} ${styles.customDatePickerInput} ${styles.customDatePickerPlaceholderText}`}
+        className={`${styles.customDatePicker} ${styles.customDatePickerInput} ${styles.customDatePickerPlaceholderText} h-14`}
       />
     </Stack>
   );
