@@ -30,10 +30,12 @@ export function defaultForm(): BookingForm {
         startDateTime: undefined,
         endDateTime: undefined,
         events: [],
-        finalCost: 0,
+        totalCost: 0,
         payments: [],
         refferral: undefined,
-        starred: false
+        starred: false,
+        outstanding: 0,
+        paid: 0
     }
 }
 
@@ -53,7 +55,7 @@ export interface BookingForm {
     status: "Inquiry" | "Quotation" | "Confirmed"
     followUpDate?: string | undefined
     events: Event[]
-    finalCost: number
+    totalCost: number
     payments: Payment[]
     refferral?: string | undefined
     paymentMethod: "Cash" | "Card" | "GPay"
@@ -138,11 +140,13 @@ export interface Refferal {
 
 
 export interface Cost {
+    costId?: number | undefined
     name: string
     amount: number
 }
 
 export interface Payment {
+    paymentId?: number | undefined
     dateTime: string
     paymentMethod: "Cash" | "Card" | "GPay",
     amount: number
@@ -150,6 +154,7 @@ export interface Payment {
 }
 
 export interface Event {
+    eventId?: number | undefined
     eventName: string
     calendarIds?: { [key: string]: string } | undefined
     notes: string

@@ -13,7 +13,7 @@ interface CreateEventFormProps {
     onAddEvent: (event: Event) => void;
     cancelAddEvent: () => void;
     status?: string,
-    selectedEvent?: Event
+    selectedEvent?: Event | null
 }
 
 const CreateEventComponent: React.FC<CreateEventFormProps> = ({ onAddEvent, cancelAddEvent, status, selectedEvent }) => {
@@ -234,7 +234,7 @@ const CreateEventComponent: React.FC<CreateEventFormProps> = ({ onAddEvent, canc
                     Cancel
                 </button>
                 <button className='border-2 rounded-xl h-12 px-6 text-white bg-selectedButton w-full title' onClick={() => { onAddEvent(event); cancelAddEvent() }}>
-                    Create event
+                    {selectedEvent?.eventId ? 'Update' : 'Create'}
                 </button>
             </div>
 

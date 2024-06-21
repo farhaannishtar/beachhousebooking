@@ -18,8 +18,9 @@ const BaseInput: React.FC<BaseInputProps> = ({ className = '', type = 'text', va
                 </div> : ''
             }
             <input className={`${preIcon ? '' : 'rounded-s-xl pl-4'} ${postIcon ? '' : 'rounded-e-xl pr-4'} h-full flex-1 bg-typo_light-100 size-1 `} value={value} onChange={(event) => {
-
-                onChange(event);
+                if (onChange) {
+                    onChange(event);
+                }
             }} placeholder={placeholder} type={type} name={name} />
             {
                 postIcon ? <div className="rounded-e-xl flex items-center px-4 h-full">

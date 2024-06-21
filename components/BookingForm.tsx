@@ -132,19 +132,34 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
         setIsSwitchOn(!EventStaySwitchValue);
     };
     //********************** Payment Params and methods **********************
-    const [selectedEvent, setSelectedEvent] = useState({} as Event);
+    const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+
     const handleAddEvent = (event: Event) => {
-        setFormState((prevState) => ({
-            ...prevState,
-            form: {
-                ...prevState.form,
-                events: [...prevState.form.events, event],
-                finalCost: [...prevState.form.events, event].reduce(
-                    (acc, event) => acc + event.finalCost,
-                    0
-                ),
-            },
-        }));
+        setFormState((prevState) => {
+            let events = [...prevState.form.events];
+            if(event.eventId == null) {
+                event.eventId = Math.floor(Math.random() * 1000000);
+                events.push(event);
+            } else {
+                events = events.map((e) => e.eventId === event.eventId ? event : e);
+            }
+            let totalCost =  events.reduce(
+                (acc, event) => acc + event.finalCost,
+                0
+            )
+            return (
+                {
+                    ...prevState,
+                    form: {
+                        ...prevState.form,
+                        events: events,
+                        totalCost:totalCost,
+                        outstanding: totalCost - prevState.form.paid
+                    },
+                }
+            )
+        }
+        );
     };
     //**********************End Events settings **********************
 
@@ -172,13 +187,11 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                 ...prevState.form,
                 payments: updatedPayments,
                 paid: updatedPaid,
-                outstanding: prevState.form.finalCost - updatedPaid
+                outstanding: prevState.form.totalCost - updatedPaid
             },
         }));
     }
-    const handlePaymentChange = (index: Number, e: ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-
+    const handlePaymentChange = (name: string, value: string, index: number) => {
         const updatedPayments = [...formState.form.payments];
         updatedPayments[index] = {
             ...updatedPayments[index],
@@ -195,7 +208,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                 ...prevState.form,
                 payments: updatedPayments,
                 paid: updatedPaid,
-                outstanding: prevState.form.finalCost - updatedPaid
+                outstanding: prevState.form.totalCost - updatedPaid
             },
 
         }));
@@ -320,6 +333,8 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
         const isValid = await validateForm();
         if (isValid) {
             console.log("creating")
+            let form = formState.form;
+            form.bookingId = bookingId;
             const id = await createBooking(formState.form);
             if (!bookingId && id != null && id != "null") {
                 // Assuming `id` is the success condition
@@ -496,7 +511,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                                             </div>
 
 
-                                            <h3 className='subheading text-right'> Final cost: ${formState.form.finalCost}</h3>
+                                            <h3 className='subheading text-right'> Final cost: ${formState.form.totalCost}</h3>
 
 
                                         </div>
@@ -526,7 +541,9 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                                                             <DateTimePickerInput label="Date"
                                                                 name="dateTime"
                                                                 value={payment.dateTime}
-                                                                onChange={(e) => handlePaymentChange(index, e)}
+                                                                onChange={(e) => {
+                                                                    handlePaymentChange('dateTime', e, index)
+                                                                }}
                                                             />
                                                             <div className='flex items-center gap-2 w-full'>
                                                                 <BaseInput type="number"
@@ -534,14 +551,18 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                                                                     value={payment.amount}
                                                                     className='!flex-1'
                                                                     placeholder="Amount"
-                                                                    onChange={(e) => handlePaymentChange(index, e)}
+                                                                    onChange={(e) => {
+                                                                        handlePaymentChange('amount', e.target.value, index)
+                                                                    }}
                                                                 />
                                                                 <BaseInput type="text"
                                                                     name="paymentMethod"
                                                                     value={payment.paymentMethod}
                                                                     className='!flex-1'
                                                                     placeholder="Method"
-                                                                    onChange={(e) => handlePaymentChange(index, e)}
+                                                                    onChange={(e) => {
+                                                                        handlePaymentChange('paymentMethod', e.target.value, index)
+                                                                    }}
                                                                 />
                                                             </div>
 
