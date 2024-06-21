@@ -20,10 +20,10 @@ export async function createBooking(booking: BookingDB, name: string): Promise<n
         booking.endDateTime,
         booking.createdDateTime,
         booking.updatedDateTime,
-        booking.starred,
-        booking.totalCost,
-        booking.paid,
-        booking.outstanding
+        booking.starred ?? false,
+        booking.totalCost ?? 0,
+        booking.paid ?? 0,
+        booking.outstanding ?? 0
       ]);
     return resp[0].id;
 }
@@ -58,10 +58,10 @@ export function updateBooking(booking: BookingDB[], id: number) {
         lastBooking.updatedDateTime,
         lastBooking.startDateTime,
         lastBooking.endDateTime,
-        lastBooking.starred,
-        lastBooking.totalCost,
-        lastBooking.paid,
-        lastBooking.outstanding
+        lastBooking.starred ?? false,
+        lastBooking.totalCost ?? 0,
+        lastBooking.paid ?? 0,
+        lastBooking.outstanding ?? 0
       ])
 }
 
