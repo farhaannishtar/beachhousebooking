@@ -17,6 +17,9 @@ interface ListLogsState {
     status: "Inquiry" | "Quotation" | "Confirmed" | null;
     updatedTime: Date | null;
     properties: Property[] | null;
+    starred: boolean | null;
+    paymentPending: boolean | null;
+    createdBy: "Nusrat" | "Prabhu" | "Yasmeen" | "Rafica" | null
   }
   date: Date | null;
   dbBookings: BookingDB[];
@@ -33,6 +36,9 @@ export default function ListLogs() {
       status: null,
       updatedTime: null,
       properties: null,
+      starred: null,
+      paymentPending: null,
+      createdBy: null
     }
   });
   
@@ -43,7 +49,7 @@ export default function ListLogs() {
     if(state.searchText) {
       bookingsData = bookingsData
       .or(`client_name.ilike.%${state.searchText}%,client_phone_number.ilike.%${state.searchText}%`)
-    } else if (state.filter.updatedTime || state.filter.status || state.filter.properties) {
+    } else if (state.filter.updatedTime || state.filter.status || state.filter.properties || state.filter.starred || state.filter.paymentPending || state.filter.createdBy) {
       if(state.filter.updatedTime) {
         bookingsData = bookingsData.gte('updated_at', state.filter.updatedTime.toISOString())
       } 
@@ -52,6 +58,15 @@ export default function ListLogs() {
       }
       if(state.filter.properties) {
         bookingsData = bookingsData.contains('properties', convertPropertiesForDb(state.filter.properties))
+      }
+      if (state.filter.starred) {
+        bookingsData = bookingsData.eq('starred', state.filter.starred)
+      }
+      if (state.filter.paymentPending) {
+        bookingsData = bookingsData.gt('outstanding', 0)
+      }
+      if (state.filter.createdBy) {
+        bookingsData = bookingsData.eq('email', state.filter.createdBy)
       }
     } else {
       bookingsData = bookingsData.gte('updated_at', new Date(new Date().setDate(new Date().getDate() - 30)).toISOString())

@@ -17,6 +17,8 @@ interface ListBookingsState {
     status: "Inquiry" | "Quotation" | "Confirmed" | null;
     checkIn: Date | null;
     properties: Property[] | null;
+    starred: boolean | null;
+    paymentPending: boolean | null;
   }
   date: Date | null;
   dbBookings: BookingDB[];
@@ -33,6 +35,8 @@ export default function ListBooking() {
       status: null,
       checkIn: null,
       properties: null,
+      starred: null,
+      paymentPending: null
     }
   });
 
@@ -46,7 +50,7 @@ export default function ListBooking() {
     if (state.searchText) {
       bookingsData = bookingsData
         .or(`client_name.ilike.%${state.searchText}%,client_phone_number.ilike.%${state.searchText}%`)
-    } else if (state.filter.checkIn || state.filter.status || state.filter.properties) {
+    } else if (state.filter.checkIn || state.filter.status || state.filter.properties || state.filter.starred || state.filter.paymentPending) {
       if (state.filter.checkIn) {
         bookingsData = bookingsData.gte('check_in', state.filter.checkIn.toISOString())
       }
@@ -55,6 +59,12 @@ export default function ListBooking() {
       }
       if (state.filter.properties) {
         bookingsData = bookingsData.contains('properties', convertPropertiesForDb(state.filter.properties))
+      }
+      if (state.filter.starred) {
+        bookingsData = bookingsData.eq('starred', state.filter.starred)
+      }
+      if (state.filter.paymentPending) {
+        bookingsData = bookingsData.gt('outstanding', 0)
       }
     } else {
       bookingsData = bookingsData.gte('check_in', new Date(new Date().setDate(new Date().getDate() - 30)).toISOString())

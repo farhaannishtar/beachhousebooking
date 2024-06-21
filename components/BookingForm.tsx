@@ -19,7 +19,7 @@ enum Page {
     EventPage
 }
 
-interface CreateBookingState {
+export interface CreateBookingState {
     form: BookingForm;
     allData: BookingForm[];
     pageToShow: Page;
@@ -39,8 +39,6 @@ interface BookingFormProps {
 export default function BookingFormComponent({ bookingId }: BookingFormProps) {
     const router = useRouter();
     const supabase = createClient();
-    const [formDataToValidate, setFormDataToValidate] =
-        useState<formDataToValidate>({} as formDataToValidate);
     const [formErrors, setFormErrors] = useState({} as formDataToValidate);
     const [isFormSubmitted, setIsFormSubmitted] = useState<boolean>(false);
 
@@ -52,12 +50,13 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                 .eq("id", bookingId)
                 .then(({ data: bookingsData }) => {
                     if (!bookingsData) return;
-                    const newData = bookingsData[0].json[bookingsData[0].json.length - 1];
+                    const currentIndex = bookingsData[0].json.length - 1;
+                    const newData = bookingsData[0].json[currentIndex];
                     setFormState((prevState) => ({
                         ...prevState,
                         form: newData,
                         allData: bookingsData[0].json,
-                        currentIndex: bookingsData[0].json.length - 1,
+                        currentIndex: currentIndex,
                     }));
                     setIsSwitchOn(newData.bookingType === "Stay" ? false : true);
                 });
@@ -260,28 +259,6 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
             },
         }));
     };
-
-    const handlePropertyChange = (property: Property) => {
-        setFormState((prevState) => {
-            const propertyIndex = prevState.form.properties?.findIndex(
-                (p) => p === property
-            );
-            let newProperties = [...(prevState.form.properties ?? [])];
-            if (propertyIndex > -1) {
-                newProperties.splice(propertyIndex, 1);
-            } else {
-                newProperties.push(property);
-            }
-            return {
-                ...prevState,
-                form: {
-                    ...prevState.form,
-                    properties: newProperties,
-                },
-            };
-        });
-    };
-
     const phoneRegExp = /^\+?(?:[0-9]\s?){6,14}[0-9]$/;
     const validationSchema = yup.object().shape({
         name: yup
@@ -434,7 +411,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                                     />
                                 </label>
                             </div>
-                            <Properties properties={formState.form.properties ?? []} handlePropertyChange={handlePropertyChange} />
+                            <Properties properties={formState.form.properties ?? []} setFormState={setFormState} />
                             <div>
                                 <label className='flex pl-20 gap-x-4'>
                                     <div className='flex items-center'>
