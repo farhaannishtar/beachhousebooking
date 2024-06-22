@@ -30,6 +30,7 @@ export function defaultForm(): BookingForm {
         startDateTime: undefined,
         endDateTime: undefined,
         events: [],
+        costs: [],
         totalCost: 0,
         payments: [],
         refferral: undefined,
@@ -55,6 +56,7 @@ export interface BookingForm {
     status: "Inquiry" | "Quotation" | "Confirmed"
     followUpDate?: string | undefined
     events: Event[]
+    costs:  Cost[]
     totalCost: number
     payments: Payment[]
     refferral?: string | undefined
