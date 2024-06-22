@@ -3,7 +3,7 @@
 import * as yup from 'yup';
 import moment from 'moment-timezone';
 import { createBooking, deleteBooking } from '@/app/api/submit';
-import { Property, BookingForm, Event, defaultForm } from '@/utils/lib/bookingType';
+import { Property, BookingForm, Event, defaultForm, BookingDB } from '@/utils/lib/bookingType';
 import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation'
 import CreateEventComponent from './CreateEventForm';
@@ -21,7 +21,8 @@ enum Page {
 
 export interface CreateBookingState {
     form: BookingForm;
-    allData: BookingForm[];
+    bookingDB?: BookingDB | undefined;
+    allData: BookingDB[];
     pageToShow: Page;
     currentIndex: number;
 }
@@ -55,6 +56,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                     setFormState((prevState) => ({
                         ...prevState,
                         form: newData,
+                        bookingDB: newData,
                         allData: bookingsData[0].json,
                         currentIndex: currentIndex,
                     }));
@@ -62,6 +64,28 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                 });
         }
     }, []);
+
+    function moveFormState(direction: "next" | "previous") {
+        if (direction === "next") {
+            if (formState.currentIndex === formState.allData.length - 1) return;
+            console.log("next ", "index: ", formState.currentIndex + 1)
+            setFormState((prevState) => ({
+                ...prevState,
+                form: prevState.allData[prevState.currentIndex + 1],
+                bookingDB: prevState.allData[prevState.currentIndex + 1],
+                currentIndex: prevState.currentIndex + 1,
+            }));
+        } else {
+            if (formState.currentIndex === 0) return;
+            console.log("prev ", "index: ", formState.currentIndex - 1)
+            setFormState((prevState) => ({
+                ...prevState,
+                form: prevState.allData[prevState.currentIndex - 1],
+                bookingDB: prevState.allData[prevState.currentIndex - 1],
+                currentIndex: prevState.currentIndex - 1,
+            }));
+        }
+    }
 
     const [formState, setFormState] = useState<CreateBookingState>(
         {
@@ -136,13 +160,13 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
     const handleAddEvent = (event: Event) => {
         setFormState((prevState) => {
             let events = [...prevState.form.events];
-            if(event.eventId == null) {
+            if (event.eventId == null) {
                 event.eventId = Math.floor(Math.random() * 1000000);
                 events.push(event);
             } else {
                 events = events.map((e) => e.eventId === event.eventId ? event : e);
             }
-            let totalCost =  events.reduce(
+            let totalCost = events.reduce(
                 (acc, event) => acc + event.finalCost,
                 0
             )
@@ -152,7 +176,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                     form: {
                         ...prevState.form,
                         events: events,
-                        totalCost:totalCost,
+                        totalCost: totalCost,
                         outstanding: totalCost - prevState.form.paid
                     },
                 }
@@ -596,7 +620,59 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                     </button>
                 </div>
             )}
+
+            {bookingId && formState.pageToShow === Page.BookingPage && (
+                <div>
+                <div className='flex items-center justify-center w-1/4 gap-x-4'>
+                    <button
+                        className='btn btn-wide bg-selectedButton text-center text-white text-base font-bold leading-normal w-full'
+                        onClick={() => moveFormState("previous")}
+                        disabled={formState.currentIndex === 0}
+                    >
+                        Previous
+                    </button>
+                    <button
+                        className='btn btn-wide bg-selectedButton text-center text-white text-base font-bold leading-normal w-full'
+                        onClick={() => moveFormState("next")}
+                        disabled={formState.currentIndex === formState.allData.length - 1}
+                    >
+                        Next
+                    </button>
+                </div>
+                <div>
+                <p>Created by {formState.bookingDB?.createdBy.name} on {convertToIndianTime(formState.bookingDB?.createdDateTime)}</p>
+                <p>Updated by {formState.bookingDB?.updatedBy.name} on {convertToIndianTime(formState.bookingDB?.updatedDateTime)}</p>
+                </div>
+                </div>
+            )}
         </div >
     );
 };
+
+function convertToIndianTime(utcDateTimeString: string | undefined) {
+    if (!utcDateTimeString) return "";
+    const utcDate = new Date(utcDateTimeString!);
+
+    // Calculate IST time offset (UTC + 5:30)
+    const istOffset = 5.5 * 60 * 60 * 1000;
+
+    // Convert to IST
+    const istDate = new Date(utcDate.getTime() + istOffset);
+
+    // Format the date to include AM/PM
+    const options: Intl.DateTimeFormatOptions = {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true,
+        timeZone: 'Asia/Kolkata'
+    };
+    return new Intl.DateTimeFormat('en-US', options).format(istDate);
+}
+
+// Get the formatted IST date string
+
 

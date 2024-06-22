@@ -97,7 +97,7 @@ const CreateEventComponent: React.FC<CreateEventFormProps> = ({ onAddEvent, canc
         <div className='flex flex-col gap-4'>
             <div className='flex items-center h-[72px]' >
                 <span className=" material-symbols-outlined cursor-pointer hover:text-selectedButton" onClick={cancelAddEvent} >arrow_back</span>
-                <h1 className='text-lg font-bold leading-6 w-full text-center '>Create Event</h1>
+                <h1 className='text-lg font-bold leading-6 w-full text-center '>{selectedEvent?.eventId == undefined ? "Create Event" : selectedEvent.eventName}</h1>
             </div>
             {/* name and number */}
             <div className='flex items-center gap-3'>
