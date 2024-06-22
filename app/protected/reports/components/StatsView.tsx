@@ -8,7 +8,8 @@ export interface StatsState {
         employee: "Prabhu" | "Yasmeen" | "Rafica" | "Nusrath" | null  
         referral: "Google" | "Instagram" | null
     }
-    rawResponse: string
+    rawReservationsResponse: string,
+    rawCheckinsResponse: string
 }
 
 const monthConvert = {"June": 6, "July": 7}
@@ -17,14 +18,26 @@ export default function StatsView() {
     const supabase = createClient();
     
     useEffect(() => {
-        supabase.rpc('get_booking_stats2', {month: monthConvert[formState.filter.month], year: 2024, employee: formState.filter.employee, referral: formState.filter.referral}).then(({data, error}) => {
+        supabase.rpc('get_booking_stats', {month: monthConvert[formState.filter.month], year: 2024, employee: formState.filter.employee, referral: formState.filter.referral}).then(({data, error}) => {
             if (error) {
                 console.log("error ", error);
             }
             setFormState( (prevState) => {
                 return {
                     ...prevState,
-                    rawResponse: JSON.stringify(data)
+                    rawReservationsResponse: JSON.stringify(data)
+                }
+            })
+        })
+
+        supabase.rpc('get_checkin_stats', {month: monthConvert[formState.filter.month], year: 2024, employee: formState.filter.employee, referral: formState.filter.referral}).then(({data, error}) => {
+            if (error) {
+                console.log("error ", error);
+            }
+            setFormState( (prevState) => {
+                return {
+                    ...prevState,
+                    rawCheckinsResponse: JSON.stringify(data)
                 }
             })
         })
@@ -36,11 +49,13 @@ export default function StatsView() {
                 employee: null,
                 referral: null
             },
-            rawResponse: ""
+            rawReservationsResponse: "",
+            rawCheckinsResponse: ""
         });
   return (
     <div>
-        Hello {formState.rawResponse}
+        Hello {formState.rawReservationsResponse}
+        World {formState.rawCheckinsResponse}
     </div>
   );
 }
