@@ -481,10 +481,16 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                                         <option value="Facebook">Facebook</option>
                                         <option value="Instagram">Instagram</option>
                                         <option value="Influencer">Influencer</option>
+                                        <option value="Other">Other</option>
                                     </select>
                                 </label>
                             </div>
-                            {/*Not Inquiry options */}
+
+                            {formState.form.refferral == "Other" && (
+                                <div>
+                                    <BaseInput type="text" name="otherRefferal" placeholder="Other Referral" value={formState.form.otherRefferal ?? ''} onChange={handleChange} />
+                                </div>
+                            )}
                             {formState.form.status != "Inquiry" && (
                                 <div>
                                     {/* Event option */}

@@ -58,6 +58,7 @@ export interface BookingForm {
     totalCost: number
     payments: Payment[]
     refferral?: string | undefined
+    otherRefferal?: string | undefined
     paymentMethod: "Cash" | "Card" | "GPay"
     starred: boolean
     paid:number
