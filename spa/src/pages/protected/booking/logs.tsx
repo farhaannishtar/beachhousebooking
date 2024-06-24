@@ -1,8 +1,6 @@
 import ListLogs from "@/components/ListLogs";
-import { useRouter } from "next/router";
 
-const ProtectedPage = () => {
-  const router = useRouter();
+const LogsPage = () => {
     return (
     <div className='h-full  w-full'>
         <ListLogs />
@@ -10,5 +8,5 @@ const ProtectedPage = () => {
     );
   };
   
-  export default ProtectedPage;
+export default LogsPage;
   

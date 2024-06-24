@@ -32,7 +32,6 @@ const handlePost = async (req: NextApiRequest, res: NextApiResponse) => {
     const booking: BookingForm = req.body;
     const user = await fetchUser(payload.sub);
     const bookingId = await mutateBookingState(booking, user);
-
     res.status(200).json({ bookingId });
   } catch (error) {
     console.error('Error creating booking:', error);

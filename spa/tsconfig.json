@@ -22,6 +22,6 @@
       "@/utils/*": ["src/utils/*"]
     }
   },
-  "include": ["src/**/*", "next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "tailwind.config.js"],
+  "include": ["src/**/*", "src/utils/*", "next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "tailwind.config.js"],
   "exclude": ["node_modules"]
 }
