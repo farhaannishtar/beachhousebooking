@@ -1,45 +1,104 @@
-import { useState } from 'react';
 import { supabase } from '@/utils/supabaseClient';
+import { useRouter } from 'next/router';
+import { useState } from 'react';
 
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-
-  const handleLogin = async () => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [phone, setPhone] = useState('');
+  const [otp, setOtp] = useState('');
+  const router = useRouter();
+  const sendOTP = async () => {
+    setErrorMessage(null);    
+    let phoneToSend:string = phone;
+    if (!phoneToSend.startsWith("+")) {
+      phoneToSend = "+91" + phoneToSend;
+    }
+    phoneToSend = phoneToSend.replace(/\s/g, "");
+    console.log(phoneToSend);
+    const { data, error } = await supabase.auth.signInWithOtp({
+      phone: phoneToSend
+    })
     if (error) {
-      console.error(error.message);
+      console.log(error);
+      setErrorMessage("Could not authenticate user");
     } else {
-      // Redirect or show a success message
+      console.log(data);
     }
   };
 
+  const confirmOTP = async () => {
+    let phoneToSend:string = phone;
+
+    if (!phoneToSend.startsWith("+")) {
+      phoneToSend = "+91" + phoneToSend;
+    }
+    phoneToSend = phoneToSend.replace(/\s/g, "");
+    const {
+      data: { session },
+      error,
+    } = await supabase.auth.verifyOtp({
+      phone: phoneToSend,
+      token: otp,
+      type: 'sms',
+    })
+
+    // console.log(session)
+
+    if (error) {
+      setErrorMessage("Could not authenticate user");
+    } else {
+      console.log(session);
+    }
+    return router.push("/protected");
+  };
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
-        <h1 className="text-2xl font-bold mb-4">Login</h1>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="w-full p-2 mb-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="w-full p-2 mb-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-        <button
-          onClick={handleLogin}
-          className="w-full p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-        >
-          Sign In
-        </button>
-      </div>
-    </div>
+    <div className="flex-1 flex flex-col w-full px-8 sm:max-w-md justify-center gap-2">
+    <form className="animate-in flex-1 flex flex-col w-full justify-center gap-2 text-foreground">
+      <label className="text-md" htmlFor="email">
+        Phone Number
+      </label>
+      <input
+        className="rounded-md px-4 py-2 bg-inherit border mb-6"
+        name="phone"
+        placeholder="+919841293731"
+        required
+        onChange={(e) => setPhone(e.target.value)}
+      />
+      <button
+        onClick= {(e) => {
+          e.preventDefault();
+          sendOTP();
+        }}
+        className="bg-green-700 rounded-md px-4 py-2 text-foreground mb-2"
+      >
+        Send OTP
+      </button>
+      <label className="text-md" htmlFor="password">
+        OTP
+      </label>
+      <input
+        className="rounded-md px-4 py-2 bg-inherit border mb-6"
+        name="otp"
+        placeholder="••••••••"
+        onChange={(e) => setOtp(e.target.value)}
+      />
+      <button
+        onClick= {(e) => {
+          e.preventDefault();
+          confirmOTP();
+        }}
+        className="border border-foreground/20 rounded-md px-4 py-2 text-foreground mb-2"
+      >
+        Login
+      </button>
+      {errorMessage && (
+          <p className="mt-4 p-4 bg-foreground/10 text-foreground text-center">
+            {errorMessage}
+          </p>
+        )}
+    </form>
+  </div>
   );
 };
 
