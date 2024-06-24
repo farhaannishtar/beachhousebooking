@@ -1,0 +1,15 @@
+{
+    "builds": [
+      {
+        "src": "spa/package.json",
+        "use": "@vercel/next"
+      }
+    ],
+    "routes": [
+      {
+        "src": "/(.*)",
+        "dest": "spa/$1"
+      }
+    ]
+  }
+  
