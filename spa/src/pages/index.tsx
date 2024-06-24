@@ -1,40 +1,33 @@
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 import { supabase } from '@/utils/supabaseClient';
-import Link from 'next/link';
 import styles from '@/styles/Home.module.css';
 
 const Home = () => {
-  const [user, setUser] = useState<any>(null);
+  const router = useRouter();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchUser = async () => {
-      const { data, error } = await supabase.auth.getUser();
-      if (data) {
-        setUser(data.user);
+    const checkUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (user) {
+        router.push('/protected');
       } else {
-        console.error(error);
+        router.push('/login');
       }
+
+      setLoading(false);
     };
 
-    fetchUser();
-  }, []);
+    checkUser();
+  }, [router]);
 
-  return (
-    <div className={styles.container}>
-      <h1 className={styles.title}>Home Page</h1>
-      {user ? (
-        <div>
-          <p>Welcome, {user.email}</p>
-          <Link href="/api/auth/signout">Sign Out</Link>
-        </div>
-      ) : (
-        <div>
-          <p>Please sign in.</p>
-          <Link href="/api/auth/signin">Sign In</Link>
-        </div>
-      )}
-    </div>
-  );
+  if (loading) {
+    return <div className={styles.container}>Loading...</div>;
+  }
+
+  return null;
 };
 
 export default Home;
