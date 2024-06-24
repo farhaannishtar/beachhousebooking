@@ -4,7 +4,6 @@ import { BookingDB, Property, convertPropertiesForDb, numOfDays, organizedByUpda
 import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client';
-import AuthButton from './AuthButton';
 import SearchInput from './ui/SearchInput';
 
 // interface BookingProps {
@@ -25,7 +24,47 @@ interface ListLogsState {
   dbBookings: BookingDB[];
 }
 
+let lastScrollToCeilingTime = Date.now();
+
 export default function ListLogs() {
+
+  let lastNumOfDays = 1;
+  let scrollLock = false;
+  const [lastScrollY, setLastScrollY] = useState(0);
+
+  const handleScroll = () => {
+    const currentScrollY = window.scrollY;
+
+    if (currentScrollY < lastScrollY && currentScrollY === 0 && !scrollLock) {
+      
+      console.log(`User has hit ceiling ${Date.now()}, ${lastScrollToCeilingTime}, ${Date.now() - lastScrollToCeilingTime}`);
+      
+      if(Date.now() - lastScrollToCeilingTime < 2000) {
+        console.log('User has hit ceiling twice in less than 1 second');
+        scrollLock = true;
+        lastNumOfDays = lastNumOfDays + 3;
+        fetchData()
+        setTimeout(() => {
+          scrollLock = false;
+        }, 1000);
+      }
+      lastScrollToCeilingTime = Date.now();
+      
+    }
+
+    setLastScrollY(currentScrollY);
+  };
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      // Only add the event listener in the browser environment
+      window.addEventListener('scroll', handleScroll);
+
+      return () => {
+        window.removeEventListener('scroll', handleScroll);
+      };
+    }
+  }, [lastScrollY]);
 
   const router = useRouter();
   const [state, setState] = useState<ListLogsState>({
@@ -69,13 +108,12 @@ export default function ListLogs() {
         bookingsData = bookingsData.eq('email', state.filter.createdBy)
       }
     } else {
-      bookingsData = bookingsData.gte('updated_at', new Date(new Date().setDate(new Date().getDate() - 30)).toISOString())
+      bookingsData = bookingsData.gte('updated_at', new Date(new Date().setDate(new Date().getDate() - lastNumOfDays)).toISOString())
     }
 
     bookingsData = bookingsData.order('updated_at', { ascending: true })
     bookingsData
     .then(( { data: bookingsData }) => {
-      console.log(bookingsData)
       let bookings: BookingDB[] = []
       bookingsData?.forEach((booking) => {
         const lastIndex = booking.json.length - 1
@@ -98,7 +136,6 @@ export default function ListLogs() {
   }, []);
 
   useEffect(() => {
-    console.log('State has changed:', state);
     fetchData()
   }, [state.searchText])
 
@@ -184,41 +221,41 @@ export default function ListLogs() {
           {convertDate(date)}
         </p>
         {organizedByUpdateDate(state.dbBookings)[date].map((booking, index) => (
-          <div 
-            className="flex mt-3 w-full justify-between"
-            key={booking.bookingId}
+            <div 
+              className="flex mt-3 w-full justify-between"
+              key={booking.bookingId}
             onClick={() => router.push(`/protected/booking/${booking.bookingId}`)}
-          >
-            <div className="pl-3">
-              <p>
-                <span className="text-neutral-900 text-base font-medium leading-6">{booking.client.name}</span> <span className="text-slate-500 text-sm font-normal leading-5">{booking.status}</span>
-              </p>
-              <p>
-                <span className="text-slate-500 text-sm font-normal leading-5">{convertTimeToDateTime(booking.startDateTime)} - {convertTimeToDateTime(booking.endDateTime)}</span> 
-              </p>
-              <div>
-                <p className="text-slate-500 text-sm font-normal leading-5">{numOfDays(booking)} days, {booking.numberOfGuests} pax</p>
-                { booking.properties?.length > 0 && (
-                  <p className="text-slate-500 text-sm font-normal leading-5">{booking.properties.join(", ")}</p>
-                )}
-                
-                {booking.refferral && (
-                  <p className="text-slate-500 text-sm font-normal leading-5">Referral: {booking.refferral}</p>
-                )}
+            >
+              <div className="pl-3">
+                <p>
+                  <span className="text-neutral-900 text-base font-medium leading-6">{booking.client.name}</span> <span className="text-slate-500 text-sm font-normal leading-5">{booking.status}</span>
+                </p>
+                <p>
+                  <span className="text-slate-500 text-sm font-normal leading-5">{convertTimeToDateTime(booking.startDateTime)} - {convertTimeToDateTime(booking.endDateTime)}</span> 
+                </p>
+                <div>
+                  <p className="text-slate-500 text-sm font-normal leading-5">{numOfDays(booking)} days, {booking.numberOfGuests} pax</p>
+                  { booking.properties?.length > 0 && (
+                    <p className="text-slate-500 text-sm font-normal leading-5">{booking.properties.join(", ")}</p>
+                  )}
+                  
+                  {booking.refferral && (
+                    <p className="text-slate-500 text-sm font-normal leading-5">Referral: {booking.refferral}</p>
+                  )}
 
-                {booking.updatedBy.name && (
-                  <p className="text-slate-500 text-sm font-normal leading-5">@{booking.createdBy.name}</p>
-                )}
+                  {booking.updatedBy.name && (
+                    <p className="text-slate-500 text-sm font-normal leading-5">@{booking.createdBy.name}</p>
+                  )}
+                </div>
               </div>
-            </div>
-            <div className="w-[84px] flex items-center">
-              <div className="w-[74px] h-6 px-5 bg-gray-100 rounded-[19px] justify-center items-center inline-flex items-center">
-                <div className="w-11 left-[20px] top-[6px] text-center text-sky-500 text-base font-medium leading-normal">
-                  {booking.bookingType}
+              <div className="w-[84px] flex items-center">
+                <div className="w-[74px] h-6 px-5 bg-gray-100 rounded-[19px] justify-center items-center inline-flex items-center">
+                  <div className="w-11 left-[20px] top-[6px] text-center text-sky-500 text-base font-medium leading-normal">
+                    {booking.bookingType}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
         ))}
         </React.Fragment>
