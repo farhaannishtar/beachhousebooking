@@ -156,7 +156,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
         setIsSwitchOn(!EventStaySwitchValue);
     };
     //********************** Global Params and methods **********************
-    const [loading, setLoading] = useState<Boolean>(false)
+    const [loading, setLoading] = useState<boolean>(false)
     //********************** Event Params and methods **********************
     const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
 

@@ -1,10 +1,10 @@
 interface LoadingButtonProps {
     preIcon?: string,
     postIcon?: string,
-    loading?: Boolean,
-    disabled?: Boolean,
+    loading?: boolean,
+    disabled?: boolean,
     label?: string;
-    type?: React.ButtonHTMLAttributes<HTMLButtonElement>;
+    type?: "button" | "submit" | "reset";
     className?: string;
     onClick?: React.MouseEventHandler<HTMLButtonElement>;
     children: React.ReactNode;

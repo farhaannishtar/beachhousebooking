@@ -67,6 +67,7 @@ async function main() {
       name: "Donald Trump",
       phone: "123456789"
     },
+    costs: [],
     numberOfEvents: 0,
     numberOfGuests: 2,
     bookingType: "Event",
