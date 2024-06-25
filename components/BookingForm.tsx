@@ -536,15 +536,18 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                                         <option value="Google">Google</option>
                                         <option value="Facebook">Facebook</option>
                                         <option value="Instagram">Instagram</option>
-                                        <option value="Influencer">Influencer</option>
                                         <option value="Other">Other</option>
                                     </select>
                                 </label>
                             </div>
 
                             {formState.form.refferral == "Other" && (
-                                <div>
-                                    <BaseInput type="text" name="otherRefferal" placeholder="Other Referral" value={formState.form.otherRefferal ?? ''} onChange={handleChange} />
+                                <div className='flex w-full'>
+                                    <div className='w-1/2'>
+                                    </div>
+                                <div className="w-1/2">
+                                    <BaseInput type="text" name="otherRefferal" placeholder="Referral Name" value={formState.form.otherRefferal ?? ''} onChange={handleChange} />
+                                </div>
                                 </div>
                             )}
                             {formState.form.status != "Inquiry" && (
@@ -585,7 +588,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                                             Costs
                                         </p>
                                         <div className='cost-list flex flex-col gap-4'>
-                                            {formState.form.costs.map((cost, index) => (
+                                            {formState.form.costs?.map((cost, index) => (
                                                 <div className='flex items-center gap-4 ' key={index}>
                                                     <BaseInput type="text"
                                                         name="name"
@@ -686,6 +689,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                         <div className='my-4'>
 
                             <div className='flex items-center justify-between '>
+                            {formState.currentIndex != 0 && (
                                 <button
                                     className={`${formState.currentIndex !== 0 && 'text-selectedButton'} bg-transparent flex items-center justify-center`}
                                     onClick={() => moveFormState("previous")}
@@ -695,9 +699,13 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                                     <span className="material-symbols-outlined cursor-pointer">
                                         arrow_back
                                     </span>
-                                </button>
+                                </button>)}
+                                {formState.currentIndex == 0 && (
+                                <p></p>
+                            )}
                                 <div className='small-text'> <p>Created by <strong>{formState.bookingDB?.createdBy.name}</strong> on <strong>{convertToIndianTime(formState.bookingDB?.createdDateTime)}</strong></p>
                                     <p>Updated by <strong>{formState.bookingDB?.updatedBy.name}</strong> on <strong>{convertToIndianTime(formState.bookingDB?.updatedDateTime)}</strong> </p></div>
+                                {formState.currentIndex != formState.allData.length - 1 && (
                                 <button
                                     className={`${formState.currentIndex !== formState.allData.length - 1 && 'text-selectedButton'} bg-transparent flex items-center justify-center`}
                                     onClick={() => moveFormState("next")}
@@ -707,7 +715,10 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                                     <span className="material-symbols-outlined cursor-pointer">
                                         arrow_forward
                                     </span>
-                                </button>
+                                </button>)}
+                                {formState.currentIndex == formState.allData.length - 1 && (
+                                <p></p>
+                            )}
                             </div>
 
                         </div>

@@ -64,9 +64,15 @@ const IncomeFromCheckin: React.FC<IncomeFromCheckinProps> = ({ data }) => {
                     display: false
                 },
                 ticks: {
-                    stepSize: 5,
-
-                },
+                    min: 5,
+                    maxTicksLimit: 5,
+                    callback: function (value: any, index: any, values: any) {
+                        if (index === 0) {
+                            return '';
+                        }
+                        return `${value}k`;
+                    }
+                }
 
             },
             x: {
@@ -74,7 +80,7 @@ const IncomeFromCheckin: React.FC<IncomeFromCheckinProps> = ({ data }) => {
                 ticks: {
                     min: 5,
                     maxTicksLimit: 7,
-                    callback: function (value, index, values) {
+                    callback: function (value: any, index: any, values: any) {
                         // Hide the first tick
                         if (index === 0) {
                             return '';

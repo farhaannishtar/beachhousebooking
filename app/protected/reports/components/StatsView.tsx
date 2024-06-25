@@ -1,6 +1,6 @@
 "use client"
 import BarChart from "@/components/charts/BarChart";
-import InqueriesVsConfirmed from "./InqueriesVsConfirmed";
+import InquiriesVsConfirmed from "./InquiriesVsConfirmed";
 import { createClient } from "@/utils/supabase/client";
 import { useEffect, useState } from "react";
 import IncomeFromReservation from "./IncomeFromReservation";
@@ -12,8 +12,8 @@ export interface StatsState {
         employee: "Prabhu" | "Yasmeen" | "Rafica" | "Nusrath" | null
         referral: "Google" | "Instagram" | null
     }
-    rawReservationsResponse: object,
-    rawCheckinsResponse: object
+    rawReservationsResponse: any,
+    rawCheckinsResponse: any
 }
 
 const monthConvert = { "June": 6, "July": 7 }
@@ -91,14 +91,14 @@ export default function StatsView() {
                         </div>
                         <div className="flex-1 rounded-xl h-28 bg-typo_light-100 flex flex-col justify-end py-2 gap-4 px-6">
                             <h3 className="label !p-0 !font-medium"> Total Income  reservations</h3>
-                            <h1 className="title">{'₹' + formState?.rawReservationsResponse?.monthly?.confirmedSum / 1000 + 'K'}</h1>
+                            <h1 className="title">{'₹' + (parseInt(formState?.rawReservationsResponse?.monthly?.confirmedSum)).toLocaleString() }</h1>
                         </div>
                     </div>
                 </div>
             </div>
             <div >
                 <h1 className="title">Inquiries vs Confirmed</h1>
-                <InqueriesVsConfirmed data={formState.rawReservationsResponse} />
+                <InquiriesVsConfirmed data={formState.rawReservationsResponse} />
             </div>
             <div>
                 <h1 className="title">Income from Reservations</h1>
@@ -106,7 +106,6 @@ export default function StatsView() {
             </div>
             <div>
                 <h1 className="title">Income from Checkins</h1>
-
                 <IncomesFromCheckin data={formState.rawCheckinsResponse} />
             </div>
             <div className="flex flex-col gap-6">
@@ -114,19 +113,19 @@ export default function StatsView() {
                 <div className="flex flex-col gap-2">
                     <div className="flex justify-between items-center">
                         <h3 className="label">Total Reservations Value</h3>
-                        <h3 className="label !font-semibold">{'₹' + formState?.rawReservationsResponse?.monthly?.confirmedSum / 1000 + ',000'}</h3>
+                        <h3 className="label !font-semibold">{'₹' + (parseInt(formState?.rawReservationsResponse?.monthly?.confirmedSum)).toLocaleString() }</h3>
                     </div>
                     <div className="flex justify-between items-center">
                         <h3 className="label">Average Reservation Value</h3>
-                        <h3 className="label !font-semibold">{'₹' + formState?.rawReservationsResponse?.monthly?.confirmedAvg / 1000 + ',000'}</h3>
+                        <h3 className="label !font-semibold">{'₹' + (parseFloat(formState?.rawReservationsResponse?.monthly?.confirmedAvg)).toLocaleString() }</h3>
                     </div>
                     <div className="flex justify-between items-center">
                         <h3 className="label">Total Checkin Value</h3>
-                        <h3 className="label !font-semibold">{'₹' + formState?.rawCheckinsResponse?.monthly?.sum / 1000 + ',000'}</h3>
+                        <h3 className="label !font-semibold">{'₹' + (parseInt(formState?.rawCheckinsResponse?.monthly?.sum)).toLocaleString() }</h3>
                     </div>
                     <div className="flex justify-between items-center">
                         <h3 className="label">Average Checkin Value</h3>
-                        <h3 className="label !font-semibold">{'₹' + formState?.rawCheckinsResponse?.monthly?.average / 1000 + ',000'}</h3>
+                        <h3 className="label !font-semibold">{'₹' + (parseFloat(formState?.rawCheckinsResponse?.monthly?.average)).toLocaleString() }</h3>
                     </div>
 
 
