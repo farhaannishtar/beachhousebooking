@@ -215,6 +215,14 @@ export default function ListLogs() {
          
         </div> 
       </div> */}
+      <button 
+        className="btn btn-sm bg-selectedButton text"
+        onClick={
+          () => {
+            lastNumOfDays = lastNumOfDays + 3;
+            fetchData()
+          }
+        } >Load More</button>
       {dates().map((date) => (
         <React.Fragment key={date}>
         <p className="pl-1 mt-6 text-neutral-900 text-lg font-semibold leading-6">

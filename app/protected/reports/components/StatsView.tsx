@@ -63,7 +63,9 @@ export default function StatsView() {
             rawCheckinsResponse: { daily: [], monthly: [] }
         });
 
-    const conversionRate = (formState?.rawReservationsResponse?.monthly?.confirmedCount / formState?.rawReservationsResponse?.monthly?.inquiriesCount) * 100
+    const dayOfMonth = new Date().getDate();
+    const conversionRateForMonth = (formState?.rawReservationsResponse?.monthly?.confirmedCount / formState?.rawReservationsResponse?.monthly?.inquiriesCount) * 100
+    const conversionRateDaily = (formState?.rawReservationsResponse?.daily[dayOfMonth]?.confirmedCount / formState?.rawReservationsResponse?.daily[dayOfMonth]?.inquiriesCount) * 100
 
     return (
         <div className='flex flex-col gap-6' >
@@ -72,7 +74,7 @@ export default function StatsView() {
                 <h1 className='text-lg font-bold leading-6 w-full text-center '>Report for {formState.filter.month}</h1>
             </div>
             <div >
-                <h1 className="title my-4">Summary</h1>
+                <h1 className="title my-4">Summary for {formState.filter.month}</h1>
                 <div className="flex flex-col  gap-4">
                     <div className="flex gap-4">
                         <div className="flex-1 rounded-xl h-28 bg-typo_light-100 flex flex-col justify-end py-2 gap-4 px-6">
@@ -87,7 +89,7 @@ export default function StatsView() {
                     <div className="flex gap-4">
                         <div className="flex-1 rounded-xl h-28 bg-typo_light-100 flex flex-col justify-end py-2 gap-4 px-6">
                             <h3 className="label !p-0 !font-medium">Conversion Rate</h3>
-                            <h1 className="title">{conversionRate ? conversionRate.toFixed(1) + '%' : 0}</h1>
+                            <h1 className="title">{conversionRateForMonth ? conversionRateForMonth.toFixed(1) + '%' : 0}</h1>
                         </div>
                         <div className="flex-1 rounded-xl h-28 bg-typo_light-100 flex flex-col justify-end py-2 gap-4 px-6">
                             <h3 className="label !p-0 !font-medium"> Total Income  reservations</h3>
@@ -96,6 +98,33 @@ export default function StatsView() {
                     </div>
                 </div>
             </div>
+
+            <div >
+                <h1 className="title my-4">Summary for Today</h1>
+                <div className="flex flex-col  gap-4">
+                    <div className="flex gap-4">
+                        <div className="flex-1 rounded-xl h-28 bg-typo_light-100 flex flex-col justify-end py-2 gap-4 px-6">
+                            <h3 className="label !p-0 !font-medium">Inquiries</h3>
+                            <h1 className="title">{formState?.rawReservationsResponse?.daily[dayOfMonth]?.inquiriesCount}</h1>
+                        </div>
+                        <div className="flex-1 rounded-xl h-28 bg-typo_light-100 flex flex-col justify-end py-2 gap-4 px-6">
+                            <h3 className="label !p-0 !font-medium">Confirmed</h3>
+                            <h1 className="title">{formState?.rawReservationsResponse?.daily[dayOfMonth]?.confirmedCount}</h1>
+                        </div>
+                    </div>
+                    <div className="flex gap-4">
+                        <div className="flex-1 rounded-xl h-28 bg-typo_light-100 flex flex-col justify-end py-2 gap-4 px-6">
+                            <h3 className="label !p-0 !font-medium">Conversion Rate</h3>
+                            <h1 className="title">{conversionRateDaily ? conversionRateDaily.toFixed(1) + '%' : 0}</h1>
+                        </div>
+                        <div className="flex-1 rounded-xl h-28 bg-typo_light-100 flex flex-col justify-end py-2 gap-4 px-6">
+                            <h3 className="label !p-0 !font-medium"> Total Income  reservations</h3>
+                            <h1 className="title">{'₹' + (parseInt(formState?.rawReservationsResponse?.daily[dayOfMonth]?.confirmedSum)).toLocaleString() }</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div >
                 <h1 className="title">Inquiries vs Confirmed</h1>
                 <InquiriesVsConfirmed data={formState.rawReservationsResponse} />
