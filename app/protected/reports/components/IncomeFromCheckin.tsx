@@ -55,6 +55,7 @@ const IncomeFromCheckin: React.FC<IncomeFromCheckinProps> = ({ data }) => {
 
     const options = {
         responsive: true,
+        maintainAspectRatio: false,
         scales: {
 
             y: {
@@ -64,20 +65,29 @@ const IncomeFromCheckin: React.FC<IncomeFromCheckinProps> = ({ data }) => {
                 },
                 ticks: {
                     stepSize: 5,
+
                 },
 
             },
             x: {
                 stacked: true,
                 ticks: {
-                    stepSize: 5,
+                    min: 5,
+                    maxTicksLimit: 7,
+                    callback: function (value, index, values) {
+                        // Hide the first tick
+                        if (index === 0) {
+                            return '';
+                        }
+                        return value;
+                    },
                 },
 
             }
         },
         plugins: {
             legend: {
-                position: 'top' as const,
+                display: false
             },
             title: {
                 display: true,
@@ -102,7 +112,7 @@ const IncomeFromCheckin: React.FC<IncomeFromCheckinProps> = ({ data }) => {
     };
 
     return (
-        <div  >
+        <div className="h-60" >
 
             <BarChart data={dataX} options={options} />
 

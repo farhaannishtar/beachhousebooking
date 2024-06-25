@@ -55,6 +55,7 @@ const IncomeFromReservation: React.FC<IncomeFromReservationProps> = ({ data }) =
 
     const options = {
         responsive: true,
+        maintainAspectRatio: false,
         scales: {
 
             y: {
@@ -67,17 +68,25 @@ const IncomeFromReservation: React.FC<IncomeFromReservationProps> = ({ data }) =
                 },
 
             },
-            x: {
+              x: {
                 stacked: true,
                 ticks: {
-                    stepSize: 5,
+                    min: 5,
+                    maxTicksLimit: 7,
+                    callback: function (value, index, values) {
+                        // Hide the first tick
+                        if (index === 0) {
+                            return '';
+                        }
+                        return value;
+                    },
                 },
 
             }
         },
         plugins: {
             legend: {
-                position: 'top' as const,
+                display: false
             },
             title: {
                 display: true,
@@ -102,7 +111,7 @@ const IncomeFromReservation: React.FC<IncomeFromReservationProps> = ({ data }) =
     };
 
     return (
-        <div  >
+        <div className="h-60" >
 
             <BarChart data={dataX} options={options} />
 

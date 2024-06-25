@@ -14,7 +14,7 @@ const InqueriesVsConfirmed: React.FC<InqueriesVsConfirmedProps> = ({ data }) => 
         console.log({ data });
 
         let barData = {
-            labels: Object.keys(data?.daily),
+            labels: [0, ...Object.keys(data?.daily)],
             datasets: [
                 {
 
@@ -65,6 +65,7 @@ const InqueriesVsConfirmed: React.FC<InqueriesVsConfirmedProps> = ({ data }) => 
 
     const options = {
         responsive: true,
+        maintainAspectRatio: false,
         scales: {
 
             y: {
@@ -80,14 +81,22 @@ const InqueriesVsConfirmed: React.FC<InqueriesVsConfirmedProps> = ({ data }) => 
             x: {
                 stacked: true,
                 ticks: {
-                    stepSize: 5,
+                    min: 5,
+                    maxTicksLimit: 7,
+                    callback: function (value, index, values) {
+                        // Hide the first tick
+                        if (index === 0) {
+                            return '';
+                        }
+                        return value;
+                    },
                 },
 
             }
         },
         plugins: {
             legend: {
-                position: 'top' as const,
+                display: false
             },
             title: {
                 display: true,
@@ -112,7 +121,7 @@ const InqueriesVsConfirmed: React.FC<InqueriesVsConfirmedProps> = ({ data }) => 
     };
 
     return (
-        <div  >
+        <div className="h-60" >
 
             <BarChart data={dataX} options={options} />
 

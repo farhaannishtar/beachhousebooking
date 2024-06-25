@@ -181,21 +181,24 @@ export default function ListBooking() {
               key={booking.bookingId}
               onClick={() => router.push(`/protected/booking/${booking.bookingId}`)}
             >
-              <div className="pl-3">
+              {/* Booking details */}
+              <div className="pl-3 flex flex-col gap-1">
                 <p>
                   <span className="text-neutral-900 text-base font-medium leading-6">{booking.client.name}</span> <span className="text-slate-500 text-sm font-normal leading-5">{booking.status}</span>
                 </p>
-                <div>
-                  <p className="text-slate-500 text-sm font-normal leading-5">{numOfDays(booking)} days, {booking.numberOfGuests} pax</p>
-                  {booking.properties?.length > 0 && (
-                    <p className="text-slate-500 text-sm font-normal leading-5">{booking.properties.join(", ")}</p>
-                  )}
-
-                  {booking.refferral && (
-                    <p className="text-slate-500 text-sm font-normal leading-5">Referral: {booking.refferral}</p>
-                  )}
+                <p className="text-slate-500 text-sm font-normal ">{numOfDays(booking)} days, {booking.numberOfGuests} pax</p>
+                {booking.properties?.length > 0 && (
+                  <p className="text-slate-500 text-sm font-normal ">{booking.properties.join(", ")}</p>
+                )}
+                <div className='flex items-center gap-4'>
+                  <h3 className='label'>Rs {booking.outstanding == 0 ? booking.paid : booking.outstanding}</h3>
+                  <div className={`${booking.outstanding == 0 ? ' bg-green-500/30' : 'bg-error/20'} px-3 py-1 rounded-xl`}>{booking.outstanding == 0 ? 'Paid' : 'Unpaid'}</div>
                 </div>
+                {booking.refferral && (
+                  <p className="text-slate-500 text-sm font-normal ">Referral: {booking.refferral}</p>
+                )}
               </div>
+              {/* Booking type */}
               <div className="w-[84px] flex items-center">
                 <div className="w-[74px] h-8 px-5 bg-gray-100 rounded-[19px] justify-center items-center inline-flex items-center">
                   <div className="w-11 label !font-medium left-[20px] top-[6px] text-center text-sky-500 text-base font-medium leading-normal">

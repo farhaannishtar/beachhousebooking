@@ -96,7 +96,7 @@ export default function StatsView() {
                     </div>
                 </div>
             </div>
-            <div>
+            <div >
                 <h1 className="title">Inquiries vs Confirmed</h1>
                 <InqueriesVsConfirmed data={formState.rawReservationsResponse} />
             </div>
