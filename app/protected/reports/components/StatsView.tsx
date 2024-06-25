@@ -69,7 +69,7 @@ export default function StatsView() {
         <div className='flex flex-col gap-6' >
             <div className='flex items-center h-[72px]' >
                 <span className=" material-symbols-outlined cursor-pointer hover:text-selectedButton"  >arrow_back</span>
-                <h1 className='text-lg font-bold leading-6 w-full text-center '>Reports</h1>
+                <h1 className='text-lg font-bold leading-6 w-full text-center '>Report for {formState.filter.month}</h1>
             </div>
             <div >
                 <h1 className="title my-4">Summary</h1>
