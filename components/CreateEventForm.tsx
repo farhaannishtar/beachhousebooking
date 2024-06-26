@@ -210,17 +210,17 @@ const CreateEventComponent: React.FC<CreateEventFormProps> = ({ onAddEvent, canc
 
                 </div>
                 <div className='flex items-center justify-end'>
-                    <button onClick={addCost} className='bg-typo_light-100 text-center rounded-xl py-2 px-6 title w-20'>+</button>
+                    <button onClick={addCost} type='button' className='bg-typo_light-100 text-center rounded-xl py-2 px-6 title w-20'>+</button>
                 </div>
-                <h3 className='title w-full text-right'>Total : {event.finalCost ? `$ ${event.finalCost}` : '$ 0'} </h3>
+                <h3 className='title w-full text-right'>Total : {event.finalCost ? `₹ ${event.finalCost}` : '₹ 0'} </h3>
 
             </div>
             <div className='flex items-center justify-end gap-4 flex-wrap'>
 
-                <button className='border-2 border-typo_dark-100 rounded-xl h-12 px-6 text-typo_dark-100 w-full title' onClick={() => cancelAddEvent()}>
+                <button type='button' className='border-2 border-typo_dark-100 rounded-xl h-12 px-6 text-typo_dark-100 w-full title' onClick={() => cancelAddEvent()}>
                     Cancel
                 </button>
-                <button className='border-2 rounded-xl h-12 px-6 text-white bg-selectedButton w-full title' onClick={() => { onAddEvent(event); cancelAddEvent() }}>
+                <button type='button' className='border-2 rounded-xl h-12 px-6 text-white bg-selectedButton w-full title' onClick={() => { onAddEvent(event); cancelAddEvent() }}>
                     {selectedEvent?.eventId ? 'Update' : 'Create'}
                 </button>
             </div>

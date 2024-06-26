@@ -1,6 +1,7 @@
 "use client";
 
 import * as yup from "yup";
+import moment from 'moment-timezone';
 import { createBooking, deleteBooking } from "@/app/api/submit";
 import {
     Property,
@@ -18,6 +19,7 @@ import DateTimePickerInput from "./DateTimePickerInput/DateTimePickerInput";
 import Properties from "./Properties";
 import { createClient } from "@/utils/supabase/client";
 import BaseInput from "./ui/BaseInput";
+import LoadingButton from "./ui/LoadingButton";
 
 enum Page {
   BookingPage,
@@ -155,7 +157,9 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
         }));
         setEventStaySwitchValue(!EventStaySwitchValue);
     };
-    //********************** Payment Params and methods **********************
+    //********************** Global Params and methods **********************
+    const [loading, setLoading] = useState<boolean>(false)
+    //********************** Event Params and methods **********************
     const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
 
     const handleAddEvent = (event: Event) => {
@@ -180,6 +184,54 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
         });
     };
     //**********************End Events settings **********************
+
+    //********************** Stay Params and methods **********************
+    const handleCostsChange = (index: number, e: ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        const updatedCosts = [...formState.form.costs];
+        updatedCosts[index] = {
+            ...updatedCosts[index],
+            [name]: name === 'amount' ? parseFloat(value) : value,
+        };
+        setFormState((prevState) => ({
+            ...prevState,
+            form: {
+                ...prevState.form,
+                costs: updatedCosts,
+                totalCost: updatedCosts.reduce((acc, cost) => acc + cost.amount, 0)
+            }
+
+        }));
+    };
+
+    const addCost = () => {
+        let newCosts = formState.form.costs
+        newCosts.push({ name: "", amount: 0 })
+        setFormState((prevState) => ({
+            ...prevState,
+            form: {
+                ...prevState.form,
+                costs: newCosts
+            }
+        }));
+    };
+
+
+
+    const removeEventCost = (costIndex: number) => {
+        const updatedCosts = formState.form.costs.filter((_, i) => i !== costIndex)
+        setFormState((prevState) => ({
+            ...prevState,
+            form: {
+                ...prevState.form,
+                costs: updatedCosts,
+                totalCost: updatedCosts.reduce((acc, cost) => acc + cost.amount, 0)
+            }
+
+        }));
+    }
+    //**********************End Stay settings **********************
+
 
     //********************** Payment Params and methods **********************
     const addPayment = () => {
@@ -292,6 +344,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
     });
 
     const handleSubmit = async (e: FormEvent) => {
+        setLoading(true)
         e.preventDefault();
         setIsFormSubmitted(true);
         console.log("validating");
@@ -307,24 +360,28 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                 router.push(`/protected/booking/${id}`);
             }
         }
+        setLoading(false)
     };
 
     const deleteCurrentBooking = async () => {
-        console.log("deleting");
+        setLoading(true)
+        console.log("deleting")
         await deleteBooking(bookingId!);
-        router.push("/protected/booking/list");
-    };
+        setLoading(false)
+
+        router.push("/protected/booking/list")
+    }
 
     return (
         <div>
             <form onSubmit={handleSubmit}>
                 {formState.pageToShow === Page.BookingPage && (
                     <div>
-                        <div className="flex items-center pt-2">
-                            <div className="flex items-center pl-3">
+                        <div className='flex items-center pt-2 justify-between'>
+                            <div className='flex items-center '>
                                 <button
                                     type="button"
-                                    onClick={() => router.push("/protected/logs")}
+                                    onClick={() => router.back()}
                                 >
                                     <svg
                                         width="18"
@@ -343,11 +400,10 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                                     </svg>
                                 </button>
                             </div>
-                            <h1 className="text-lg font-bold leading-6 w-full text-center">
-                                {bookingId ? formState.form.client.name : "Create Booking"}
-                            </h1>
+                            <h1 className='text-lg font-bold leading-6 w-full text-center'>{bookingId ? formState.form.client.name : "Create Booking"}</h1>
+                            {bookingId && formState.pageToShow === Page.BookingPage && <span className={`${formState.form.starred ? 'material-symbols-filled ' : 'material-symbols-outlined'}  cursor-pointer text-2xl `} onClick={() => handleChange({ target: { name: 'starred', value: !formState.form.starred } })}>star_rate</span>}
                         </div>
-                        <div className="flex flex-col gap-y-4 mt-6 mx-3">
+                        <div className='flex flex-col gap-y-4 mt-6 '>
                             {/* Name Input */}
                             <div className="w-full">
                                 <BaseInput
@@ -482,21 +538,18 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                                         <option value="Google">Google</option>
                                         <option value="Facebook">Facebook</option>
                                         <option value="Instagram">Instagram</option>
-                                        <option value="Influencer">Influencer</option>
                                         <option value="Other">Other</option>
                                     </select>
                                 </label>
                             </div>
 
                             {formState.form.refferral == "Other" && (
-                                <div>
-                                    <BaseInput
-                                        type="text"
-                                        name="otherRefferal"
-                                        placeholder="Other Referral"
-                                        value={formState.form.otherRefferal ?? ""}
-                                        onChange={handleChange}
-                                    />
+                                <div className='flex w-full'>
+                                    <div className='w-1/2'>
+                                    </div>
+                                <div className="w-1/2">
+                                    <BaseInput type="text" name="otherRefferal" placeholder="Referral Name" value={formState.form.otherRefferal ?? ''} onChange={handleChange} />
+                                </div>
                                 </div>
                             )}
                             {formState.form.status != "Inquiry" && (
@@ -522,194 +575,186 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                                                     </span>
                                                 </div>
                                             ))}
-                                            <div
-                                                className="flex items-center justify-center w-full my-5"
-                                                onClick={() => {
-                                                    setSelectedEvent(null);
-                                                    handlePageChange(Page.EventPage);
-                                                }}
-                                            >
-                                                <button
-                                                    type="submit"
-                                                    className="btn btn-wide bg-selectedButton text-center text-white text-base font-bold leading-normal "
-                                                >
-                          Add Event{" "}
-                                                </button>
+                                            <div className='flex items-center justify-center w-full my-5' onClick={() => {
+                                                setSelectedEvent(null)
+                                                handlePageChange(Page.EventPage)
+                                            }
+                                            }>
+                                                <button type='button' className='btn btn-wide bg-selectedButton text-center text-white text-base font-bold leading-normal '>
+                                                    Add Event </button>
                                             </div>
 
-                                            <h3 className="subheading text-right">
-                                                {" "}
-                        Final cost: ${formState.form.totalCost}
-                                            </h3>
+
+                                            <h3 className='subheading text-right'> Final cost: ₹{formState.form.totalCost}</h3>
+
+
                                         </div>
                                     )}
                                     {/* Stay options */}
-                                    {formState.form.bookingType == "Stay" && (
-                                        <div>
-                                            <h2>Stay form:</h2>
-                                            <StayFormComponent status="inquiry" />
+                                    {formState.form.bookingType == "Stay" && (<div className='flex flex-col gap-4'>
+                                        <p className='text-base font-bold leading-normal my-4'>
+                                            Costs
+                                        </p>
+                                        <div className='cost-list flex flex-col gap-4'>
+                                            {formState.form.costs && formState.form.costs.map((cost, index) => (
+                                                <div className='flex items-center gap-4 ' key={index}>
+                                                    <BaseInput type="text"
+                                                        name="name"
+                                                        value={cost.name}
+                                                        onChange={(e) => handleCostsChange(index, e)}
+                                                        placeholder="Type of Expense"
+                                                        className='flex-1'
+                                                    />
+                                                    <BaseInput type="number"
+                                                        name="amount"
+                                                        value={cost.amount}
+                                                        onChange={(e) => handleCostsChange(index, e)}
+                                                        placeholder="Cost"
+                                                        className='flex-1 pr-3' />
+                                                    <span className=" material-symbols-outlined cursor-pointer hover:text-red-500" onClick={() => { removeEventCost(index) }} >delete</span>
+                                                </div>
+                                            ))}
+
                                         </div>
-                                    )}
-                                </div>
-                            )}
+                                        <div className='flex items-center justify-end'>
+                                            <button onClick={addCost} type='button' className='bg-typo_light-100 text-center rounded-xl py-2 px-6 title w-20'>+</button>
+                                        </div>
+                                        <h3 className='title w-full text-right'>Total : {formState.form.totalCost ? `₹ ${formState.form.totalCost}` : '₹ 0'} </h3>
+
+                                        <div />
+
+                                    </div>)}
+                                </div>)}
                             {/*Confirmed option */}
                             {formState.form.status == "Confirmed" && (
                                 <div>
-                                    {/* Event option */}
-                                    {formState.form.bookingType == "Event" && (
-                                        <div className="flex flex-col gap-4">
-                                            <p className="text-base font-bold leading-normal ">
-                        Payments
-                                            </p>
-                                            <div className="cost-list flex flex-col gap-4">
-                                                {formState.form.payments.map((payment, index) => (
-                                                    <div
-                                                        className="flex items-center gap-4 justify-between"
-                                                        key={index}
-                                                    >
-                                                        <div className="flex flex-wrap items-center gap-2">
-                                                            <DateTimePickerInput
-                                                                label="Date"
-                                                                name="dateTime"
-                                                                value={payment.dateTime}
+                                    <div className='flex flex-col gap-4'>
+                                        <p className='text-base font-bold leading-normal '>
+                                            Payments
+                                        </p>
+                                        <div className='cost-list flex flex-col gap-4'>
+                                            {formState.form.payments.map((payment, index) => (
+                                                <div className='flex items-center gap-4 justify-between' key={index}>
+                                                    <div className='flex flex-wrap items-center gap-2'>
+                                                        <DateTimePickerInput label="Date"
+                                                            name="dateTime"
+                                                            value={convertToIndianTime(payment.dateTime)}
+                                                            onChange={(e) => {
+                                                                handlePaymentChange('dateTime', e, index)
+                                                            }}
+                                                        />
+                                                        <div className='flex items-center gap-2 w-full'>
+                                                            <BaseInput type="number"
+                                                                name="amount"
+                                                                value={payment.amount}
+                                                                className='!flex-1'
+                                                                placeholder="Amount"
                                                                 onChange={(e) => {
-                                                                    handlePaymentChange("dateTime", e, index);
+                                                                    handlePaymentChange('amount', e.target.value, index)
                                                                 }}
                                                             />
-                                                            <div className="flex items-center gap-2 w-full">
-                                                                <BaseInput
-                                                                    type="number"
-                                                                    name="amount"
-                                                                    value={payment.amount}
-                                                                    className="!flex-1"
-                                                                    placeholder="Amount"
-                                                                    onChange={(e) => {
-                                                                        handlePaymentChange(
-                                                                            "amount",
-                                                                            e.target.value,
-                                                                            index
-                                                                        );
-                                                                    }}
-                                                                />
-                                                                <BaseInput
-                                                                    type="text"
-                                                                    name="paymentMethod"
-                                                                    value={payment.paymentMethod}
-                                                                    className="!flex-1"
-                                                                    placeholder="Method"
-                                                                    onChange={(e) => {
-                                                                        handlePaymentChange(
-                                                                            "paymentMethod",
-                                                                            e.target.value,
-                                                                            index
-                                                                        );
-                                                                    }}
-                                                                />
-                                                            </div>
+                                                            <BaseInput type="text"
+                                                                name="paymentMethod"
+                                                                value={payment.paymentMethod}
+                                                                className='!flex-1'
+                                                                placeholder="Method"
+                                                                onChange={(e) => {
+                                                                    handlePaymentChange('paymentMethod', e.target.value, index)
+                                                                }}
+                                                            />
                                                         </div>
-                                                        <span
-                                                            className=" material-symbols-outlined cursor-pointer hover:text-red-500"
-                                                            onClick={() => {
-                                                                removePayment(index);
-                                                            }}
-                                                        >
-                              delete
-                                                        </span>
-                                                    </div>
-                                                ))}
-                                                <div className="flex items-center justify-end">
-                                                    <button
-                                                        onClick={addPayment}
-                                                        className="bg-typo_light-100 text-center rounded-xl py-2 px-6 title w-20"
-                                                    >
-                            +
-                                                    </button>
-                                                </div>
-                                            </div>
 
-                                            <h3 className="subheading text-right">
-                                                {" "}
-                        Paid: ${formState.form.paid}
-                                            </h3>
-                                            <h3 className="title text-right">
-                                                {" "}
-                        Outstanding: ${formState.form.outstanding}
-                                            </h3>
+                                                    </div>
+                                                    <span className=" material-symbols-outlined cursor-pointer hover:text-red-500" onClick={() => { removePayment(index) }} >delete</span>
+                                                </div>
+                                            ))}
+                                            <div className='flex items-center justify-end'>
+                                                <button onClick={addPayment} type='button' className='bg-typo_light-100 text-center rounded-xl py-2 px-6 title w-20'>+</button>
+                                            </div>
                                         </div>
-                                    )}
-                                    {/* Stay options */}
-                                    {formState.form.bookingType == "Stay" && (
-                                        <div>
-                                            <h2>Stay form:</h2>
-                                            <StayFormComponent status="inquiry" />
-                                        </div>
-                                    )}
+
+
+
+                                        <h3 className='subheading text-right'> Paid: ₹{formState.form.paid}</h3>
+                                        <h3 className='title text-right'> Outstanding: ₹{formState.form.outstanding}</h3>
+
+
+                                    </div>
                                 </div>
                             )}
                         </div>
-                    </div>
-                )}
-                {formState.pageToShow === Page.EventPage && (
-                    <CreateEventComponent
-                        onAddEvent={handleAddEvent}
-                        cancelAddEvent={() => handlePageChange(Page.BookingPage)}
-                        status={formState.form.status}
-                        selectedEvent={selectedEvent}
-                    />
-                )}
-                {formState.pageToShow === Page.BookingPage && (
-                    <div className="flex items-center justify-center w-full mt-6">
-                        <button
-                            type="submit"
-                            className="btn btn-wide bg-selectedButton text-center text-white text-base font-bold leading-normal flex-1"
-                        >
+                    </div >
+                )
+                }
+                {
+                    formState.pageToShow === Page.EventPage && (
+                        <CreateEventComponent onAddEvent={handleAddEvent} cancelAddEvent={() => handlePageChange(Page.BookingPage)} status={formState.form.status} selectedEvent={selectedEvent} />
+                    )
+                }
+                {/* Version History  */}
+                {
+                    bookingId && formState.pageToShow === Page.BookingPage && (
+                        <div className='my-4'>
+
+                            <div className='flex items-center justify-between '>
+                            {formState.currentIndex != 0 && (
+                                <button
+                                    className={`${formState.currentIndex !== 0 && 'text-selectedButton'} bg-transparent flex items-center justify-center`}
+                                    onClick={() => moveFormState("previous")}
+                                    disabled={formState.currentIndex === 0}
+                                    type='button'
+                                >
+                                    <span className="material-symbols-outlined cursor-pointer">
+                                        arrow_back
+                                    </span>
+                                </button>)}
+                                {formState.currentIndex == 0 && (
+                                <p></p>
+                            )}
+                                <div className='small-text'> <p>Created by <strong>{formState.bookingDB?.createdBy.name}</strong> on <strong>{convertToIndianTime(formState.bookingDB?.createdDateTime)}</strong></p>
+                                    <p>Updated by <strong>{formState.bookingDB?.updatedBy.name}</strong> on <strong>{convertToIndianTime(formState.bookingDB?.updatedDateTime)}</strong> </p></div>
+                                {formState.currentIndex != formState.allData.length - 1 && (
+                                <button
+                                    className={`${formState.currentIndex !== formState.allData.length - 1 && 'text-selectedButton'} bg-transparent flex items-center justify-center`}
+                                    onClick={() => moveFormState("next")}
+                                    disabled={formState.currentIndex === formState.allData.length - 1}
+                                    type='button'
+                                >
+                                    <span className="material-symbols-outlined cursor-pointer">
+                                        arrow_forward
+                                    </span>
+                                </button>)}
+                                {formState.currentIndex == formState.allData.length - 1 && (
+                                <p></p>
+                            )}
+                            </div>
+
+                        </div>
+                    )
+                }
+                {/* End Version History */}
+                {
+                    formState.pageToShow === Page.BookingPage && (<div className='flex items-center justify-center w-full mt-6'>
+                        <LoadingButton loading={loading} type="submit" className='btn btn-wide bg-selectedButton text-center text-white text-base font-bold leading-normal flex-1'>
                             {bookingId ? "Update" : "Create"}
-                        </button>
-                    </div>
-                )}
-            </form>
+                        </LoadingButton>
+                    </div>)
+                }
+            </form >
             {bookingId && formState.pageToShow === Page.BookingPage && (
-                <div className="flex items-center justify-center w-full mt-6">
-                    <button
-                        className="btn btn-wide bg-error text-center text-white text-base font-bold leading-normal w-full"
+                <div className='flex items-center justify-center w-full mt-6'>
+                    <LoadingButton
+                        className='btn btn-wide bg-error text-center text-white text-base font-bold leading-normal w-full'
                         onClick={() => deleteCurrentBooking()}
+                        loading={loading}
                     >
-            Delete
-                    </button>
+                        Delete
+                    </LoadingButton>
                 </div>
             )}
 
-            {bookingId && formState.pageToShow === Page.BookingPage && (
-                <div>
-                    <div className="flex items-center justify-center w-1/4 gap-x-4">
-                        <button
-                            className="btn btn-wide bg-selectedButton text-center text-white text-base font-bold leading-normal w-full"
-                            onClick={() => moveFormState("previous")}
-                            disabled={formState.currentIndex === 0}
-                        >
-              Previous
-                        </button>
-                        <button
-                            className="btn btn-wide bg-selectedButton text-center text-white text-base font-bold leading-normal w-full"
-                            onClick={() => moveFormState("next")}
-                            disabled={formState.currentIndex === formState.allData.length - 1}
-                        >
-              Next
-                        </button>
-                    </div>
-                    <div>
-                        <p>
-              Created by {formState.bookingDB?.createdBy.name} on{" "}
-                            {convertToIndianTime(formState.bookingDB?.createdDateTime)}
-                        </p>
-                        <p>
-              Updated by {formState.bookingDB?.updatedBy.name} on{" "}
-                            {convertToIndianTime(formState.bookingDB?.updatedDateTime)}
-                        </p>
-                    </div>
-                </div>
-            )}
-        </div>
+
+        </div >
     );
 }
 

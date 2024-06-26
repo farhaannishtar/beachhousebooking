@@ -170,6 +170,7 @@ export default function ListBooking() {
          
         </div> 
       </div> */}
+<<<<<<< HEAD
             {dates().map((date) => (
                 <React.Fragment key={date}>
                     <p className="pl-1 mt-6 text-neutral-900 text-lg font-semibold leading-6">
@@ -204,6 +205,45 @@ export default function ListBooking() {
                                 </div>
                             </div>
                         </div>
+=======
+      {dates().map((date) => (
+        <React.Fragment key={date}>
+          <p className="pl-1 mt-6 text-neutral-900 text-lg font-semibold leading-6">
+            {convertDate(date)}
+          </p>
+          {organizedByStartDate(state.dbBookings)[date].map((booking, index) => (
+            <div
+              className="flex mt-3 w-full justify-between"
+              key={booking.bookingId}
+              onClick={() => router.push(`/protected/booking/${booking.bookingId}`)}
+            >
+              {/* Booking details */}
+              <div className="pl-3 flex flex-col gap-1">
+                <label>
+                  <span className="text-neutral-900 text-base font-medium leading-6">{booking.client.name}</span> <span className="text-slate-500 text-sm font-normal leading-5">{booking.status}</span>{booking?.starred && <span className='material-symbols-filled text-2xl'>star_rate</span>}
+                </label>
+                <label className="text-slate-500 text-sm font-normal ">{numOfDays(booking)} days, {booking.numberOfGuests} pax</label>
+                {booking.properties?.length > 0 && (
+                  <label className="text-slate-500 text-sm font-normal ">{booking.properties.join(", ")}</label>
+                )}
+                <div className='flex items-center gap-4 text-sm'>
+                  <label >Rs {booking.outstanding == 0 ? booking.paid : booking.outstanding}</label>
+                  <div className={`${booking.outstanding == 0 ? ' bg-green-500/30' : 'bg-error/20'} px-3 rounded-xl`}>{booking.outstanding == 0 ? 'Paid' : 'Unpaid'}</div>
+                </div>
+                {booking.refferral && (
+                  <label className="text-slate-500 text-sm font-normal ">Referral: {booking.refferral}</label>
+                )}
+              </div>
+              {/* Booking type */}
+              <div className="w-[84px] flex items-center">
+                <div className="w-[74px] h-8 px-5 bg-gray-100 rounded-[19px] justify-center items-center inline-flex items-center">
+                  <div className="w-11 label !font-medium left-[20px] top-[6px] text-center text-sky-500 text-base font-medium leading-normal">
+                    {booking.bookingType}
+                  </div>
+                </div>
+              </div>
+            </div>
+>>>>>>> origin/style/yassine
 
                     ))}
                 </React.Fragment>
