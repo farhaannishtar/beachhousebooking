@@ -62,13 +62,6 @@ export default function StatsView() {
             rawReservationsResponse: { daily: [], monthly: [] },
             rawCheckinsResponse: { daily: [], monthly: [] }
         });
-<<<<<<< HEAD
-    return (
-        <div>
-        Hello {formState.rawReservationsResponse}
-        World {formState.rawCheckinsResponse}
-        </div>
-=======
 
     const dayOfMonth = new Date().getDate();
     const conversionRateForMonth = (formState?.rawReservationsResponse?.monthly?.confirmedCount / formState?.rawReservationsResponse?.monthly?.inquiriesCount) * 100
@@ -168,6 +161,5 @@ export default function StatsView() {
                 </div>
             </div>
         </div >
->>>>>>> origin/style/yassine
     );
 }

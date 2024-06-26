@@ -170,42 +170,6 @@ export default function ListBooking() {
          
         </div> 
       </div> */}
-<<<<<<< HEAD
-            {dates().map((date) => (
-                <React.Fragment key={date}>
-                    <p className="pl-1 mt-6 text-neutral-900 text-lg font-semibold leading-6">
-                        {convertDate(date)}
-                    </p>
-                    {organizedByStartDate(state.dbBookings)[date].map((booking, index) => (
-                        <div
-                            className="flex mt-3 w-full justify-between"
-                            key={booking.bookingId}
-                            onClick={() => router.push(`/protected/booking/${booking.bookingId}`)}
-                        >
-                            <div className="pl-3">
-                                <p>
-                                    <span className="text-neutral-900 text-base font-medium leading-6">{booking.client.name}</span> <span className="text-slate-500 text-sm font-normal leading-5">{booking.status}</span>
-                                </p>
-                                <div>
-                                    <p className="text-slate-500 text-sm font-normal leading-5">{numOfDays(booking)} days, {booking.numberOfGuests} pax</p>
-                                    {booking.properties?.length > 0 && (
-                                        <p className="text-slate-500 text-sm font-normal leading-5">{booking.properties.join(", ")}</p>
-                                    )}
-
-                                    {booking.refferral && (
-                                        <p className="text-slate-500 text-sm font-normal leading-5">Referral: {booking.refferral}</p>
-                                    )}
-                                </div>
-                            </div>
-                            <div className="w-[84px] flex items-center">
-                                <div className="w-[74px] h-8 px-5 bg-gray-100 rounded-[19px] justify-center items-center inline-flex items-center">
-                                    <div className="w-11 label !font-medium left-[20px] top-[6px] text-center text-sky-500 text-base font-medium leading-normal">
-                                        {booking.bookingType}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-=======
       {dates().map((date) => (
         <React.Fragment key={date}>
           <p className="pl-1 mt-6 text-neutral-900 text-lg font-semibold leading-6">
@@ -243,7 +207,6 @@ export default function ListBooking() {
                 </div>
               </div>
             </div>
->>>>>>> origin/style/yassine
 
                     ))}
                 </React.Fragment>
