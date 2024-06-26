@@ -1,13 +1,14 @@
 "use client"
 import BarChart from "@/components/charts/BarChart";
 import { createClient } from "@/utils/supabase/client";
+import { max } from "lodash";
 import { useEffect, useState } from "react";
 
 interface InqueriesVsConfirmedProps {
     data?: any
 }
 
-const InqueriesVsConfirmed: React.FC<InqueriesVsConfirmedProps> = ({ data }) => {
+const InquiriesVsConfirmed: React.FC<InqueriesVsConfirmedProps> = ({ data }) => {
 
 
     useEffect(() => {
@@ -74,7 +75,7 @@ const InqueriesVsConfirmed: React.FC<InqueriesVsConfirmedProps> = ({ data }) => 
                     display: false
                 },
                 ticks: {
-                    stepSize: 5,
+                    maxTicksLimit: 5,
                 },
 
             },
@@ -83,8 +84,7 @@ const InqueriesVsConfirmed: React.FC<InqueriesVsConfirmedProps> = ({ data }) => 
                 ticks: {
                     min: 5,
                     maxTicksLimit: 7,
-                    callback: function (value, index, values) {
-                        // Hide the first tick
+                    callback: function (value: any, index: any, values: any) {
                         if (index === 0) {
                             return '';
                         }
@@ -128,4 +128,4 @@ const InqueriesVsConfirmed: React.FC<InqueriesVsConfirmedProps> = ({ data }) => 
         </div >
     );
 }
-export default InqueriesVsConfirmed;
+export default InquiriesVsConfirmed;

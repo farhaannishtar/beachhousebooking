@@ -57,23 +57,28 @@ const IncomeFromReservation: React.FC<IncomeFromReservationProps> = ({ data }) =
         responsive: true,
         maintainAspectRatio: false,
         scales: {
-
             y: {
                 stacked: true,
                 border: {
                     display: false
                 },
                 ticks: {
-                    stepSize: 5,
-                },
-
+                    min: 5,
+                    maxTicksLimit: 5,
+                    callback: function (value: any, index: any, values: any) {
+                        if (index === 0) {
+                            return '';
+                        }
+                        return `${value}k`;
+                    }
+                }
             },
-              x: {
+            x: {
                 stacked: true,
                 ticks: {
                     min: 5,
                     maxTicksLimit: 7,
-                    callback: function (value, index, values) {
+                    callback: function (value: any, index: any, values: any) {
                         // Hide the first tick
                         if (index === 0) {
                             return '';
@@ -81,7 +86,6 @@ const IncomeFromReservation: React.FC<IncomeFromReservationProps> = ({ data }) =
                         return value;
                     },
                 },
-
             }
         },
         plugins: {
