@@ -183,19 +183,19 @@ export default function ListBooking() {
             >
               {/* Booking details */}
               <div className="pl-3 flex flex-col gap-1">
-                <p>
-                  <span className="text-neutral-900 text-base font-medium leading-6">{booking.client.name}</span> <span className="text-slate-500 text-sm font-normal leading-5">{booking.status}</span>
-                </p>
-                <p className="text-slate-500 text-sm font-normal ">{numOfDays(booking)} days, {booking.numberOfGuests} pax</p>
+                <label>
+                  <span className="text-neutral-900 text-base font-medium leading-6">{booking.client.name}</span> <span className="text-slate-500 text-sm font-normal leading-5">{booking.status}</span>{booking?.starred && <span className='material-symbols-filled text-2xl'>star_rate</span>}
+                </label>
+                <label className="text-slate-500 text-sm font-normal ">{numOfDays(booking)} days, {booking.numberOfGuests} pax</label>
                 {booking.properties?.length > 0 && (
-                  <p className="text-slate-500 text-sm font-normal ">{booking.properties.join(", ")}</p>
+                  <label className="text-slate-500 text-sm font-normal ">{booking.properties.join(", ")}</label>
                 )}
-                <div className='flex items-center gap-4'>
-                  <h3 className='label'>Rs {booking.outstanding == 0 ? booking.paid : booking.outstanding}</h3>
-                  <div className={`${booking.outstanding == 0 ? ' bg-green-500/30' : 'bg-error/20'} px-3 py-1 rounded-xl`}>{booking.outstanding == 0 ? 'Paid' : 'Unpaid'}</div>
+                <div className='flex items-center gap-4 text-sm'>
+                  <label >Rs {booking.outstanding == 0 ? booking.paid : booking.outstanding}</label>
+                  <div className={`${booking.outstanding == 0 ? ' bg-green-500/30' : 'bg-error/20'} px-3 rounded-xl`}>{booking.outstanding == 0 ? 'Paid' : 'Unpaid'}</div>
                 </div>
                 {booking.refferral && (
-                  <p className="text-slate-500 text-sm font-normal ">Referral: {booking.refferral}</p>
+                  <label className="text-slate-500 text-sm font-normal ">Referral: {booking.refferral}</label>
                 )}
               </div>
               {/* Booking type */}

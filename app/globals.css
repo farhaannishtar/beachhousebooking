@@ -163,5 +163,6 @@ textarea:focus, input:focus{
 @media only screen and (max-width: 390px) {
   .container{
     width: 100%;
+    padding: 0 0.5rem !important;
   }
 }
