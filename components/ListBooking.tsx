@@ -183,12 +183,12 @@ export default function ListBooking() {
             >
               {/* Booking details */}
               <div className="pl-3 flex flex-col gap-1">
-                <p>
-                  <span className="text-neutral-900 text-base font-medium leading-6">{booking.client.name}</span> <span className="text-slate-500 text-sm font-normal leading-5">{booking.status}</span>
-                </p>
-                <p className="text-slate-500 text-sm font-normal ">{numOfDays(booking)} days, {booking.numberOfGuests} pax</p>
+                <label>
+                  <span className="text-neutral-900 text-base font-medium leading-6">{booking.client.name}</span> <span className="text-slate-500 text-sm font-normal leading-5">{booking.status}</span>{booking?.starred && <span className='material-symbols-filled text-2xl'>star_rate</span>}
+                </label>
+                <label className="text-slate-500 text-sm font-normal ">{numOfDays(booking)} days, {booking.numberOfGuests} pax</label>
                 {booking.properties?.length > 0 && (
-                  <p className="text-slate-500 text-sm font-normal ">{booking.properties.join(", ")}</p>
+                  <label className="text-slate-500 text-sm font-normal ">{booking.properties.join(", ")}</label>
                 )}
                 <div className='flex items-center gap-2'>
                   <p className="text-slate-500 text-sm font-normal ">₹{(booking.totalCost).toLocaleString()}</p>
