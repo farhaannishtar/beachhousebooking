@@ -52,10 +52,10 @@ export default function StatsView() {
             rawReservationsResponse: "",
             rawCheckinsResponse: ""
         });
-  return (
-    <div>
+    return (
+        <div>
         Hello {formState.rawReservationsResponse}
         World {formState.rawCheckinsResponse}
-    </div>
-  );
+        </div>
+    );
 }

@@ -8,49 +8,49 @@ import { fetchUser, verifyAndGetPayload } from "@/utils/lib/auth";
 
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
-  console.log('Get request')
-  return new NextResponse(JSON.stringify({message: "Hello"}), {
-    status: 200,
-  });
+    console.log('Get request')
+    return new NextResponse(JSON.stringify({message: "Hello"}), {
+        status: 200,
+    });
 }
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
-  console.log('Post request')
+    console.log('Post request')
     const payload = verifyAndGetPayload(request)
     if (payload instanceof NextResponse) {
-      return payload as NextResponse;
+        return payload as NextResponse;
     }
     let booking: BookingForm = await request.json()
     let user = await fetchUser(payload.sub)
     let bookingId = await mutateBookingState(booking, user)
     try {
-      return new NextResponse(JSON.stringify({bookingId: bookingId}), {
-        status: 200,
-      });
+        return new NextResponse(JSON.stringify({bookingId: bookingId}), {
+            status: 200,
+        });
     } catch (error) {
-      return new NextResponse(JSON.stringify({error: "Error creating booking"}), {
-        status: 500,
-      });
+        return new NextResponse(JSON.stringify({error: "Error creating booking"}), {
+            status: 500,
+        });
     }
 }
 
 
 export async function DELETE(request: NextRequest): Promise<NextResponse> {
-  console.log('Delete request')
-  const payload = verifyAndGetPayload(request)
-  if (payload instanceof NextResponse) {
-    return payload as NextResponse;
-  }
-  let {bookingId} = await request.json()
-  console.log('Booking id: ', bookingId)
-  await deleteBooking(bookingId)
-  try {
-    return new NextResponse(JSON.stringify({bookingId: bookingId}), {
-      status: 200,
-    });
-  } catch (error) {
-    return new NextResponse(JSON.stringify({error: "Error deleting booking"}), {
-      status: 500,
-    });
-  }
+    console.log('Delete request')
+    const payload = verifyAndGetPayload(request)
+    if (payload instanceof NextResponse) {
+        return payload as NextResponse;
+    }
+    let {bookingId} = await request.json()
+    console.log('Booking id: ', bookingId)
+    await deleteBooking(bookingId)
+    try {
+        return new NextResponse(JSON.stringify({bookingId: bookingId}), {
+            status: 200,
+        });
+    } catch (error) {
+        return new NextResponse(JSON.stringify({error: "Error deleting booking"}), {
+            status: 500,
+        });
+    }
 }

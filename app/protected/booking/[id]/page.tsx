@@ -4,9 +4,9 @@ import { BookingForm } from '@/utils/lib/bookingType';
 
 export default async function Booking({params}: {params: {id: string}}) {
 
-  return (
-    <div className='h-full flex items-start justify-center mt-4 w-full'>
-      <BookingFormComponent bookingId={parseInt(params.id)} />
-    </div>
-  );
+    return (
+        <div className='h-full flex items-start justify-center mt-4 w-full'>
+            <BookingFormComponent bookingId={parseInt(params.id)} />
+        </div>
+    );
 }

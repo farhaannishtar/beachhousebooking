@@ -5,9 +5,9 @@ export default async function Booking() {
 
 
 
-  return (
-    <div className='h-full  w-full'>
-      <ListLogs />
-    </div>
-  );
+    return (
+        <div className='h-full  w-full'>
+            <ListLogs />
+        </div>
+    );
 }

@@ -4,9 +4,9 @@ export default async function Booking() {
 
 
 
-  return (
-    <div className='h-full  w-full'>
-      <StatsView />
-    </div>
-  );
+    return (
+        <div className='h-full  w-full'>
+            <StatsView />
+        </div>
+    );
 }

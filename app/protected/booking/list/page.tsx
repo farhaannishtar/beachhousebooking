@@ -6,9 +6,9 @@ export default async function Booking() {
 
 
 
-  return (
-    <div className='h-full flex items-start justify-center  w-full'>
-      <BookingsListComponent  />
-    </div>
-  );
+    return (
+        <div className='h-full flex items-start justify-center  w-full'>
+            <BookingsListComponent  />
+        </div>
+    );
 }
