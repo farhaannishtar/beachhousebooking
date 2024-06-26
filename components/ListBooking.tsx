@@ -190,15 +190,12 @@ export default function ListBooking() {
                 {booking.properties?.length > 0 && (
                   <label className="text-slate-500 text-sm font-normal ">{booking.properties.join(", ")}</label>
                 )}
-                <div className='flex items-center gap-2'>
-                  <p className="text-slate-500 text-sm font-normal ">₹{(booking.totalCost).toLocaleString()}</p>
-                  <p className={`text-slate-500 text-sm font-normal ${booking.outstanding == 0 ? ' bg-green-500/30' : 'bg-error/20'} px-3 py-[1px] rounded-xl`}>{booking.outstanding == 0 ? 'Paid' : 'Unpaid'}</p>
+                <div className='flex items-center gap-4 text-sm'>
+                  <label >Rs {booking.outstanding == 0 ? booking.paid : booking.outstanding}</label>
+                  <div className={`${booking.outstanding == 0 ? ' bg-green-500/30' : 'bg-error/20'} px-3 rounded-xl`}>{booking.outstanding == 0 ? 'Paid' : 'Unpaid'}</div>
                 </div>
-                {booking.refferral && booking.refferral != "Other" && (
-                  <p className="text-slate-500 text-sm font-normal ">Referral: {booking.refferral}</p>
-                )}
-                {booking.refferral && booking.refferral == "Other" && (
-                  <p className="text-slate-500 text-sm font-normal ">Referral: {booking.otherRefferal}</p>
+                {booking.refferral && (
+                  <label className="text-slate-500 text-sm font-normal ">Referral: {booking.refferral}</label>
                 )}
               </div>
               {/* Booking type */}

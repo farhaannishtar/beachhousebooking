@@ -589,7 +589,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                                             Costs
                                         </p>
                                         <div className='cost-list flex flex-col gap-4'>
-                                            {formState.form.costs?.map((cost, index) => (
+                                            {formState.form.costs && formState.form.costs.map((cost, index) => (
                                                 <div className='flex items-center gap-4 ' key={index}>
                                                     <BaseInput type="text"
                                                         name="name"
