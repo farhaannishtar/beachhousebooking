@@ -133,7 +133,12 @@ textarea:focus, input:focus{
   animation: prixClipFix 2s linear infinite, rotate 0.5s linear infinite reverse;
   inset: 3px;
 }
-
+.rs-picker-popup{
+  z-index: 9999 !important;
+}
+.filterDatePicker .rs-stack-item{
+width: 100% !important;
+}
 @keyframes rotate {
   0% {
     transform: rotate(0deg);

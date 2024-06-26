@@ -1,14 +1,15 @@
 import { CreateBookingState } from "./BookingForm";
 import PropertyBadge from "./PropertyBadge";
 import { Event, Property } from "@/utils/lib/bookingType";
-
+import { ListLogsState } from "@/utils/lib/LogsType";
 interface PropertiesProps {
   setFormState?: React.Dispatch<React.SetStateAction<CreateBookingState>> | undefined
   setEventState?: React.Dispatch<React.SetStateAction<Event>> | undefined
+  setLogListState?: React.Dispatch<React.SetStateAction<ListLogsState>> | undefined
   properties: Property[];
 }
 
-const Properties: React.FC<PropertiesProps> = ({ setFormState, setEventState, properties }) => {
+const Properties: React.FC<PropertiesProps> = ({ setLogListState, setFormState, setEventState, properties }) => {
   const handlePropertyChange = (property: Property) => {
     if (setFormState) {
       setFormState((prevState: CreateBookingState) => {
@@ -34,14 +35,33 @@ const Properties: React.FC<PropertiesProps> = ({ setFormState, setEventState, pr
       setEventState((prevEvent) => {
         let updatedValues = [...prevEvent.properties];
         if (updatedValues.includes(property)) {
-            updatedValues = updatedValues.filter((item) => item !== property);
+          updatedValues = updatedValues.filter((item) => item !== property);
         } else {
-            updatedValues.push(property);
+          updatedValues.push(property);
         }
         return {
-            ...prevEvent,
-            properties: updatedValues
+          ...prevEvent,
+          properties: updatedValues
         };
+      })
+    }
+    if (setLogListState) {
+      setLogListState((prevEvent) => {
+        let updatedValues = [...prevEvent?.filter?.properties];
+        if (updatedValues.includes(property)) {
+          updatedValues = updatedValues.filter((item) => item !== property);
+        } else {
+          updatedValues.push(property);
+        }
+        return {
+          ...prevEvent,
+          filter: {
+            ...prevEvent.filter,
+            properties: updatedValues
+          }
+
+        };
+
       })
     }
   };
