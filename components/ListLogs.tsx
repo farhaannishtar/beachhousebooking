@@ -279,7 +279,9 @@ export default function ListLogs() {
           {/* filters */}
           <label className='subheading'>Filters</label>
           <DateTimePickerInput label="Pick Date" name="updatedTime" onChange={handleDateChange} value={state.filter.updatedTime} className='filterDatePicker' />
+          {/* Referrals */}
 
+          <Properties properties={state.filter.properties ?? []} setLogListState={setState} />
           {/* Booking Types */}
           <label className='subheading'>Booking Types</label>
           <div className='flex items-center flex-wrap gap-4' >
