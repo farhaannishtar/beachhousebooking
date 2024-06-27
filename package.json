@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "net": "^1.0.2",
-    "next-pwa": "^5.6.0"
-  }
-}
