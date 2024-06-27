@@ -1,6 +1,6 @@
 "use client";
 
-import { BookingDB, Property, convertPropertiesForDb, numOfDays, organizedByUpdateDate } from '@/utils/lib/bookingType';
+import { BookingDB, Property, convertPropertiesForDb, numOfDays, organizedByStartDate } from '@/utils/lib/bookingType';
 import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client';
@@ -10,7 +10,7 @@ import SearchInput from './ui/SearchInput';
 //   bookingsFromParent: BookingDB[];
 // }
 
-interface ListLogsState {
+export interface ListLogsState {
   searchText: string | null;
   filter: {
     status: "Inquiry" | "Quotation" | "Confirmed" | null;
@@ -149,17 +149,12 @@ export default function ListLogs() {
   };
 
   const dates = (): string[] => {
-    return Object.keys(organizedByUpdateDate(state.dbBookings)).sort((a, b) => {
+    return Object.keys(organizedByStartDate(state.dbBookings)).sort((a, b) => {
       if (a == "Invalid Date") return 1
       if (b == "Invalid Date") return -1
       return new Date(a).getTime() - new Date(b).getTime()
     })
   }
-
-  const convertDate = (date: string) => {
-    if (new Date(date).toDateString() === new Date().toDateString()) {
-      return "Today"
-    }
 
     const convertDate = (date: string) => {
         if (new Date(date).toDateString() === new Date().toDateString()) {
@@ -200,7 +195,8 @@ export default function ListLogs() {
             }}
           >Logout</button>
 
-        </div> */}
+        </div> 
+        */}
         <span className=" material-symbols-outlined cursor-pointer hover:text-selectedButton" onClick={() => router.push('/protected/booking/create')}>add_circle</span>
       </div>
       {/* Top Nav */}
@@ -233,7 +229,7 @@ export default function ListLogs() {
           <p className="pl-1 mt-6 text-neutral-900 text-lg font-semibold leading-6">
             {convertDate(date)}
           </p>
-          {organizedByUpdateDate(state.dbBookings)[date].map((booking, index) => (
+          {organizedByStartDate(state.dbBookings)[date].map((booking, index) => (
             <div
               className="flex mt-3 w-full justify-between"
               key={booking.bookingId}
@@ -276,12 +272,6 @@ export default function ListLogs() {
           ))}
         </React.Fragment>
       ))}
-
-
-                    ))}
-                </React.Fragment>
-            ))}
-
 
         </div>
     );
