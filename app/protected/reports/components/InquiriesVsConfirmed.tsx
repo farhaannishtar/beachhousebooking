@@ -4,11 +4,11 @@ import { createClient } from "@/utils/supabase/client";
 import { max } from "lodash";
 import { useEffect, useState } from "react";
 
-interface InqueriesVsConfirmedProps {
+interface InquiriesVsConfirmedProps {
     data?: any
 }
 
-const InquiriesVsConfirmed: React.FC<InqueriesVsConfirmedProps> = ({ data }) => {
+const InquiriesVsConfirmed: React.FC<InquiriesVsConfirmedProps> = ({ data }) => {
 
 
     useEffect(() => {
@@ -31,7 +31,7 @@ const InquiriesVsConfirmed: React.FC<InqueriesVsConfirmedProps> = ({ data }) => 
                 {
 
                     backgroundColor: '#F0F2F5',
-                    label: 'Inqueries',
+                    label: 'Inquiries',
                     borderColor: '#757575',
                     borderWidth: {
                         top: 2,
@@ -52,7 +52,7 @@ const InquiriesVsConfirmed: React.FC<InqueriesVsConfirmedProps> = ({ data }) => 
         datasets: [
             {
                 backgroundColor: '#F0F2F5',
-                label: 'Inqueries',
+                label: 'Inquiries',
                 borderColor: '#757575',
                 borderWidth: {
                     top: 2,
