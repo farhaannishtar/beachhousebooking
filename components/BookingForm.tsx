@@ -643,9 +643,9 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                                                     <div className='flex flex-wrap items-center gap-2'>
                                                         <DateTimePickerInput label="Date"
                                                             name="dateTime"
-                                                            value={printInIndianTime(payment.dateTime)}
-                                                            onChange={(e) => {
-                                                                handlePaymentChange('dateTime', e, index)
+                                                            value={payment.dateTime}
+                                                            onChange={(name, newDateTime) => {
+                                                                handlePaymentChange(name, newDateTime!, index)
                                                             }}
                                                         />
                                                         <div className='flex items-center gap-2 w-full'>
