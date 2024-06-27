@@ -3,7 +3,7 @@ import { useState } from "react";
 interface BaseSelectProps {
 
     value: string | number;
-    onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    onChange?: (value: string) => void;
     placeholder?: string;
     type?: string;
     className?: string;
@@ -29,7 +29,7 @@ const BaseSelect: React.FC<BaseSelectProps> = ({ className = '', type = 'text', 
                     data.map((d, i) => {
                         return <h3 key={i} onClick={() => {
                             if (onChange) {
-                                onChange({ target: { value: d.value, name: name } });
+                                onChange(d.value);
                                 setPopUpOpened(!popupOpened)
                             }
                         }} className="!leading-none py-3 px-4 first-of-type:rounded-t-lg last-of-type:rounded-b-lg hover:bg-typo_light-100 text-typo_dark-300">{d.label}</h3>

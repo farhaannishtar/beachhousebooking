@@ -10,10 +10,11 @@ interface DateTimePickerInputProps {
   onChange?: (name: string, value: string | null) => void;
   name?: string;
   value?: string | null;
-  className?: string
+  className?: string;
+  cleanable?: boolean;
 }
 
-export default function DateTimePickerInput({ label, onChange, name, value, className }: DateTimePickerInputProps) {
+export default function DateTimePickerInput({ label, onChange, name, value, className, cleanable }: DateTimePickerInputProps) {
   const [date, setDate] = useState<Date | null>(null);
   if (value && date === null) {
     setDate(new Date(value))
@@ -43,7 +44,7 @@ export default function DateTimePickerInput({ label, onChange, name, value, clas
           setDate(value)
           onChange!(name!, value ? value.toISOString() : null)
         }}
-        cleanable={false}
+        cleanable={cleanable ? true : false}
         placement={label === "End Date" ? "bottomEnd" : "bottomStart"}
         className={`${styles.customDatePicker} ${styles.customDatePickerInput} ${styles.customDatePickerPlaceholderText}  h-14 `}
       />

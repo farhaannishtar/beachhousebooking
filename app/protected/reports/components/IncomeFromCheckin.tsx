@@ -41,7 +41,7 @@ const IncomeFromCheckin: React.FC<IncomeFromCheckinProps> = ({ data }) => {
         datasets: [
             {
                 backgroundColor: '#F0F2F5',
-                label: 'Inqueries',
+                label: 'Inquiries',
                 borderColor: '#757575',
                 borderWidth: {
                     top: 2,
