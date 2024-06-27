@@ -99,7 +99,9 @@ export function organizedByStartDate(bookings: BookingDB[]): { [key: string]: Bo
     let organizedBookings: { [key: string]: BookingDB[] } = {}
     
     for (let booking of bookings) {
-        let date = new Date(booking.startDateTime).toLocaleDateString()
+        let date = new Date(booking.startDateTime).toLocaleDateString("en-IN", {
+            timeZone: "Asia/Kolkata"
+        });
         if (organizedBookings[date]) {
             organizedBookings[date].push(booking)
         } else {
@@ -109,11 +111,15 @@ export function organizedByStartDate(bookings: BookingDB[]): { [key: string]: Bo
     return organizedBookings
 }
 
-export function organizedByUpdateDate(bookings: BookingDB[]): { [key: string]: BookingDB[] } {
+export function organizedByCreatedDate(bookings: BookingDB[]): { [key: string]: BookingDB[] } {
     let organizedBookings: { [key: string]: BookingDB[] } = {}
     
     for (let booking of bookings) {
-        let date = new Date(booking.updatedDateTime).toLocaleDateString()
+        // date in indian format
+        let date = new Date(booking.createdDateTime).toLocaleDateString("en-IN", {
+            timeZone: "Asia/Kolkata"
+        });
+
         if (organizedBookings[date]) {
             organizedBookings[date].push(booking)
         } else {
@@ -122,6 +128,44 @@ export function organizedByUpdateDate(bookings: BookingDB[]): { [key: string]: B
     }
     return organizedBookings
 }
+
+export function printInIndianTime(utcDateTimeString: string | undefined, onlyTime: boolean = false) {
+    if (!utcDateTimeString) return "";
+    const utcDate = new Date(utcDateTimeString!);
+    const options: Intl.DateTimeFormatOptions = {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true,
+        timeZone: 'Asia/Kolkata'
+    };
+    let ret = new Intl.DateTimeFormat('en-US', options).format(utcDate);
+    if (onlyTime) {
+        ret = ret.split(',')[1];
+        let ampm = ret.split(' ')[2];
+        ret = ret.split(':').slice(0, 2).join(':')
+        ret = ret + ' ' + ampm
+    } 
+    return ret
+}
+
+export function convertDateToIndianDate({date, subtractDays}: {date?: Date | undefined, subtractDays?: number | undefined}) {
+    let indianDate = new Date()
+    if (date) {
+      indianDate = new Date(date)
+    }
+    if (subtractDays) {
+      indianDate.setDate(indianDate.getDate() - subtractDays);
+    }
+    indianDate.setUTCHours(0, 0, 0, 0);
+    // set to midnight in indian time
+    indianDate.setHours(indianDate.getHours() - 5, indianDate.getMinutes() - 30, indianDate.getSeconds(), indianDate.getMilliseconds());
+    return indianDate.toISOString()
+  }
+
 
 
 export interface BookingDB extends BookingForm {

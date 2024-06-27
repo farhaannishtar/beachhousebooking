@@ -85,8 +85,7 @@ export default function StatsView() {
     const toggleFilterModal = () => {
         setFilterModalOpened(!filterModalOpened)
     }
-    const filterChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
+    const filterChange = ({name, value}: {name: string, value: string | null}) => {
         setFormState((prevState) => ({
             ...prevState,
             filter: { ...prevState.filter, [name]: value }
@@ -202,19 +201,21 @@ export default function StatsView() {
                 <div className='bg-white flex flex-col p-4 relative gap-4 z-20'>
                     {/* filters */}
                     <label className='subheading'>Filters</label>
-                    <BaseSelect value={formState.filter.month} data={[{ label: 'June', value: 'June' }, { label: 'July', value: 'July' }]} onChange={filterChange} name="month" />
+                    <BaseSelect value={formState.filter.month} data={[{ label: 'June', value: 'June' }, { label: 'July', value: 'July' }]} 
+                    onChange={(value) => filterChange({ name: 'month', value: value })}
+                    name="month" />
 
                     {/* Referrals */}
                     <label className='subheading'>Referrals</label>
                     <div className='flex items-center flex-wrap gap-4' >
-                        <div onClick={() => filterChange({ target: { name: 'referral', value: formState.filter.referral == 'Facebook' ? null : 'Facebook' } })} className={`badge badge-lg text-center w-44 ${formState.filter.referral == 'Facebook' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
+                        <div onClick={() => filterChange({ name: 'referral', value: formState.filter.referral == 'Facebook' ? null : 'Facebook' } )} className={`badge badge-lg text-center w-44 ${formState.filter.referral == 'Facebook' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
                             } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Facebook</div>
-                        <div onClick={() => filterChange({ target: { name: 'referral', value: formState.filter.referral == 'Google' ? null : 'Google' } })} className={`badge badge-lg text-center w-44 ${formState.filter.referral == 'Google' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
+                        <div onClick={() => filterChange({ name: 'referral', value: formState.filter.referral == 'Google' ? null : 'Google' })} className={`badge badge-lg text-center w-44 ${formState.filter.referral == 'Google' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
                             } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Google</div>
-                        <div onClick={() => filterChange({ target: { name: 'referral', value: formState.filter.referral == 'Instagram' ? null : 'Instagram' } })} className={`badge badge-lg text-center w-44 ${formState.filter.referral == 'Instagram' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
+                        <div onClick={() => filterChange({ name: 'referral', value: formState.filter.referral == 'Instagram' ? null : 'Instagram' })} className={`badge badge-lg text-center w-44 ${formState.filter.referral == 'Instagram' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
                             } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Instagram</div>
 
-                        <div onClick={() => filterChange({ target: { name: 'referral', value: formState.filter.referral == 'Other' ? null : 'Other' } })} className={`badge badge-lg text-center w-44 ${formState.filter.referral == 'Other' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
+                        <div onClick={() => filterChange({name: 'referral', value: formState.filter.referral == 'Other' ? null : 'Other' } )} className={`badge badge-lg text-center w-44 ${formState.filter.referral == 'Other' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
                             } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Other</div>
 
 
@@ -223,13 +224,13 @@ export default function StatsView() {
                     {/* Employees */}
                     <label className='subheading'>Employees</label>
                     <div className='flex items-center flex-wrap gap-4' >
-                        <div onClick={() => filterChange({ target: { name: 'employee', value: 'Nusrath' } })} className={`badge badge-lg text-center w-32 ${formState.filter.employee == 'Nusrath' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
+                        <div onClick={() => filterChange({name: 'employee', value: 'Nusrath' } )} className={`badge badge-lg text-center w-32 ${formState.filter.employee == 'Nusrath' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
                             } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Nusrath</div>
-                        <div onClick={() => filterChange({ target: { name: 'employee', value: 'Prabhu' } })} className={`badge badge-lg text-center w-32 ${formState.filter.employee == 'Prabhu' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
+                        <div onClick={() => filterChange({name: 'employee', value: 'Prabhu' } )} className={`badge badge-lg text-center w-32 ${formState.filter.employee == 'Prabhu' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
                             } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Prabhu</div>
-                        <div onClick={() => filterChange({ target: { name: 'employee', value: 'Yasmeen' } })} className={`badge badge-lg text-center w-32 ${formState.filter.employee == 'Yasmeen' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
+                        <div onClick={() => filterChange({name: 'employee', value: 'Yasmeen' })} className={`badge badge-lg text-center w-32 ${formState.filter.employee == 'Yasmeen' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
                             } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Yasmeen</div>
-                        <div onClick={() => filterChange({ target: { name: 'employee', value: 'Rafica' } })} className={`badge badge-lg text-center w-32 ${formState.filter.employee == 'Rafica' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
+                        <div onClick={() => filterChange({ name: 'employee', value: 'Rafica' } )} className={`badge badge-lg text-center w-32 ${formState.filter.employee == 'Rafica' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
                             } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Rafica</div>
                     </div>
                     {/* Apply filters */}
