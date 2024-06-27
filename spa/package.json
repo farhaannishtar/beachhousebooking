@@ -22,6 +22,8 @@
     "jsonwebtoken": "^9.0.2",
     "moment-timezone": "^0.5.45",
     "next": "latest",
+    "net": "^1.0.2",
+    "next-pwa": "^5.6.0",
     "pg": "^8.12.0",
     "postcss": "8.4.33",
     "react": "^18",

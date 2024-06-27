@@ -7,4 +7,5 @@ const CreateBookingPage = () => {
         </div>
     );
 }
+CreateBookingPage.useNoLayout = true;
 export default CreateBookingPage;
