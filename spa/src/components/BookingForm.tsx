@@ -2,8 +2,7 @@
 
 import * as yup from 'yup';
 import moment from 'moment-timezone';
-import { createBooking, deleteBooking } from '@/utils/serverCommunicator';
-import { Property, BookingForm, Event, defaultForm, BookingDB } from '@/utils/lib/bookingType';
+import { BookingForm, Event, defaultForm, BookingDB, printInIndianTime } from '@/utils/lib/bookingType';
 import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation'
 import CreateEventComponent from './CreateEventForm';
@@ -11,9 +10,10 @@ import StayFormComponent from './StayForm';
 import { EventStaySwitch } from './EventStaySwitch';
 import DateTimePickerInput from './DateTimePickerInput/DateTimePickerInput';
 import Properties from './Properties';
-import { supabase } from '@/utils/supabase/client';
 import BaseInput from './ui/BaseInput';
 import LoadingButton from './ui/LoadingButton';
+import { supabase } from '@/utils/supabase/client';
+import { createBooking, deleteBooking } from '@/utils/serverCommunicator';
 
 enum Page {
     BookingPage,
@@ -422,7 +422,19 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                                 </button>
                             </div>
                             <h1 className='text-lg font-bold leading-6 w-full text-center'>{bookingId ? formState.form.client.name : "Create Booking"}</h1>
-                            {bookingId && formState.pageToShow === Page.BookingPage && <span className={`${formState.form.starred ? 'material-symbols-filled ' : 'material-symbols-outlined'}  cursor-pointer text-2xl `} onClick={() => handleChange({ target: { name: 'starred', value: !formState.form.starred } })}>star_rate</span>}
+                            {bookingId && formState.pageToShow === Page.BookingPage && 
+                            <span className={`${formState.form.starred ? 'material-symbols-filled ' : 'material-symbols-outlined'}  cursor-pointer text-2xl `} 
+                                onClick={() => 
+                                    setFormState((prevState) => ({
+                                        ...prevState,
+                                        form: {
+                                            ...prevState.form,
+                                            starred: !prevState.form.starred
+                                        }
+                                    }))
+                                }>
+                                    star_rate
+                                </span>}
                         </div>
                         <div className='flex flex-col gap-y-4 mt-6 '>
                             {/* Name Input */}
@@ -545,9 +557,9 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                                 <div className='flex w-full'>
                                     <div className='w-1/2'>
                                     </div>
-                                    <div className="w-1/2">
-                                        <BaseInput type="text" name="otherRefferal" placeholder="Referral Name" value={formState.form.otherRefferal ?? ''} onChange={handleChange} />
-                                    </div>
+                                <div className="w-1/2">
+                                    <BaseInput type="text" name="otherRefferal" placeholder="Referral Name" value={formState.form.otherRefferal ?? ''} onChange={handleChange} />
+                                </div>
                                 </div>
                             )}
                             {formState.form.status != "Inquiry" && (
@@ -630,9 +642,9 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                                                     <div className='flex flex-wrap items-center gap-2'>
                                                         <DateTimePickerInput label="Date"
                                                             name="dateTime"
-                                                            value={convertToIndianTime(payment.dateTime)}
-                                                            onChange={(e) => {
-                                                                handlePaymentChange('dateTime', e, index)
+                                                            value={payment.dateTime}
+                                                            onChange={(name, newDateTime) => {
+                                                                handlePaymentChange(name, newDateTime!, index)
                                                             }}
                                                         />
                                                         <div className='flex items-center gap-2 w-full'>
@@ -689,36 +701,36 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                         <div className='my-4'>
 
                             <div className='flex items-center justify-between '>
-                                {formState.currentIndex != 0 && (
-                                    <button
-                                        className={`${formState.currentIndex !== 0 && 'text-selectedButton'} bg-transparent flex items-center justify-center`}
-                                        onClick={() => moveFormState("previous")}
-                                        disabled={formState.currentIndex === 0}
-                                        type='button'
-                                    >
-                                        <span className="material-symbols-outlined cursor-pointer">
-                                            arrow_back
-                                        </span>
-                                    </button>)}
+                            {formState.currentIndex != 0 && (
+                                <button
+                                    className={`${formState.currentIndex !== 0 && 'text-selectedButton'} bg-transparent flex items-center justify-center`}
+                                    onClick={() => moveFormState("previous")}
+                                    disabled={formState.currentIndex === 0}
+                                    type='button'
+                                >
+                                    <span className="material-symbols-outlined cursor-pointer">
+                                        arrow_back
+                                    </span>
+                                </button>)}
                                 {formState.currentIndex == 0 && (
-                                    <p></p>
-                                )}
-                                <div className='small-text'> <p>Created by <strong>{formState.bookingDB?.createdBy.name}</strong> on <strong>{convertToIndianTime(formState.bookingDB?.createdDateTime)}</strong></p>
-                                    <p>Updated by <strong>{formState.bookingDB?.updatedBy.name}</strong> on <strong>{convertToIndianTime(formState.bookingDB?.updatedDateTime)}</strong> </p></div>
+                                <p></p>
+                            )}
+                                <div className='small-text'> <p>Created by <strong>{formState.bookingDB?.createdBy.name}</strong> on <strong>{printInIndianTime(formState.bookingDB?.createdDateTime)}</strong></p>
+                                    <p>Updated by <strong>{formState.bookingDB?.updatedBy.name}</strong> on <strong>{printInIndianTime(formState.bookingDB?.updatedDateTime)}</strong> </p></div>
                                 {formState.currentIndex != formState.allData.length - 1 && (
-                                    <button
-                                        className={`${formState.currentIndex !== formState.allData.length - 1 && 'text-selectedButton'} bg-transparent flex items-center justify-center`}
-                                        onClick={() => moveFormState("next")}
-                                        disabled={formState.currentIndex === formState.allData.length - 1}
-                                        type='button'
-                                    >
-                                        <span className="material-symbols-outlined cursor-pointer">
-                                            arrow_forward
-                                        </span>
-                                    </button>)}
+                                <button
+                                    className={`${formState.currentIndex !== formState.allData.length - 1 && 'text-selectedButton'} bg-transparent flex items-center justify-center`}
+                                    onClick={() => moveFormState("next")}
+                                    disabled={formState.currentIndex === formState.allData.length - 1}
+                                    type='button'
+                                >
+                                    <span className="material-symbols-outlined cursor-pointer">
+                                        arrow_forward
+                                    </span>
+                                </button>)}
                                 {formState.currentIndex == formState.allData.length - 1 && (
-                                    <p></p>
-                                )}
+                                <p></p>
+                            )}
                             </div>
 
                         </div>
@@ -749,30 +761,3 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
         </div >
     );
 };
-
-function convertToIndianTime(utcDateTimeString: string | undefined) {
-    if (!utcDateTimeString) return "";
-    const utcDate = new Date(utcDateTimeString!);
-
-    // Calculate IST time offset (UTC + 5:30)
-    const istOffset = 5.5 * 60 * 60 * 1000;
-
-    // Convert to IST
-    const istDate = new Date(utcDate.getTime() + istOffset);
-
-    // Format the date to include AM/PM
-    const options: Intl.DateTimeFormatOptions = {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: true,
-        timeZone: 'Asia/Kolkata'
-    };
-    return new Intl.DateTimeFormat('en-US', options).format(istDate);
-}
-
-// Get the formatted IST date string
-

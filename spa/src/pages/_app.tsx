@@ -22,7 +22,9 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 
 import type { AppProps } from 'next/app';
 import ProtectedLayout from 'src/layouts/ProtectedLayout';
-const DefaultLayout = ({ children }) => {
+import React, { ReactNode } from 'react';
+
+const DefaultLayout = ({ children }: { children: ReactNode }) => {
   return (
     <>
 
@@ -32,7 +34,7 @@ const DefaultLayout = ({ children }) => {
   );
 };
 function MyApp({ Component, pageProps }: AppProps) {
-  const useNoLayout = Component.noLayout || false;
+  const useNoLayout = (Component as { noLayout?: boolean }).noLayout || false;
   const Layout = !useNoLayout ? ProtectedLayout : DefaultLayout;
   return <main className={`${plusJakartaSans.className} min-h-screen flex flex-col items-center w-full container`}> <Layout><Component {...pageProps} /></Layout> </main>
 }

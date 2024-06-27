@@ -1,11 +1,11 @@
 import { CreateBookingState } from "./BookingForm";
+import { ListLogsState } from "./ListLogs";
 import PropertyBadge from "./PropertyBadge";
 import { Event, Property } from "@/utils/lib/bookingType";
-import { ListLogsState } from "@/utils/lib/LogsType";
 interface PropertiesProps {
   setFormState?: React.Dispatch<React.SetStateAction<CreateBookingState>> | undefined
   setEventState?: React.Dispatch<React.SetStateAction<Event>> | undefined
-  setLogListState?: React.Dispatch<React.SetStateAction<ListLogsState>> | undefined
+  setLogListState?:React.Dispatch<React.SetStateAction<ListLogsState>> | undefined
   properties: Property[];
 }
 
@@ -46,8 +46,8 @@ const Properties: React.FC<PropertiesProps> = ({ setLogListState, setFormState, 
       })
     }
     if (setLogListState) {
-      setLogListState((prevEvent) => {
-        let updatedValues = [...prevEvent?.filter?.properties];
+      setLogListState((prevEvent: ListLogsState) => {
+        let updatedValues = [...prevEvent?.filter?.properties ?? []];
         if (updatedValues.includes(property)) {
           updatedValues = updatedValues.filter((item) => item !== property);
         } else {

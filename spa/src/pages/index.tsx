@@ -13,7 +13,7 @@ const Home = () => {
       const { data: { user } } = await supabase.auth.getUser();
 
       if (user) {
-        router.push('/protected/booking');
+        router.push('/protected/logs');
       } else {
         router.push('/login');
       }

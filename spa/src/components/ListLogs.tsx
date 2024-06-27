@@ -1,24 +1,21 @@
-"use client";
-
-import { BookingDB, Property, convertPropertiesForDb, numOfDays, organizedByUpdateDate } from '@/utils/lib/bookingType';
+"use client"
+import { BookingDB, Property, convertDateToIndianDate, convertPropertiesForDb, printInIndianTime, numOfDays, organizedByCreatedDate } from '@/utils/lib/bookingType';
 import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { useRouter } from 'next/navigation'
+
 import SearchInput from './ui/SearchInput';
-import { supabase } from '@/utils/supabase/client';
 import LoadingButton from './ui/LoadingButton';
 import DateTimePickerInput from './DateTimePickerInput/DateTimePickerInput';
 import Properties from './Properties';
+import { supabase } from '@/utils/supabase/client';
 
-// interface BookingProps {
-//   bookingsFromParent: BookingDB[];
-// }
 
-interface ListLogsState {
+export interface ListLogsState {
   searchText: string | null;
   filter: {
     status: "Inquiry" | "Quotation" | "Confirmed" | null;
-    updatedTime: Date | string | null;
-    properties: Property[] | null;
+    createdTime: string | null;
+    properties: Property[];
     starred: boolean | null;
     paymentPending: boolean | null;
     createdBy: "Nusrat" | "Prabhu" | "Yasmeen" | "Rafica" | null
@@ -28,10 +25,9 @@ interface ListLogsState {
 }
 
 let lastScrollToCeilingTime = Date.now();
+let lastNumOfDays = 1;
 
 export default function ListLogs() {
-
-  let lastNumOfDays = 1;
   let scrollLock = false;
   const [lastScrollY, setLastScrollY] = useState(0);
 
@@ -45,7 +41,7 @@ export default function ListLogs() {
       if (Date.now() - lastScrollToCeilingTime < 2000) {
         console.log('User has hit ceiling twice in less than 1 second');
         scrollLock = true;
-        lastNumOfDays = lastNumOfDays + 3;
+        lastNumOfDays = lastNumOfDays + 1;
         fetchData()
         setTimeout(() => {
           scrollLock = false;
@@ -70,13 +66,14 @@ export default function ListLogs() {
   }, [lastScrollY]);
 
   const router = useRouter();
+
   const [state, setState] = useState<ListLogsState>({
     searchText: null,
     date: null,
     dbBookings: [],
     filter: {
       status: null,
-      updatedTime: null,
+      createdTime: null,
       properties: [],
       starred: null,
       paymentPending: null,
@@ -88,15 +85,17 @@ export default function ListLogs() {
   async function fetchData() {
     setLoading(true)
     let bookingsData = supabase.from("bookings").select()
-
+    
     if (state.searchText) {
       bookingsData = bookingsData
         .or(`client_name.ilike.%${state.searchText}%,client_phone_number.ilike.%${state.searchText}%`)
-    } else if (state.filter.updatedTime || state.filter.status || state.filter.properties || state.filter.starred || state.filter.paymentPending || state.filter.createdBy) {
-      if (state.filter.updatedTime) {
-        bookingsData = bookingsData.gte('updated_at', new Date(state.filter.updatedTime).toISOString())
+    } else if (state.filter.createdTime || state.filter.status || state.filter.properties.length > 0 || state.filter.starred || state.filter.paymentPending || state.filter.createdBy) {
+
+      if (state.filter.createdTime) {
+        bookingsData = bookingsData.gte('created_at', convertDateToIndianDate({date: new Date(state.filter.createdTime)}))
       }
       if (state.filter.status) {
+
         bookingsData = bookingsData.eq('status', state.filter.status.toLocaleLowerCase())
       }
       if (state.filter.properties) {
@@ -109,31 +108,30 @@ export default function ListLogs() {
         bookingsData = bookingsData.gt('outstanding', 0)
       }
       if (state.filter.createdBy) {
-        bookingsData = bookingsData.eq('email', state.filter.createdBy)
+        bookingsData = bookingsData.eq('email', state.filter.createdBy).gte('updated_at', convertDateToIndianDate({subtractDays: lastNumOfDays}))
       }
     } else {
-      bookingsData = bookingsData.gte('updated_at', new Date(new Date().setDate(new Date().getDate() - lastNumOfDays)).toISOString())
+      bookingsData = bookingsData.gte('created_at', convertDateToIndianDate({subtractDays: lastNumOfDays}))
     }
 
-    bookingsData = bookingsData.order('updated_at', { ascending: true })
-    bookingsData
-      .then(({ data: bookingsData }) => {
-        let bookings: BookingDB[] = []
-        bookingsData?.forEach((booking) => {
-          const lastIndex = booking.json.length - 1
-          const lastBooking: BookingDB = booking.json[lastIndex]
-          bookings.push({
-            ...lastBooking,
-            bookingId: booking.id,
-          })
-        })
-        setState((prevState) => ({
-          ...prevState,
-          dbBookings: bookings,
-        }));
-        setLoading(false);
-        setFilterModalOpened(false)
+    bookingsData = bookingsData.order('created_at', { ascending: true })
+    let { data: result } = await bookingsData
+    let bookings: BookingDB[] = []
+    result?.forEach((booking: any) => {
+      const lastIndex = booking.json.length - 1
+      const lastBooking: BookingDB = booking.json[lastIndex]
+      bookings.push({
+        ...lastBooking,
+        bookingId: booking.id,
       })
+    })
+    setState((prevState) => ({
+      ...prevState,
+      dbBookings: bookings,
+    }));
+    setLoading(false);
+    setFilterModalOpened(false)
+
   };
 
 
@@ -155,7 +153,7 @@ export default function ListLogs() {
   };
 
   const dates = (): string[] => {
-    return Object.keys(organizedByUpdateDate(state.dbBookings)).sort((a, b) => {
+    return Object.keys(organizedByCreatedDate(state.dbBookings)).sort((a, b) => {
       if (a == "Invalid Date") return 1
       if (b == "Invalid Date") return -1
       return new Date(a).getTime() - new Date(b).getTime()
@@ -186,14 +184,15 @@ export default function ListLogs() {
   const showFilterModal = () => {
     setFilterModalOpened(!filterModalOpened)
   }
-  const filterChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
+  const filterChange = ({name, value}: {name: string, value: string | null | boolean}) => {
     setState((prevState) => ({
       ...prevState,
-      filter: { ...prevState.filter, [name]: value }
+      filter: { 
+        ...prevState.filter, 
+        [name]: prevState.filter[name as keyof typeof prevState.filter] == value ? null : value }
     }));
-
   }
+
   const handleDateChange = (name: string, value: string | null) => {
     setState((prevState) => ({
       ...prevState,
@@ -210,12 +209,13 @@ export default function ListLogs() {
       </div>
       {/* Top Nav */}
       <SearchInput value={state.searchText || undefined}
-        onChange={handleChangeSearch} onFilterClick={showFilterModal} />
+        onChange={handleChangeSearch} 
+        onFilterClick={showFilterModal} />
       <LoadingButton
         className=" border-[1px] border-selectedButton text-selectedButton my-4 w-full py-2 px-4 rounded-xl"
         onClick={
           () => {
-            lastNumOfDays = lastNumOfDays + 3;
+            lastNumOfDays = lastNumOfDays + 1;
             fetchData()
           }
         } >Load More</LoadingButton>
@@ -225,7 +225,7 @@ export default function ListLogs() {
           <p className="pl-1 mt-6 text-neutral-900 text-lg font-semibold leading-6">
             {convertDate(date)}
           </p>
-          {organizedByUpdateDate(state.dbBookings)[date].map((booking, index) => (
+          {organizedByCreatedDate(state.dbBookings)[date].map((booking, index) => (
             <div
               className="flex mt-3 w-full justify-between"
               key={booking.bookingId}
@@ -247,12 +247,14 @@ export default function ListLogs() {
                 {booking.refferral && (
                   <label className="text-slate-500 text-sm font-normal ">Referral: {booking.refferral}</label>
                 )}
-                <div className='flex items-center gap-4 text-sm'>
+                {booking.totalCost > 0 && (
+                  <div className='flex items-center gap-4 text-sm'>
                   <label >Rs {booking.outstanding == 0 ? booking.paid : booking.outstanding}</label>
                   <div className={`${booking.outstanding == 0 ? ' bg-green-500/30' : 'bg-error/20'} px-3 rounded-xl`}>{booking.outstanding == 0 ? 'Paid' : 'Unpaid'}</div>
                 </div>
+                )}
                 {booking.updatedBy.name && (
-                  <label className="text-slate-500 text-sm font-normal ">@{booking.createdBy.name}</label>
+                  <label className="text-slate-500 text-sm font-normal ">@{booking.createdBy.name} {printInIndianTime(booking.createdDateTime, true)}</label>
                 )}
 
               </div>
@@ -277,27 +279,27 @@ export default function ListLogs() {
         <div className='bg-white flex flex-col p-4 relative gap-4 z-20'>
           {/* filters */}
           <label className='subheading'>Filters</label>
-          <DateTimePickerInput label="Pick Date" name="updatedTime" onChange={handleDateChange} value={state.filter.updatedTime} className='filterDatePicker' />
+          <DateTimePickerInput label="Pick Date" name="updatedTime" onChange={handleDateChange} value={state.filter.createdTime} className='filterDatePicker' cleanable={true}/>
           {/* Referrals */}
 
           <Properties properties={state.filter.properties ?? []} setLogListState={setState} />
           {/* Booking Types */}
           <label className='subheading'>Booking Types</label>
           <div className='flex items-center flex-wrap gap-4' >
-            <div onClick={() => filterChange({ target: { name: 'status', value: 'Inquiry' } })} className={`badge badge-lg text-center w-32 ${state.filter.status == 'Inquiry' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
+            <div onClick={() => filterChange({ name: 'status', value: 'Inquiry' } )} className={`badge badge-lg text-center w-32 ${state.filter.status == 'Inquiry' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
               } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Inquiries</div>
-            <div onClick={() => filterChange({ target: { name: 'status', value: 'Quotation' } })} className={`badge badge-lg text-center w-32 ${state.filter.status == 'Quotation' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
+            <div onClick={() => filterChange({name: 'status', value: 'Quotation' } )} className={`badge badge-lg text-center w-32 ${state.filter.status == 'Quotation' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
               } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Quotations</div>
-            <div onClick={() => filterChange({ target: { name: 'status', value: 'Confirmed' } })} className={`badge badge-lg text-center w-32 ${state.filter.status == 'Confirmed' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
+            <div onClick={() => filterChange({ name: 'status', value: 'Confirmed' } )} className={`badge badge-lg text-center w-32 ${state.filter.status == 'Confirmed' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
               } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Confirmed</div>
 
           </div>
           {/* Other */}
           <label className='subheading'>Other</label>
           <div className='flex items-center flex-wrap gap-4' >
-            <div onClick={() => filterChange({ target: { name: 'paymentPending', value: !state.filter.paymentPending } })} className={`badge badge-lg text-center w-44 ${state.filter.paymentPending ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
+            <div onClick={() => filterChange({ name: 'paymentPending', value: !state.filter.paymentPending  })} className={`badge badge-lg text-center w-44 ${state.filter.paymentPending ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
               } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Payment Pending</div>
-            <div onClick={() => filterChange({ target: { name: 'starred', value: !state.filter.starred } })} className={`badge badge-lg text-center w-32 ${state.filter.starred ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
+            <div onClick={() => filterChange({ name: 'starred', value: !state.filter.starred  })} className={`badge badge-lg text-center w-32 ${state.filter.starred ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
               } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Starred</div>
 
 
@@ -305,13 +307,13 @@ export default function ListLogs() {
           {/* Employees */}
           <label className='subheading'>Employees</label>
           <div className='flex items-center flex-wrap gap-4' >
-            <div onClick={() => filterChange({ target: { name: 'createdBy', value: 'Nusrat' } })} className={`badge badge-lg text-center w-32 ${state.filter.createdBy == 'Nusrat' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
+            <div onClick={() => filterChange({ name: 'createdBy', value: 'Nusrat' } )} className={`badge badge-lg text-center w-32 ${state.filter.createdBy == 'Nusrat' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
               } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Nusrat</div>
-            <div onClick={() => filterChange({ target: { name: 'createdBy', value: 'Prabhu' } })} className={`badge badge-lg text-center w-32 ${state.filter.createdBy == 'Prabhu' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
+            <div onClick={() => filterChange({ name: 'createdBy', value: 'Prabhu' } )} className={`badge badge-lg text-center w-32 ${state.filter.createdBy == 'Prabhu' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
               } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Prabhu</div>
-            <div onClick={() => filterChange({ target: { name: 'createdBy', value: 'Yasmeen' } })} className={`badge badge-lg text-center w-32 ${state.filter.createdBy == 'Yasmeen' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
+            <div onClick={() => filterChange({ name: 'createdBy', value: 'Yasmeen' } )} className={`badge badge-lg text-center w-32 ${state.filter.createdBy == 'Yasmeen' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
               } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Yasmeen</div>
-            <div onClick={() => filterChange({ target: { name: 'createdBy', value: 'Rafica' } })} className={`badge badge-lg text-center w-32 ${state.filter.createdBy == 'Rafica' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
+            <div onClick={() => filterChange({ name: 'createdBy', value: 'Rafica' } )} className={`badge badge-lg text-center w-32 ${state.filter.createdBy == 'Rafica' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
               } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Rafica</div>
           </div>
           {/* Apply filters */}

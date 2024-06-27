@@ -52,6 +52,7 @@ export default function EventForm({ events, setEvents }: { events: Event[], setE
       <Accordion type="single" collapsible className="flex flex-col gap-y-5">
         {events.map((event, index) => (
           <AccordionItem
+            key={index} // Add key prop here
             value={`${index}`}
             className='border border-gray-300 rounded-lg shadow-md px-3'
           >
