@@ -3,8 +3,8 @@
 import { BookingDB, Property, convertPropertiesForDb, numOfDays, organizedByStartDate } from '@/utils/lib/bookingType';
 import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { useRouter } from 'next/navigation'
-import SearchInput from './ui/SearchInput';
 import { supabase } from '@/utils/supabase/client';
+import SearchInput from './ui/SearchInput';
 
 // interface BookingProps {
 //   bookingsFromParent: BookingDB[];
@@ -134,21 +134,7 @@ export default function ListBooking() {
       {/* Top Nav */}
       <div className='flex items-center h-[72px]' >
         <h1 className='text-lg font-bold leading-6 w-full text-center '>Bookings</h1>
-        {/* <div className='flex items-center'>
-          <button
-            className="btn btn-sm bg-selectedButton text-white"
-            onClick={() => router.push('/protected/booking/create')}
-          >+</button>
-          <button
-            className="btn btn-sm bg-selectedButton text-white"
-            onClick={() => {
-              const supabase = createClient();
-              supabase.auth.signOut();
-              router.push('/login')
-            }}
-          >Logout</button>
 
-        </div> */}
         <span className=" material-symbols-outlined cursor-pointer hover:text-selectedButton" onClick={() => router.push('/protected/booking/create')}>add_circle</span>
       </div>
       {/* Top Nav */}
@@ -179,21 +165,24 @@ export default function ListBooking() {
               key={booking.bookingId}
               onClick={() => router.push(`/protected/booking/${booking.bookingId}`)}
             >
-              <div className="pl-3">
-                <p>
-                  <span className="text-neutral-900 text-base font-medium leading-6">{booking.client.name}</span> <span className="text-slate-500 text-sm font-normal leading-5">{booking.status}</span>
-                </p>
-                <div>
-                  <p className="text-slate-500 text-sm font-normal leading-5">{numOfDays(booking)} days, {booking.numberOfGuests} pax</p>
-                  {booking.properties?.length > 0 && (
-                    <p className="text-slate-500 text-sm font-normal leading-5">{booking.properties.join(", ")}</p>
-                  )}
-
-                  {booking.refferral && (
-                    <p className="text-slate-500 text-sm font-normal leading-5">Referral: {booking.refferral}</p>
-                  )}
+              {/* Booking details */}
+              <div className="pl-3 flex flex-col gap-1">
+                <label>
+                  <span className="text-neutral-900 text-base font-medium leading-6">{booking.client.name}</span> <span className="text-slate-500 text-sm font-normal leading-5">{booking.status}</span>{booking?.starred && <span className='material-symbols-filled text-2xl'>star_rate</span>}
+                </label>
+                <label className="text-slate-500 text-sm font-normal ">{numOfDays(booking)} days, {booking.numberOfGuests} pax</label>
+                {booking.properties?.length > 0 && (
+                  <label className="text-slate-500 text-sm font-normal ">{booking.properties.join(", ")}</label>
+                )}
+                <div className='flex items-center gap-4 text-sm'>
+                  <label >Rs {booking.outstanding == 0 ? booking.paid : booking.outstanding}</label>
+                  <div className={`${booking.outstanding == 0 ? ' bg-green-500/30' : 'bg-error/20'} px-3 rounded-xl`}>{booking.outstanding == 0 ? 'Paid' : 'Unpaid'}</div>
                 </div>
+                {booking.refferral && (
+                  <label className="text-slate-500 text-sm font-normal ">Referral: {booking.refferral}</label>
+                )}
               </div>
+              {/* Booking type */}
               <div className="w-[84px] flex items-center">
                 <div className="w-[74px] h-8 px-5 bg-gray-100 rounded-[19px] justify-center items-center inline-flex items-center">
                   <div className="w-11 label !font-medium left-[20px] top-[6px] text-center text-sky-500 text-base font-medium leading-normal">

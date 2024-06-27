@@ -1,9 +1,11 @@
 import { supabase } from "@/utils/supabase/client";
 import { useRouter } from "next/router";
+import ProtectedLayout from "src/layouts/ProtectedLayout";
 
 const ProtectedPage = () => {
   const router = useRouter();
-    return (
+  return (
+    <ProtectedLayout>
       <div>
         <h1>Protected Page</h1>
         <p>This content is protected and only visible to authenticated users.</p>
@@ -13,11 +15,12 @@ const ProtectedPage = () => {
             supabase.auth.signOut();
             router.push("/");
           }}
-          >
+        >
           Log out</button>
       </div>
-    );
-  };
-  
-  export default ProtectedPage;
-  
+    </ProtectedLayout>
+
+  );
+};
+
+export default ProtectedPage;

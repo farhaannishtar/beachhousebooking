@@ -82,21 +82,15 @@
     --radius: 0.5rem;
   }
 }
+textarea:focus, input:focus{
+  outline: none !important;
+}
+
 .container{
   width: 390px;
   margin: auto;
   padding: 0 !important;
 }
-@media only screen and (max-width: 390px) {
-  .container{
-    width: 100%;
-  }
-}
-textarea:focus, input:focus{
-  outline: none !important;
-}
-
-
 .small-text{
   font-weight: 400;
   font-size: 0.75rem;
@@ -139,7 +133,12 @@ textarea:focus, input:focus{
   animation: prixClipFix 2s linear infinite, rotate 0.5s linear infinite reverse;
   inset: 3px;
 }
-
+.rs-picker-popup,.rs-picker-select-menu{
+  z-index: 9999 !important;
+}
+.filterDatePicker .rs-stack-item{
+width: 100% !important;
+}
 @keyframes rotate {
   0% {
     transform: rotate(0deg);
@@ -164,5 +163,11 @@ textarea:focus, input:focus{
   }
   100% {
     clip-path: polygon(50% 50%, 0 0, 100% 0, 100% 100%, 0 100%, 0 0);
+  }
+}
+@media only screen and (max-width: 390px) {
+  .container{
+    width: 100%;
+    padding: 0 0.5rem !important;
   }
 }

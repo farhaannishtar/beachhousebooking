@@ -10,15 +10,17 @@ interface DateTimePickerInputProps {
   onChange?: (name: string, value: string | null) => void;
   name?: string;
   value?: string | null;
+  className?: string;
+  cleanable?: boolean;
 }
 
-export default function DateTimePickerInput({ label, onChange, name, value }: DateTimePickerInputProps) {
+export default function DateTimePickerInput({ label, onChange, name, value, className, cleanable }: DateTimePickerInputProps) {
   const [date, setDate] = useState<Date | null>(null);
   if (value && date === null) {
     setDate(new Date(value))
   }
   return (
-    <Stack spacing={10} direction="column">
+    <Stack spacing={10} direction="column" className={`${className}`}>
       <DatePicker
         format="dd/MM/yy hh:mmaa"
         renderValue={value => {
@@ -42,9 +44,9 @@ export default function DateTimePickerInput({ label, onChange, name, value }: Da
           setDate(value)
           onChange!(name!, value ? value.toISOString() : null)
         }}
-        cleanable={false}
+        cleanable={cleanable ? true : false}
         placement={label === "End Date" ? "bottomEnd" : "bottomStart"}
-        className={`${styles.customDatePicker} ${styles.customDatePickerInput} ${styles.customDatePickerPlaceholderText} h-14`}
+        className={`${styles.customDatePicker} ${styles.customDatePickerInput} ${styles.customDatePickerPlaceholderText}  h-14 `}
       />
     </Stack>
   );

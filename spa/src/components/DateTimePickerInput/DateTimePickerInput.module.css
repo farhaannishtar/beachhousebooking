@@ -1,4 +1,7 @@
 /* Targeting the input box specifically within the customDatePicker scope */
+.rs-picker-popup {
+  z-index: 999!important;
+}
 .customDatePicker :global .rs-input-group {
   background-color: #F0F2F5; /* Example background color */
   color: #617A8A; /* Example font color */

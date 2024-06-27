@@ -1,16 +1,19 @@
+"use client";
+
 import * as yup from 'yup';
 import moment from 'moment-timezone';
+import { createBooking, deleteBooking } from '@/utils/serverCommunicator';
 import { Property, BookingForm, Event, defaultForm, BookingDB } from '@/utils/lib/bookingType';
 import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import CreateEventComponent from './CreateEventForm';
+import StayFormComponent from './StayForm';
 import { EventStaySwitch } from './EventStaySwitch';
 import DateTimePickerInput from './DateTimePickerInput/DateTimePickerInput';
 import Properties from './Properties';
+import { supabase } from '@/utils/supabase/client';
 import BaseInput from './ui/BaseInput';
 import LoadingButton from './ui/LoadingButton';
-import { supabase } from '@/utils/supabase/client';
-import { createBooking, deleteBooking } from '@/utils/serverCommunicator';
 
 enum Page {
     BookingPage,
@@ -386,6 +389,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
             form.bookingId = bookingId;
             const id = await createBooking(formState.form);
             if (!bookingId && id != null && id != "null") {
+                // Assuming `id` is the success condition
                 router.push(`/protected/booking/${id}`);
             }
         }
@@ -406,11 +410,11 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
             <form onSubmit={handleSubmit}>
                 {formState.pageToShow === Page.BookingPage && (
                     <div>
-                        <div className='flex items-center pt-2'>
-                            <div className='flex items-center pl-3'>
+                        <div className='flex items-center pt-2 justify-between'>
+                            <div className='flex items-center '>
                                 <button
                                     type="button"
-                                    onClick={() => router.push('/protected/booking/logs')}
+                                    onClick={() => router.back()}
                                 >
                                     <svg width="18" height="16" viewBox="0 0 18 16" fill="#fff" xmlns="http://www.w3.org/2000/svg">
                                         <path id="Vector - 0" fillRule="evenodd" clipRule="evenodd" d="M18 8C18 8.41421 17.6642 8.75 17.25 8.75H2.56031L8.03063 14.2194C8.32368 14.5124 8.32368 14.9876 8.03063 15.2806C7.73757 15.5737 7.26243 15.5737 6.96937 15.2806L0.219375 8.53063C0.0785422 8.38995 -0.000590086 8.19906 -0.000590086 8C-0.000590086 7.80094 0.0785422 7.61005 0.219375 7.46937L6.96937 0.719375C7.26243 0.426319 7.73757 0.426319 8.03063 0.719375C8.32368 1.01243 8.32368 1.48757 8.03063 1.78062L2.56031 7.25H17.25C17.6642 7.25 18 7.58579 18 8Z" fill="#0D141C" />
@@ -418,8 +422,9 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                                 </button>
                             </div>
                             <h1 className='text-lg font-bold leading-6 w-full text-center'>{bookingId ? formState.form.client.name : "Create Booking"}</h1>
+                            {bookingId && formState.pageToShow === Page.BookingPage && <span className={`${formState.form.starred ? 'material-symbols-filled ' : 'material-symbols-outlined'}  cursor-pointer text-2xl `} onClick={() => handleChange({ target: { name: 'starred', value: !formState.form.starred } })}>star_rate</span>}
                         </div>
-                        <div className='flex flex-col gap-y-4 mt-6 mx-3'>
+                        <div className='flex flex-col gap-y-4 mt-6 '>
                             {/* Name Input */}
                             <div className='w-full'>
                                 <BaseInput className="flex-1 h-14" type="text" placeholder="Name"
@@ -531,15 +536,18 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                                         <option value="Google">Google</option>
                                         <option value="Facebook">Facebook</option>
                                         <option value="Instagram">Instagram</option>
-                                        <option value="Influencer">Influencer</option>
                                         <option value="Other">Other</option>
                                     </select>
                                 </label>
                             </div>
 
                             {formState.form.refferral == "Other" && (
-                                <div>
-                                    <BaseInput type="text" name="otherRefferal" placeholder="Other Referral" value={formState.form.otherRefferal ?? ''} onChange={handleChange} />
+                                <div className='flex w-full'>
+                                    <div className='w-1/2'>
+                                    </div>
+                                    <div className="w-1/2">
+                                        <BaseInput type="text" name="otherRefferal" placeholder="Referral Name" value={formState.form.otherRefferal ?? ''} onChange={handleChange} />
+                                    </div>
                                 </div>
                             )}
                             {formState.form.status != "Inquiry" && (
@@ -580,7 +588,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                                             Costs
                                         </p>
                                         <div className='cost-list flex flex-col gap-4'>
-                                            {formState.form.costs.map((cost, index) => (
+                                            {formState.form.costs && formState.form.costs.map((cost, index) => (
                                                 <div className='flex items-center gap-4 ' key={index}>
                                                     <BaseInput type="text"
                                                         name="name"
@@ -622,7 +630,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                                                     <div className='flex flex-wrap items-center gap-2'>
                                                         <DateTimePickerInput label="Date"
                                                             name="dateTime"
-                                                            value={payment.dateTime}
+                                                            value={convertToIndianTime(payment.dateTime)}
                                                             onChange={(e) => {
                                                                 handlePaymentChange('dateTime', e, index)
                                                             }}
@@ -681,28 +689,36 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                         <div className='my-4'>
 
                             <div className='flex items-center justify-between '>
-                                <button
-                                    className={`${formState.currentIndex !== 0 && 'text-selectedButton'} bg-transparent flex items-center justify-center`}
-                                    onClick={() => moveFormState("previous")}
-                                    disabled={formState.currentIndex === 0}
-                                    type='button'
-                                >
-                                    <span className="material-symbols-outlined cursor-pointer">
-                                        arrow_back
-                                    </span>
-                                </button>
+                                {formState.currentIndex != 0 && (
+                                    <button
+                                        className={`${formState.currentIndex !== 0 && 'text-selectedButton'} bg-transparent flex items-center justify-center`}
+                                        onClick={() => moveFormState("previous")}
+                                        disabled={formState.currentIndex === 0}
+                                        type='button'
+                                    >
+                                        <span className="material-symbols-outlined cursor-pointer">
+                                            arrow_back
+                                        </span>
+                                    </button>)}
+                                {formState.currentIndex == 0 && (
+                                    <p></p>
+                                )}
                                 <div className='small-text'> <p>Created by <strong>{formState.bookingDB?.createdBy.name}</strong> on <strong>{convertToIndianTime(formState.bookingDB?.createdDateTime)}</strong></p>
                                     <p>Updated by <strong>{formState.bookingDB?.updatedBy.name}</strong> on <strong>{convertToIndianTime(formState.bookingDB?.updatedDateTime)}</strong> </p></div>
-                                <button
-                                    className={`${formState.currentIndex !== formState.allData.length - 1 && 'text-selectedButton'} bg-transparent flex items-center justify-center`}
-                                    onClick={() => moveFormState("next")}
-                                    disabled={formState.currentIndex === formState.allData.length - 1}
-                                    type='button'
-                                >
-                                    <span className="material-symbols-outlined cursor-pointer">
-                                        arrow_forward
-                                    </span>
-                                </button>
+                                {formState.currentIndex != formState.allData.length - 1 && (
+                                    <button
+                                        className={`${formState.currentIndex !== formState.allData.length - 1 && 'text-selectedButton'} bg-transparent flex items-center justify-center`}
+                                        onClick={() => moveFormState("next")}
+                                        disabled={formState.currentIndex === formState.allData.length - 1}
+                                        type='button'
+                                    >
+                                        <span className="material-symbols-outlined cursor-pointer">
+                                            arrow_forward
+                                        </span>
+                                    </button>)}
+                                {formState.currentIndex == formState.allData.length - 1 && (
+                                    <p></p>
+                                )}
                             </div>
 
                         </div>
@@ -759,5 +775,4 @@ function convertToIndianTime(utcDateTimeString: string | undefined) {
 }
 
 // Get the formatted IST date string
-
 

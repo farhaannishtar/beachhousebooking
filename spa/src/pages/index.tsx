@@ -13,7 +13,7 @@ const Home = () => {
       const { data: { user } } = await supabase.auth.getUser();
 
       if (user) {
-        router.push('/protected');
+        router.push('/protected/booking');
       } else {
         router.push('/login');
       }
@@ -30,5 +30,6 @@ const Home = () => {
 
   return null;
 };
+Home.useNoLayout = true;
 
 export default Home;

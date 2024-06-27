@@ -1,5 +1,6 @@
+"use client";
 
-import React, { useState, ChangeEvent, FormEvent, useEffect } from 'react';
+import React, { useState, ChangeEvent, useEffect } from 'react';
 import { Event, Property } from '@/utils/lib/bookingType';
 import BaseInput from './ui/BaseInput';
 import DateTimePickerInput from './DateTimePickerInput/DateTimePickerInput';
