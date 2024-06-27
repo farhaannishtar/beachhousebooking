@@ -1,12 +1,9 @@
 "use client"
-import BarChart from "@/components/charts/BarChart";
 import InquiriesVsConfirmed from "./InquiriesVsConfirmed";
 import { useEffect, useState } from "react";
 import IncomeFromReservation from "./IncomeFromReservation";
-import DateTimePickerInput from "@/components/DateTimePickerInput/DateTimePickerInput";
 import LoadingButton from "@/components/ui/LoadingButton";
 import { useRouter } from 'next/navigation'
-import { SelectPicker, Stack } from "rsuite";
 import BaseSelect from "@/components/ui/BaseSelect";
 import { supabase } from "@/utils/supabase/client";
 import IncomeFromCheckin from "./IncomeFromCheckin";
@@ -82,12 +79,12 @@ export default function StatsView() {
     const toggleFilterModal = () => {
         setFilterModalOpened(!filterModalOpened)
     }
-    const filterChange = ({name, value}: {name: string, value: string | null}) => {
+    const filterChange = ({ name, value }: { name: string, value: string | null }) => {
         setFormState((prevState) => ({
             ...prevState,
-            filter: { 
-                ...prevState.filter, 
-                [name]: prevState.filter[name as keyof typeof prevState.filter] == value ? null : value 
+            filter: {
+                ...prevState.filter,
+                [name]: prevState.filter[name as keyof typeof prevState.filter] == value ? null : value
             }
         }));
 
@@ -99,31 +96,31 @@ export default function StatsView() {
         }));
     };
     return (
-        <div className='flex flex-col gap-6' >
+        <div className='flex flex-col gap-5' >
             <div className='flex items-center h-[72px]' >
                 <span className=" material-symbols-outlined cursor-pointer hover:text-selectedButton" onClick={() => router.back()}>arrow_back</span>
                 <h1 className='text-lg font-bold leading-6 w-full text-center '>Report for {formState.filter.month}</h1>
                 <span className="material-symbols-filled text-2xl cursor-pointer" onClick={() => toggleFilterModal()}>filter_alt</span>
             </div>
-            <div >
-                <h1 className="title my-4">Summary for {formState.filter.month}</h1>
-                <div className="flex flex-col  gap-4">
-                    <div className="flex gap-4">
-                        <div className="flex-1 rounded-xl h-28 bg-typo_light-100 flex flex-col justify-end py-2 gap-4 px-6">
+            <div className="flex flex-col gap-5">
+                <h1 className="title ">Summary for {formState.filter.month}</h1>
+                <div className="flex flex-col  gap-5">
+                    <div className="flex gap-5">
+                        <div className="flex-1 rounded-xl h-28 bg-typo_light-100 flex flex-col justify-end py-2 gap-5 px-6">
                             <label className="label !p-0 !font-medium">Inquiries</label>
                             <label className="title">{formState?.rawReservationsResponse?.monthly?.inquiriesCount}</label>
                         </div>
-                        <div className="flex-1 rounded-xl h-28 bg-typo_light-100 flex flex-col justify-end py-2 gap-4 px-6">
+                        <div className="flex-1 rounded-xl h-28 bg-typo_light-100 flex flex-col justify-end py-2 gap-5 px-6">
                             <label className="label !p-0 !font-medium">Confirmed</label>
                             <label className="title">{formState?.rawReservationsResponse?.monthly?.confirmedCount}</label>
                         </div>
                     </div>
-                    <div className="flex gap-4">
-                        <div className="flex-1 rounded-xl h-28 bg-typo_light-100 flex flex-col justify-end py-2 gap-4 px-6">
+                    <div className="flex gap-5">
+                        <div className="flex-1 rounded-xl h-28 bg-typo_light-100 flex flex-col justify-end py-2 gap-5 px-6">
                             <label className="label !p-0 !font-medium">Conversion Rate</label>
                             <label className="title">{conversionRateForMonth ? conversionRateForMonth.toFixed(1) + '%' : 0}</label>
                         </div>
-                        <div className="flex-1 rounded-xl h-28 bg-typo_light-100 flex flex-col justify-end py-2 gap-4 px-6">
+                        <div className="flex-1 rounded-xl h-28 bg-typo_light-100 flex flex-col justify-end py-2 gap-5 px-6">
                             <label className="label !p-0 !font-medium"> Total Income  reservations</label>
                             <label className="title">{'₹' + (parseInt(formState?.rawReservationsResponse?.monthly?.confirmedSum)).toLocaleString()}</label>
                         </div>
@@ -131,25 +128,25 @@ export default function StatsView() {
                 </div>
             </div>
 
-            <div >
-                <h1 className="title my-4">Summary for Today</h1>
-                <div className="flex flex-col  gap-4">
-                    <div className="flex gap-4">
-                        <div className="flex-1 rounded-xl h-28 bg-typo_light-100 flex flex-col justify-end py-2 gap-4 px-6">
+            <div className="flex flex-col gap-5">
+                <h1 className="title ">Summary for Today</h1>
+                <div className="flex flex-col  gap-5">
+                    <div className="flex gap-5">
+                        <div className="flex-1 rounded-xl h-28 bg-typo_light-100 flex flex-col justify-end py-2 gap-5 px-6">
                             <label className="label !p-0 !font-medium">Inquiries</label>
                             <label className="title">{formState?.rawReservationsResponse?.daily[dayOfMonth]?.inquiriesCount}</label>
                         </div>
-                        <div className="flex-1 rounded-xl h-28 bg-typo_light-100 flex flex-col justify-end py-2 gap-4 px-6">
+                        <div className="flex-1 rounded-xl h-28 bg-typo_light-100 flex flex-col justify-end py-2 gap-5 px-6">
                             <label className="label !p-0 !font-medium">Confirmed</label>
                             <label className="title">{formState?.rawReservationsResponse?.daily[dayOfMonth]?.confirmedCount}</label>
                         </div>
                     </div>
-                    <div className="flex gap-4">
-                        <div className="flex-1 rounded-xl h-28 bg-typo_light-100 flex flex-col justify-end py-2 gap-4 px-6">
+                    <div className="flex gap-5">
+                        <div className="flex-1 rounded-xl h-28 bg-typo_light-100 flex flex-col justify-end py-2 gap-5 px-6">
                             <label className="label !p-0 !font-medium">Conversion Rate</label>
                             <label className="title">{conversionRateDaily ? conversionRateDaily.toFixed(1) + '%' : 0}</label>
                         </div>
-                        <div className="flex-1 rounded-xl h-28 bg-typo_light-100 flex flex-col justify-end py-2 gap-4 px-6">
+                        <div className="flex-1 rounded-xl h-28 bg-typo_light-100 flex flex-col justify-end py-2 gap-5 px-6">
                             <label className="label !p-0 !font-medium"> Total Income  reservations</label>
                             <label className="title">{'₹' + (parseInt(formState?.rawReservationsResponse?.daily[dayOfMonth]?.confirmedSum)).toLocaleString()}</label>
                         </div>
@@ -169,12 +166,12 @@ export default function StatsView() {
                 <h1 className="title">Income from Checkins</h1>
                 <IncomeFromCheckin data={formState.rawCheckinsResponse} />
             </div>
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-5">
                 <h1 className="title">Booking Details</h1>
                 <div className="flex flex-col gap-2">
                     <div className="flex justify-between items-center">
-                        <label className="label">Total Reservations Value</label>
-                        <label className="label !font-semibold">{'₹' + (parseInt(formState?.rawReservationsResponse?.monthly?.confirmedSum)).toLocaleString()}</label>
+                        <label className="label !pt-0">Total Reservations Value</label>
+                        <label className="label !pt-0 !font-semibold">{'₹' + (parseInt(formState?.rawReservationsResponse?.monthly?.confirmedSum)).toLocaleString()}</label>
                     </div>
                     <div className="flex justify-between items-center">
                         <label className="label">Average Reservation Value</label>
@@ -198,24 +195,24 @@ export default function StatsView() {
                 {/* overlay background */}
                 <div className="overlay h-full w-full bg-black/40 absolute z-10" onClick={toggleFilterModal}></div>
                 {/* Filter part  */}
-                <div className='bg-white flex flex-col p-4 relative gap-4 z-20'>
+                <div className='bg-white flex flex-col p-4 relative gap-5 z-20'>
                     {/* filters */}
                     <label className='subheading'>Filters</label>
-                    <BaseSelect value={formState.filter.month} data={[{ label: 'June', value: 'June' }, { label: 'July', value: 'July' }]} 
-                    onChange={(value) => filterChange({ name: 'month', value: value })}
-                    name="month" />
+                    <BaseSelect value={formState.filter.month} data={[{ label: 'June', value: 'June' }, { label: 'July', value: 'July' }]}
+                        onChange={(value) => filterChange({ name: 'month', value: value })}
+                        name="month" />
 
                     {/* Referrals */}
                     <label className='subheading'>Referrals</label>
-                    <div className='flex items-center flex-wrap gap-4' >
-                        <div onClick={() => filterChange({ name: 'referral', value: formState.filter.referral == 'Facebook' ? null : 'Facebook' } )} className={`badge badge-lg text-center w-44 ${formState.filter.referral == 'Facebook' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
+                    <div className='flex items-center flex-wrap gap-5' >
+                        <div onClick={() => filterChange({ name: 'referral', value: formState.filter.referral == 'Facebook' ? null : 'Facebook' })} className={`badge badge-lg text-center w-32 ${formState.filter.referral == 'Facebook' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
                             } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Facebook</div>
-                        <div onClick={() => filterChange({ name: 'referral', value: formState.filter.referral == 'Google' ? null : 'Google' })} className={`badge badge-lg text-center w-44 ${formState.filter.referral == 'Google' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
+                        <div onClick={() => filterChange({ name: 'referral', value: formState.filter.referral == 'Google' ? null : 'Google' })} className={`badge badge-lg text-center w-32 ${formState.filter.referral == 'Google' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
                             } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Google</div>
-                        <div onClick={() => filterChange({ name: 'referral', value: formState.filter.referral == 'Instagram' ? null : 'Instagram' })} className={`badge badge-lg text-center w-44 ${formState.filter.referral == 'Instagram' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
+                        <div onClick={() => filterChange({ name: 'referral', value: formState.filter.referral == 'Instagram' ? null : 'Instagram' })} className={`badge badge-lg text-center w-32 ${formState.filter.referral == 'Instagram' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
                             } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Instagram</div>
 
-                        <div onClick={() => filterChange({name: 'referral', value: formState.filter.referral == 'Other' ? null : 'Other' } )} className={`badge badge-lg text-center w-44 ${formState.filter.referral == 'Other' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
+                        <div onClick={() => filterChange({ name: 'referral', value: formState.filter.referral == 'Other' ? null : 'Other' })} className={`badge badge-lg text-center w-32 ${formState.filter.referral == 'Other' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
                             } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Other</div>
 
 
@@ -223,14 +220,14 @@ export default function StatsView() {
                     </div>
                     {/* Employees */}
                     <label className='subheading'>Employees</label>
-                    <div className='flex items-center flex-wrap gap-4' >
-                        <div onClick={() => filterChange({name: 'employee', value: 'Nusrat' } )} className={`badge badge-lg text-center w-32 ${formState.filter.employee == 'Nusrat' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
+                    <div className='flex items-center flex-wrap gap-5' >
+                        <div onClick={() => filterChange({ name: 'employee', value: 'Nusrat' })} className={`badge badge-lg text-center w-32 ${formState.filter.employee == 'Nusrat' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
                             } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Nusrat</div>
-                        <div onClick={() => filterChange({name: 'employee', value: 'Prabhu' } )} className={`badge badge-lg text-center w-32 ${formState.filter.employee == 'Prabhu' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
+                        <div onClick={() => filterChange({ name: 'employee', value: 'Prabhu' })} className={`badge badge-lg text-center w-32 ${formState.filter.employee == 'Prabhu' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
                             } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Prabhu</div>
-                        <div onClick={() => filterChange({name: 'employee', value: 'Yasmeen' })} className={`badge badge-lg text-center w-32 ${formState.filter.employee == 'Yasmeen' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
+                        <div onClick={() => filterChange({ name: 'employee', value: 'Yasmeen' })} className={`badge badge-lg text-center w-32 ${formState.filter.employee == 'Yasmeen' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
                             } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Yasmeen</div>
-                        <div onClick={() => filterChange({ name: 'employee', value: 'Rafica' } )} className={`badge badge-lg text-center w-32 ${formState.filter.employee == 'Rafica' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
+                        <div onClick={() => filterChange({ name: 'employee', value: 'Rafica' })} className={`badge badge-lg text-center w-32 ${formState.filter.employee == 'Rafica' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
                             } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Rafica</div>
                     </div>
                     {/* Apply filters */}
