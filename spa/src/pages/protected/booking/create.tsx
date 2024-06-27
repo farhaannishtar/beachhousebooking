@@ -7,4 +7,5 @@ return (
   </div>
 );
 }
+CreateBookingPage.useNoLayout = true;
 export default CreateBookingPage;
