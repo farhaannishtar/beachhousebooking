@@ -202,21 +202,21 @@ export default function StatsView() {
                     {/* filters */}
                     <label className='subheading'>Filters</label>
                     <BaseSelect value={formState.filter.month} data={[{ label: 'June', value: 'June' }, { label: 'July', value: 'July' }]} 
-                    onChange={(value) => filterChange({ name: 'month', value: value })}
-                    name="month" />
+                        onChange={(value) => filterChange({ name: 'month', value: value })}
+                        name="month" />
 
                     {/* Referrals */}
                     <label className='subheading'>Referrals</label>
                     <div className='flex items-center flex-wrap gap-4' >
                         <div onClick={() => filterChange({ name: 'referral', value: formState.filter.referral == 'Facebook' ? null : 'Facebook' } )} className={`badge badge-lg text-center w-44 ${formState.filter.referral == 'Facebook' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
-                            } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Facebook</div>
+                        } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Facebook</div>
                         <div onClick={() => filterChange({ name: 'referral', value: formState.filter.referral == 'Google' ? null : 'Google' })} className={`badge badge-lg text-center w-44 ${formState.filter.referral == 'Google' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
-                            } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Google</div>
+                        } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Google</div>
                         <div onClick={() => filterChange({ name: 'referral', value: formState.filter.referral == 'Instagram' ? null : 'Instagram' })} className={`badge badge-lg text-center w-44 ${formState.filter.referral == 'Instagram' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
-                            } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Instagram</div>
+                        } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Instagram</div>
 
                         <div onClick={() => filterChange({name: 'referral', value: formState.filter.referral == 'Other' ? null : 'Other' } )} className={`badge badge-lg text-center w-44 ${formState.filter.referral == 'Other' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
-                            } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Other</div>
+                        } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Other</div>
 
 
 
@@ -225,13 +225,13 @@ export default function StatsView() {
                     <label className='subheading'>Employees</label>
                     <div className='flex items-center flex-wrap gap-4' >
                         <div onClick={() => filterChange({name: 'employee', value: 'Nusrat' } )} className={`badge badge-lg text-center w-32 ${formState.filter.employee == 'Nusrat' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
-                            } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Nusrat</div>
+                        } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Nusrat</div>
                         <div onClick={() => filterChange({name: 'employee', value: 'Prabhu' } )} className={`badge badge-lg text-center w-32 ${formState.filter.employee == 'Prabhu' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
-                            } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Prabhu</div>
+                        } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Prabhu</div>
                         <div onClick={() => filterChange({name: 'employee', value: 'Yasmeen' })} className={`badge badge-lg text-center w-32 ${formState.filter.employee == 'Yasmeen' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
-                            } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Yasmeen</div>
+                        } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Yasmeen</div>
                         <div onClick={() => filterChange({ name: 'employee', value: 'Rafica' } )} className={`badge badge-lg text-center w-32 ${formState.filter.employee == 'Rafica' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
-                            } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Rafica</div>
+                        } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Rafica</div>
                     </div>
                     {/* Apply filters */}
                     <LoadingButton

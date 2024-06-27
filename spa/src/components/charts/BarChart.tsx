@@ -11,7 +11,7 @@ interface BarChartProps {
 }
 
 const BarChart: React.FC<BarChartProps> = ({ data, options }) => {
-  return <Bar data={data} options={options} />;
+    return <Bar data={data} options={options} />;
 };
 
 export default BarChart;

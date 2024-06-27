@@ -5,7 +5,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 export function verifyAndGetPayload(request: NextApiRequest): JwtPayload {
     const header = request.headers.authorization;
     if (!header) {
-      throw new Error('No authorization header');
+        throw new Error('No authorization header');
     }
 
     const bearer = header.split(' ');
@@ -14,7 +14,7 @@ export function verifyAndGetPayload(request: NextApiRequest): JwtPayload {
     const verifiedToken = verifyToken(token);
 
     if (verifiedToken == "Invalid token") { 
-      throw new Error('Invalid token');
+        throw new Error('Invalid token');
     }
     return verifiedToken as JwtPayload;
 }
@@ -26,14 +26,14 @@ export interface User {
 }
 
 export async function fetchUser(id: string): Promise<User> {
-  // id = "fd730c87-6eba-4b50-9ada-20ef5749a37b"
-  const result = await query('SELECT * FROM auth.users WHERE id = $1', [id]);
-  // let metadata = result[0].raw_user_meta_data
-  // metadata.display_name = "Rafica";
-  // await query('UPDATE auth.users SET raw_user_meta_data = $1 WHERE id = $2', [metadata, id]);
-  return {
-    id: result[0].id,
-    email: result[0].email,
-    displayName: result[0].raw_user_meta_data.display_name
-  };
+    // id = "fd730c87-6eba-4b50-9ada-20ef5749a37b"
+    const result = await query('SELECT * FROM auth.users WHERE id = $1', [id]);
+    // let metadata = result[0].raw_user_meta_data
+    // metadata.display_name = "Rafica";
+    // await query('UPDATE auth.users SET raw_user_meta_data = $1 WHERE id = $2', [metadata, id]);
+    return {
+        id: result[0].id,
+        email: result[0].email,
+        displayName: result[0].raw_user_meta_data.display_name
+    };
 }

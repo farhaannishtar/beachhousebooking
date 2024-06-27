@@ -155,16 +155,16 @@ export function printInIndianTime(utcDateTimeString: string | undefined, onlyTim
 export function convertDateToIndianDate({date, subtractDays}: {date?: Date | undefined, subtractDays?: number | undefined}) {
     let indianDate = new Date()
     if (date) {
-      indianDate = new Date(date)
+        indianDate = new Date(date)
     }
     if (subtractDays) {
-      indianDate.setDate(indianDate.getDate() - subtractDays);
+        indianDate.setDate(indianDate.getDate() - subtractDays);
     }
     indianDate.setUTCHours(0, 0, 0, 0);
     // set to midnight in indian time
     indianDate.setHours(indianDate.getHours() - 5, indianDate.getMinutes() - 30, indianDate.getSeconds(), indianDate.getMilliseconds());
     return indianDate.toISOString()
-  }
+}
 
 
 

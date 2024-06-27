@@ -434,7 +434,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                                     }))
                                 }>
                                     star_rate
-                                </span>}
+                            </span>}
                         </div>
                         <div className='flex flex-col gap-y-4 mt-6 '>
                             {/* Name Input */}
@@ -557,9 +557,9 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                                 <div className='flex w-full'>
                                     <div className='w-1/2'>
                                     </div>
-                                <div className="w-1/2">
-                                    <BaseInput type="text" name="otherRefferal" placeholder="Referral Name" value={formState.form.otherRefferal ?? ''} onChange={handleChange} />
-                                </div>
+                                    <div className="w-1/2">
+                                        <BaseInput type="text" name="otherRefferal" placeholder="Referral Name" value={formState.form.otherRefferal ?? ''} onChange={handleChange} />
+                                    </div>
                                 </div>
                             )}
                             {formState.form.status != "Inquiry" && (
@@ -701,36 +701,36 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                         <div className='my-4'>
 
                             <div className='flex items-center justify-between '>
-                            {formState.currentIndex != 0 && (
-                                <button
-                                    className={`${formState.currentIndex !== 0 && 'text-selectedButton'} bg-transparent flex items-center justify-center`}
-                                    onClick={() => moveFormState("previous")}
-                                    disabled={formState.currentIndex === 0}
-                                    type='button'
-                                >
-                                    <span className="material-symbols-outlined cursor-pointer">
+                                {formState.currentIndex != 0 && (
+                                    <button
+                                        className={`${formState.currentIndex !== 0 && 'text-selectedButton'} bg-transparent flex items-center justify-center`}
+                                        onClick={() => moveFormState("previous")}
+                                        disabled={formState.currentIndex === 0}
+                                        type='button'
+                                    >
+                                        <span className="material-symbols-outlined cursor-pointer">
                                         arrow_back
-                                    </span>
-                                </button>)}
+                                        </span>
+                                    </button>)}
                                 {formState.currentIndex == 0 && (
-                                <p></p>
-                            )}
+                                    <p></p>
+                                )}
                                 <div className='small-text'> <p>Created by <strong>{formState.bookingDB?.createdBy.name}</strong> on <strong>{printInIndianTime(formState.bookingDB?.createdDateTime)}</strong></p>
                                     <p>Updated by <strong>{formState.bookingDB?.updatedBy.name}</strong> on <strong>{printInIndianTime(formState.bookingDB?.updatedDateTime)}</strong> </p></div>
                                 {formState.currentIndex != formState.allData.length - 1 && (
-                                <button
-                                    className={`${formState.currentIndex !== formState.allData.length - 1 && 'text-selectedButton'} bg-transparent flex items-center justify-center`}
-                                    onClick={() => moveFormState("next")}
-                                    disabled={formState.currentIndex === formState.allData.length - 1}
-                                    type='button'
-                                >
-                                    <span className="material-symbols-outlined cursor-pointer">
+                                    <button
+                                        className={`${formState.currentIndex !== formState.allData.length - 1 && 'text-selectedButton'} bg-transparent flex items-center justify-center`}
+                                        onClick={() => moveFormState("next")}
+                                        disabled={formState.currentIndex === formState.allData.length - 1}
+                                        type='button'
+                                    >
+                                        <span className="material-symbols-outlined cursor-pointer">
                                         arrow_forward
-                                    </span>
-                                </button>)}
+                                        </span>
+                                    </button>)}
                                 {formState.currentIndex == formState.allData.length - 1 && (
-                                <p></p>
-                            )}
+                                    <p></p>
+                                )}
                             </div>
 
                         </div>
