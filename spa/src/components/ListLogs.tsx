@@ -1,7 +1,7 @@
 "use client"
 import { BookingDB, Property, convertDateToIndianDate, convertPropertiesForDb, printInIndianTime, numOfDays, organizedByCreatedDate } from '@/utils/lib/bookingType';
 import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
-import { useRouter } from 'next/navigation'
+import { useRouter } from 'next/router'
 
 import SearchInput from './ui/SearchInput';
 import LoadingButton from './ui/LoadingButton';
@@ -66,6 +66,7 @@ export default function ListLogs() {
   }, [lastScrollY]);
 
   const router = useRouter();
+  //Scroll smoothely to page section
 
   const [state, setState] = useState<ListLogsState>({
     searchText: null,
@@ -129,6 +130,11 @@ export default function ListLogs() {
       ...prevState,
       dbBookings: bookings,
     }));
+    //Scroll smoothely to page section
+    if (router.asPath.includes('#')) {
+      const id = router.asPath.split('#')[1];
+      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+    }
     setLoading(false);
     setFilterModalOpened(false)
 
@@ -231,7 +237,7 @@ export default function ListLogs() {
               className="flex mt-3 w-full justify-between"
               key={booking.bookingId}
               id={`${booking.bookingId}-id`}
-              onClick={() => router.push(`/protected/booking/${booking.bookingId}`)}
+              onClick={() => router.push(`/protected/booking/${booking.bookingId}?returnTo=/protected/logs`)}
             >
               <div className="pl-3 flex flex-col gap-0">
                 <label className='flex items-center gap-1'>
