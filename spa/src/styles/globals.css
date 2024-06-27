@@ -85,7 +85,9 @@
 textarea:focus, input:focus{
   outline: none !important;
 }
-
+input,textarea{
+  font-size: 16px !important;
+}
 .container{
   width: 390px;
   margin: auto;
