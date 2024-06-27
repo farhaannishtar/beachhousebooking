@@ -163,10 +163,11 @@ export default function ListBooking() {
             <div
               className="flex mt-3 w-full justify-between"
               key={booking.bookingId}
+              id={`${booking.bookingId}-id`}
               onClick={() => router.push(`/protected/booking/${booking.bookingId}`)}
             >
               {/* Booking details */}
-              <div className="pl-3 flex flex-col gap-1">
+              <div className="pl-3 flex flex-col gap-0">
                 <label>
                   <span className="text-neutral-900 text-base font-medium leading-6">{booking.client.name}</span> <span className="text-slate-500 text-sm font-normal leading-5">{booking.status}</span>{booking?.starred && <span className='material-symbols-filled text-2xl'>star_rate</span>}
                 </label>

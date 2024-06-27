@@ -195,7 +195,7 @@ export default function StatsView() {
                 {/* overlay background */}
                 <div className="overlay h-full w-full bg-black/40 absolute z-10" onClick={toggleFilterModal}></div>
                 {/* Filter part  */}
-                <div className='bg-white flex flex-col p-4 relative gap-5 z-20'>
+                <div className='bg-white flex flex-col p-4 relative gap-5 z-20 max-h-[80vh] overflow-y-auto'>
                     {/* filters */}
                     <label className='subheading'>Filters</label>
                     <BaseSelect value={formState.filter.month} data={[{ label: 'June', value: 'June' }, { label: 'July', value: 'July' }]}
