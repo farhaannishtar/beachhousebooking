@@ -5,6 +5,7 @@ import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { useRouter } from 'next/router'
 import { supabase } from '@/utils/supabase/client';
 import SearchInput from './ui/SearchInput';
+import BookingFilter from './BookingFilter';
 import LoadingButton from './ui/LoadingButton';
 
 // interface BookingProps {
@@ -37,8 +38,10 @@ export default function ListBooking() {
       paymentPending: null
     }
   });
-
+  //Loading data
+  const [loading, setLoading] = useState<boolean>(false)
   async function fetchData() {
+    setLoading(true)
     console.log("Fetching Data")
     let bookingsData = supabase.from("bookings").select()
 
@@ -79,15 +82,18 @@ export default function ListBooking() {
             bookingId: booking.id,
           })
         })
+
+        setState((prevState) => ({
+          ...prevState,
+          dbBookings: bookings,
+        }));
         //Scroll smoothely to page section
         if (router.asPath.includes('#')) {
           const id = router.asPath.split('#')[1];
           document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
         }
-        setState((prevState) => ({
-          ...prevState,
-          dbBookings: bookings,
-        }));
+        setLoading(false);
+        setFilterModalOpened(false)
       })
   };
 
@@ -142,6 +148,27 @@ export default function ListBooking() {
       return date
     }
   }
+  //Filter modal
+  const [filterModalOpened, setFilterModalOpened] = useState<Boolean>(false)
+  const showFilterModal = () => {
+    setFilterModalOpened(!filterModalOpened)
+  }
+  const filterChange = ({ name, value }: { name: string, value: string | null | boolean }) => {
+    setState((prevState) => ({
+      ...prevState,
+      filter: {
+        ...prevState.filter,
+        [name]: prevState.filter[name as keyof typeof prevState.filter] == value ? null : value
+      }
+    }));
+  }
+
+  const handleDateChange = (name: string, value: string | null) => {
+    setState((prevState) => ({
+      ...prevState,
+      filter: { ...prevState.filter, [name]: value }
+    }));
+  };
 
   return (
     <div className="w-full  ">
@@ -153,7 +180,23 @@ export default function ListBooking() {
       </div>
       {/* Top Nav */}
       <SearchInput value={state.searchText || undefined}
-        onChange={handleChangeSearch} />
+        onChange={handleChangeSearch}
+        onFilterClick={showFilterModal} />
+      {/* <div className="relative my-3 mb-4 flex w-full flex-wrap items-stretch bg-inputBoxbg rounded-xl">
+       
+         <div className="relative flex items-center m-0 block w-full rounded-xl border border-solid border-neutral-300 bg-transparent px-3 text-base font-normal leading-[1.6] outline-none transition duration-200 ease-in-out focus-within:border-primary dark:border-neutral-600">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="#617A8A" className="h-5 w-5 absolute z-50 left-3 pointer-events-none">
+            <path fillRule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clipRule="evenodd" />
+          </svg>
+          <input type="search" className="relative flex-auto w-full px-10 py-[0.25rem] placeholder:text-placeHolderText bg-inputBoxbg text-neutral-700 outline-none" placeholder="Search" aria-label="Search"
+            name="searchText"
+            value={state.searchText || undefined}
+            onChange={handleChangeSearch}
+          />
+         
+        </div> 
+      </div> */}
+       
       <LoadingButton
         className=" border-[1px] border-selectedButton text-selectedButton my-4 w-full py-2 px-4 rounded-xl"
         onClick={
@@ -204,6 +247,16 @@ export default function ListBooking() {
           ))}
         </React.Fragment>
       ))}
+      {/* Filter modal */}
+
+      <BookingFilter filterModalOpened={filterModalOpened}
+        showFilterModal={showFilterModal}
+        handleDateChange={handleDateChange}
+        filterChange={filterChange}
+        state={state}
+        setState={setState}
+        loading={loading}
+        onClick={fetchData} />
 
 
     </div>

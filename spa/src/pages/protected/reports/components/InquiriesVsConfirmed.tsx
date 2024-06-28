@@ -26,6 +26,7 @@ const InquiriesVsConfirmed: React.FC<InquiriesVsConfirmedProps> = ({ data }) => 
                         right: 0,
                     },
                     data: Object.values(data?.daily).map((d: any) => d.confirmedCount),
+                    metadata: { data: Object.values(data?.daily).map((d: any) => d.inquiriesCount), label: 'Inquiries' }
                 },
                 {
 
@@ -38,6 +39,7 @@ const InquiriesVsConfirmed: React.FC<InquiriesVsConfirmedProps> = ({ data }) => 
                         right: 0,
                     },
                     data: Object.values(data?.daily).map((d: any) => d.inquiriesCount),
+                    metadata: { data: Object.values(data?.daily).map((d: any) => d.confirmedCount), label: 'Confirmed' }
                 },
             ],
         };
@@ -104,9 +106,13 @@ const InquiriesVsConfirmed: React.FC<InquiriesVsConfirmedProps> = ({ data }) => 
             tooltip: {
                 callbacks: {
                     label: function (context: any) {
+
                         const label = context.dataset.label || '';
                         const value = context.raw;
-                        return `${label}: ${value} `;
+                        const secondStackValue = context.dataset.metadata.data[context.dataIndex]
+                        const secondStackLabel = context.dataset.metadata.label
+
+                        return [`${label}: ${value}`, `${secondStackLabel}: ${secondStackValue}`];
                     },
                     title: function (context: any) {
                         const date = new Date();  // 2009-11-10

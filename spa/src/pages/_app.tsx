@@ -41,7 +41,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     const checkUser = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       const userId = user?.id;
-      
+
       if (userId) {
         if (currentPath === '/login') {
           router.push('/protected/logs');
@@ -59,7 +59,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   const useNoLayout = currentPath === '/login' || currentPath === '/protected/booking/create' || currentPath === '/protected/booking/[id]'
   const Layout = !useNoLayout ? ProtectedLayout : DefaultLayout;
-  return <main className={`${plusJakartaSans.className} min-h-screen flex flex-col items-center w-full container`}> <Layout><Component {...pageProps} /></Layout> </main>
+  return <main className={`${plusJakartaSans.className} min-h-screen flex flex-col items-center w-full container !select-none`}> <Layout><Component {...pageProps} /></Layout> </main>
 }
 
 export default MyApp;

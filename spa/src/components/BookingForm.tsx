@@ -352,19 +352,19 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                 /^\d{4}-[01]\d-[0-3]\d[T][0-2]\d:[0-5]\d:[0-5]\d.\d+Z$/,
                 "Start date and time must be in ISO format"
             )
-        //     .test(
-        //         "is-same-or-after-current-date",
-        //         "Start date and time must be the same as or after the current date and time",
-        //         (value) => {
-        //             if (bookingId) return true;
-        //             const currentDateEST = moment().tz("America/New_York"); // Get current date in EST, accounting for DST
-        //             const twentyFourHoursBeforeCurrentDateEST = currentDateEST
-        //                 .clone()
-        //                 .subtract(24, "hours"); // Subtract 24 hours from the current date in EST
-        //             const startDate = moment(value).tz("America/New_York"); // Convert startDateTime to EST
-        //             return startDate.isSameOrAfter(twentyFourHoursBeforeCurrentDateEST);
-        //         }
-        //     )
+            //     .test(
+            //         "is-same-or-after-current-date",
+            //         "Start date and time must be the same as or after the current date and time",
+            //         (value) => {
+            //             if (bookingId) return true;
+            //             const currentDateEST = moment().tz("America/New_York"); // Get current date in EST, accounting for DST
+            //             const twentyFourHoursBeforeCurrentDateEST = currentDateEST
+            //                 .clone()
+            //                 .subtract(24, "hours"); // Subtract 24 hours from the current date in EST
+            //             const startDate = moment(value).tz("America/New_York"); // Convert startDateTime to EST
+            //             return startDate.isSameOrAfter(twentyFourHoursBeforeCurrentDateEST);
+            //         }
+            //     )
             .test(
                 "is-before-end-date",
                 "Start date and time must be before the end date and time",
@@ -757,7 +757,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                 }
             </form >
             {bookingId && formState.pageToShow === Page.BookingPage && (
-                <div className='flex items-center justify-center w-full mt-6'>
+                <div className='flex items-center justify-center w-full my-6'>
                     <LoadingButton
                         className='btn btn-wide bg-error text-center text-white text-base font-bold leading-normal w-full'
                         onClick={() => deleteCurrentBooking()}
