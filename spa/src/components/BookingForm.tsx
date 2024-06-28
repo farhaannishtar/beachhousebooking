@@ -142,8 +142,10 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
     ]);
 
     useEffect(() => {
-        const newHeight = Math.min(16, formState.form.notes.length / 10 + 40);
-        setTextareaHeight(newHeight);
+        const newHeight = Math.ceil(formState.form.notes.length / 41) * 32
+        setTextareaHeight(newHeight + 16);
+        console.log(newHeight);
+
     }, [formState.form.notes]);
 
     const handleSwitchChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -510,7 +512,8 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                                         value={formState.form.notes}
                                         placeholder="Notes"
                                         onChange={handleChange}
-                                        className={`textarea w-full text-base h-${textareaHeight} font-normal leading-normal bg-inputBoxbg rounded-xl placeholder:text-placeHolderText placeholder:text-base placeholder:leading-normal placeholder:font-normal`}
+                                        style={{ height: `${textareaHeight}px` }}
+                                        className={`textarea w-full text-base overflow-hidden resize-y font-normal leading-normal bg-inputBoxbg rounded-xl placeholder:text-placeHolderText placeholder:text-base placeholder:leading-normal placeholder:font-normal`}
                                     />
                                 </label>
                             </div>
