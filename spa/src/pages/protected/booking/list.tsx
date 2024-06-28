@@ -4,10 +4,10 @@ const BookingListPage = () => {
 
 
 
-    return (
-        <div className='h-full flex items-start justify-center  w-full'>
-            <BookingsListComponent />
-        </div>
-    );
+  return (
+    <div className='h-full flex items-start justify-center  w-full'>
+      <BookingsListComponent />
+    </div>
+  );
 }
 export default BookingListPage

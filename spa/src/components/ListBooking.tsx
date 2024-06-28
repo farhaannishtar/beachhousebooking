@@ -237,7 +237,7 @@ export default function ListBooking() {
         setFilterState={setFilterState}
         loading={loading}
         applyFilters={fetchData}
-        />
+      />
 
 
     </div>

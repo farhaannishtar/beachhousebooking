@@ -4,10 +4,10 @@ const ReportsPage = () => {
 
 
 
-    return (
-        <div className='h-full  w-full'>
-            <StatsView />
-        </div>
-    );
+  return (
+    <div className='h-full  w-full'>
+      <StatsView />
+    </div>
+  );
 }
 export default ReportsPage

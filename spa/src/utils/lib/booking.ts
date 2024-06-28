@@ -4,28 +4,28 @@ import { deleteEvent, insertEvent } from "./calendar";
 import { query } from "./helper";
 
 export async function createBooking(booking: BookingDB, name: string): Promise<number> {
-    let resp = await query(`
+  let resp = await query(`
       INSERT INTO bookings(email, json, client_name, client_phone_number, referred_by, status, properties, check_in, check_out, created_at, updated_at, starred, total_cost, paid, outstanding)
       VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
       RETURNING id`, 
-      [
-        name, 
-        [booking],
-        booking.client.name,
-        booking.client.phone,
-        booking.refferral,
-        booking.status.toLocaleLowerCase(),
-        convertPropertiesForDb(getProperties(booking)),
-        booking.startDateTime,
-        booking.endDateTime,
-        booking.createdDateTime,
-        booking.updatedDateTime,
-        booking.starred ?? false,
-        booking.totalCost ?? 0,
-        booking.paid ?? 0,
-        booking.outstanding ?? 0
-      ]);
-    return resp[0].id;
+  [
+    name, 
+    [booking],
+    booking.client.name,
+    booking.client.phone,
+    booking.refferral,
+    booking.status.toLocaleLowerCase(),
+    convertPropertiesForDb(getProperties(booking)),
+    booking.startDateTime,
+    booking.endDateTime,
+    booking.createdDateTime,
+    booking.updatedDateTime,
+    booking.starred ?? false,
+    booking.totalCost ?? 0,
+    booking.paid ?? 0,
+    booking.outstanding ?? 0
+  ]);
+  return resp[0].id;
 }
 
 export function updateBooking(booking: BookingDB[], id: number) {
@@ -48,26 +48,26 @@ export function updateBooking(booking: BookingDB[], id: number) {
         paid = $13,
         outstanding = $14
       WHERE id = $1`, 
-      [id, 
-        booking, 
-        lastBooking.client.name, 
-        lastBooking.client.phone, 
-        lastBooking.refferral, 
-        lastBooking.status.toLocaleLowerCase(), 
-        convertPropertiesForDb(getProperties(lastBooking)),
-        lastBooking.updatedDateTime,
-        lastBooking.startDateTime,
-        lastBooking.endDateTime,
-        lastBooking.starred ?? false,
-        lastBooking.totalCost ?? 0,
-        lastBooking.paid ?? 0,
-        lastBooking.outstanding ?? 0
-      ])
+  [id, 
+    booking, 
+    lastBooking.client.name, 
+    lastBooking.client.phone, 
+    lastBooking.refferral, 
+    lastBooking.status.toLocaleLowerCase(), 
+    convertPropertiesForDb(getProperties(lastBooking)),
+    lastBooking.updatedDateTime,
+    lastBooking.startDateTime,
+    lastBooking.endDateTime,
+    lastBooking.starred ?? false,
+    lastBooking.totalCost ?? 0,
+    lastBooking.paid ?? 0,
+    lastBooking.outstanding ?? 0
+  ])
 }
 
 export async function fetchBooking(id: number): Promise<BookingDB[]> {
-    const result = await query('SELECT * FROM bookings WHERE id = $1', [id]);
-    return result[0].json;
+  const result = await query('SELECT * FROM bookings WHERE id = $1', [id]);
+  return result[0].json;
 }
 
 function capitalizeString(str: string): string {

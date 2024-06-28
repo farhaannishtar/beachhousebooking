@@ -10,16 +10,16 @@ interface LoadingButtonProps {
     children: React.ReactNode;
 }
 const LoadingButton: React.FC<LoadingButtonProps> = ({ className = '', label, type = 'button', preIcon, postIcon, loading, disabled, children, onClick }) => {
-    return (
-        <button
-            className={className + ' flex items-center justify-center gap-4'}
-            onClick={onClick}
-            type={type}
-            disabled={loading || disabled}
-        >
-            {!loading ? children : <span className="loader-spinner"></span>}
-        </button>
-    )
+  return (
+    <button
+      className={className + ' flex items-center justify-center gap-4'}
+      onClick={onClick}
+      type={type}
+      disabled={loading || disabled}
+    >
+      {!loading ? children : <span className="loader-spinner"></span>}
+    </button>
+  )
 }
 
 export default LoadingButton;

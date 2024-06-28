@@ -5,18 +5,18 @@ import { fetchUser, saveUser, verifyAndGetPayload } from '@/utils/lib/auth';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   switch (req.method) {
-    case 'GET':
-      await handleGet(req, res);
-      break;
-    case 'POST':
-      await handlePost(req, res);
-      break;
-    case 'DELETE':
-      await handleDelete(req, res);
-      break;
-    default:
-      res.setHeader('Allow', ['GET', 'POST', 'DELETE']);
-      res.status(405).end(`Method ${req.method} Not Allowed`);
+  case 'GET':
+    await handleGet(req, res);
+    break;
+  case 'POST':
+    await handlePost(req, res);
+    break;
+  case 'DELETE':
+    await handleDelete(req, res);
+    break;
+  default:
+    res.setHeader('Allow', ['GET', 'POST', 'DELETE']);
+    res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 }
 

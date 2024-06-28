@@ -4,10 +4,10 @@ const Logs = () => {
 
 
 
-    return (
-        <div className='h-full  w-full'>
-            <ListLogs />
-        </div>
-    );
+  return (
+    <div className='h-full  w-full'>
+      <ListLogs />
+    </div>
+  );
 }
 export default Logs 

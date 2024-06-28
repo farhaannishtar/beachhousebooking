@@ -55,8 +55,8 @@ const Properties: React.FC<PropertiesProps> = ({ setFilterState, setFormState, s
           updatedValues.push(property);
         }
         return {
-            ...prevFilter,
-            properties: updatedValues
+          ...prevFilter,
+          properties: updatedValues
         };
 
       })

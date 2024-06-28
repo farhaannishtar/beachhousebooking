@@ -3,20 +3,20 @@ import { NextApiRequest, NextApiResponse } from 'next';
 // import { headers } from 'next/headers'
 
 export function verifyAndGetPayload(request: NextApiRequest): JwtPayload {
-    const header = request.headers.authorization;
-    if (!header) {
-      throw new Error('No authorization header');
-    }
+  const header = request.headers.authorization;
+  if (!header) {
+    throw new Error('No authorization header');
+  }
 
-    const bearer = header.split(' ');
-    const token = bearer[1];
+  const bearer = header.split(' ');
+  const token = bearer[1];
 
-    const verifiedToken = verifyToken(token);
+  const verifiedToken = verifyToken(token);
 
-    if (verifiedToken == "Invalid token") { 
-      throw new Error('Invalid token');
-    }
-    return verifiedToken as JwtPayload;
+  if (verifiedToken == "Invalid token") { 
+    throw new Error('Invalid token');
+  }
+  return verifiedToken as JwtPayload;
 }
 
 export interface User {

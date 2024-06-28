@@ -32,11 +32,11 @@ export default function ListLogs() {
 
   const [filterState, setFilterState] = useState<Filter>({
     status: null,
-      createdTime: null,
-      properties: [],
-      starred: null,
-      paymentPending: null,
-      createdBy: null
+    createdTime: null,
+    properties: [],
+    starred: null,
+    paymentPending: null,
+    createdBy: null
   })
 
   //Loading data
@@ -244,7 +244,7 @@ export default function ListLogs() {
         setFilterState={setFilterState}
         loading={loading}
         applyFilters={fetchData}
-        />
+      />
 
     </div>
   );

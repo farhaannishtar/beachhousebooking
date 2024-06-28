@@ -14,7 +14,7 @@ const PropertyBadge: React.FC<PropertyBadgeProps> = ({ propertyName, handlePrope
   };
 
   const badgeClasses = `badge badge-lg text-center ${value ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
-    } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`;
+  } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`;
 
   return (
     <div
