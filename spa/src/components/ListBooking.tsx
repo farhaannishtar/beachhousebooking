@@ -5,6 +5,7 @@ import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { useRouter } from 'next/router'
 import { supabase } from '@/utils/supabase/client';
 import SearchInput from './ui/SearchInput';
+import BookingFilter from './BookingFilter';
 
 // interface BookingProps {
 //   bookingsFromParent: BookingDB[];
@@ -38,8 +39,10 @@ export default function ListBooking() {
       paymentPending: null
     }
   });
-
+  //Loading data
+  const [loading, setLoading] = useState<boolean>(false)
   async function fetchData() {
+    setLoading(true)
     console.log("Fetching Data")
     let bookingsData = supabase.from("bookings").select()
 
@@ -81,15 +84,18 @@ export default function ListBooking() {
             bookingId: booking.id,
           })
         })
+
+        setState((prevState) => ({
+          ...prevState,
+          dbBookings: bookings,
+        }));
         //Scroll smoothely to page section
         if (router.asPath.includes('#')) {
           const id = router.asPath.split('#')[1];
           document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
         }
-        setState((prevState) => ({
-          ...prevState,
-          dbBookings: bookings,
-        }));
+        setLoading(false);
+        setFilterModalOpened(false)
       })
   };
 
@@ -133,6 +139,27 @@ export default function ListBooking() {
       return date
     }
   }
+  //Filter modal
+  const [filterModalOpened, setFilterModalOpened] = useState<Boolean>(false)
+  const showFilterModal = () => {
+    setFilterModalOpened(!filterModalOpened)
+  }
+  const filterChange = ({ name, value }: { name: string, value: string | null | boolean }) => {
+    setState((prevState) => ({
+      ...prevState,
+      filter: {
+        ...prevState.filter,
+        [name]: prevState.filter[name as keyof typeof prevState.filter] == value ? null : value
+      }
+    }));
+  }
+
+  const handleDateChange = (name: string, value: string | null) => {
+    setState((prevState) => ({
+      ...prevState,
+      filter: { ...prevState.filter, [name]: value }
+    }));
+  };
 
   return (
     <div className="w-full  ">
@@ -144,7 +171,8 @@ export default function ListBooking() {
       </div>
       {/* Top Nav */}
       <SearchInput value={state.searchText || undefined}
-        onChange={handleChangeSearch} />
+        onChange={handleChangeSearch}
+        onFilterClick={showFilterModal} />
       {/* <div className="relative my-3 mb-4 flex w-full flex-wrap items-stretch bg-inputBoxbg rounded-xl">
        
          <div className="relative flex items-center m-0 block w-full rounded-xl border border-solid border-neutral-300 bg-transparent px-3 text-base font-normal leading-[1.6] outline-none transition duration-200 ease-in-out focus-within:border-primary dark:border-neutral-600">
@@ -201,6 +229,16 @@ export default function ListBooking() {
           ))}
         </React.Fragment>
       ))}
+      {/* Filter modal */}
+
+      <BookingFilter filterModalOpened={filterModalOpened}
+        showFilterModal={showFilterModal}
+        handleDateChange={handleDateChange}
+        filterChange={filterChange}
+        state={state}
+        setState={setState}
+        loading={loading}
+        onClick={fetchData} />
 
 
     </div>
