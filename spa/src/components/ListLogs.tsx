@@ -8,19 +8,11 @@ import LoadingButton from './ui/LoadingButton';
 import DateTimePickerInput from './DateTimePickerInput/DateTimePickerInput';
 import Properties from './Properties';
 import { supabase } from '@/utils/supabase/client';
-import BookingFilter from './BookingFilter';
+import BookingFilter, { Filter } from './BookingFilter';
 
 
 export interface ListLogsState {
   searchText: string | null;
-  filter: {
-    status: "Inquiry" | "Quotation" | "Confirmed" | null;
-    createdTime: string | null;
-    properties: Property[];
-    starred: boolean | null;
-    paymentPending: boolean | null;
-    createdBy: "Nusrat" | "Prabhu" | "Yasmeen" | "Rafica" | null
-  }
   date: Date | null;
   dbBookings: BookingDB[];
 }
@@ -36,15 +28,17 @@ export default function ListLogs() {
     searchText: null,
     date: null,
     dbBookings: [],
-    filter: {
-      status: null,
+  });
+
+  const [filterState, setFilterState] = useState<Filter>({
+    status: null,
       createdTime: null,
       properties: [],
       starred: null,
       paymentPending: null,
       createdBy: null
-    }
-  });
+  })
+
   //Loading data
   const [loading, setLoading] = useState<boolean>(false)
   async function fetchData() {
@@ -54,27 +48,27 @@ export default function ListLogs() {
     if (state.searchText) {
       bookingsData = bookingsData
         .or(`client_name.ilike.%${state.searchText}%,client_phone_number.ilike.%${state.searchText}%`)
-    } else if (state.filter.createdTime || state.filter.status || state.filter.properties.length > 0 || state.filter.starred || state.filter.paymentPending || state.filter.createdBy) {
-      if (state.filter.createdTime) {
+    } else if (filterState.createdTime || filterState.status || (filterState.properties?.length ?? 0) > 0 || filterState.starred || filterState.paymentPending || filterState.createdBy) {
+      if (filterState.createdTime) {
         bookingsData = bookingsData
-          .gte('created_at', convertDateToIndianDate({date: new Date(state.filter.createdTime)}))
-          .lte('created_at', convertDateToIndianDate({date: new Date(state.filter.createdTime), addDays: 1}))
+          .gte('created_at', convertDateToIndianDate({date: new Date(filterState.createdTime)}))
+          .lte('created_at', convertDateToIndianDate({date: new Date(filterState.createdTime), addDays: 1}))
       }
-      if (state.filter.status) {
+      if (filterState.status) {
 
-        bookingsData = bookingsData.eq('status', state.filter.status.toLocaleLowerCase())
+        bookingsData = bookingsData.eq('status', filterState.status.toLocaleLowerCase())
       }
-      if (state.filter.properties) {
-        bookingsData = bookingsData.contains('properties', convertPropertiesForDb(state.filter.properties))
+      if (filterState.properties) {
+        bookingsData = bookingsData.contains('properties', convertPropertiesForDb(filterState.properties))
       }
-      if (state.filter.starred) {
-        bookingsData = bookingsData.eq('starred', state.filter.starred)
+      if (filterState.starred) {
+        bookingsData = bookingsData.eq('starred', filterState.starred)
       }
-      if (state.filter.paymentPending) {
+      if (filterState.paymentPending) {
         bookingsData = bookingsData.gt('outstanding', 0)
       }
-      if (state.filter.createdBy) {
-        bookingsData = bookingsData.eq('email', state.filter.createdBy)
+      if (filterState.createdBy) {
+        bookingsData = bookingsData.eq('email', filterState.createdBy)
       }
     } 
 
@@ -162,26 +156,11 @@ export default function ListLogs() {
     return date.toDateString().slice(4, 10) + ", " + date.toDateString().slice(11, 15)
   }
   //Filter modal
-  const [filterModalOpened, setFilterModalOpened] = useState<Boolean>(false)
-  const showFilterModal = () => {
+  const [filterModalOpened, setFilterModalOpened] = useState<boolean>(false)
+  const toggleFilterDisplay = () => {
     setFilterModalOpened(!filterModalOpened)
   }
-  const filterChange = ({ name, value }: { name: string, value: string | null | boolean }) => {
-    setState((prevState) => ({
-      ...prevState,
-      filter: {
-        ...prevState.filter,
-        [name]: prevState.filter[name as keyof typeof prevState.filter] == value ? null : value
-      }
-    }));
-  }
 
-  const handleDateChange = (name: string, value: string | null) => {
-    setState((prevState) => ({
-      ...prevState,
-      filter: { ...prevState.filter, [name]: value }
-    }));
-  };
   return (
     <div className="w-full  ">
       {/* Top Nav */}
@@ -193,7 +172,7 @@ export default function ListLogs() {
       {/* Top Nav */}
       <SearchInput value={state.searchText || undefined}
         onChange={handleChangeSearch}
-        onFilterClick={showFilterModal} />
+        onFilterClick={toggleFilterDisplay} />
       <LoadingButton
         className=" border-[1px] border-selectedButton text-selectedButton my-4 w-full py-2 px-4 rounded-xl"
         onClick={
@@ -256,14 +235,16 @@ export default function ListLogs() {
       ))}
       {/* Filter modal */}
 
-      <BookingFilter filterModalOpened={filterModalOpened}
-        showFilterModal={showFilterModal}
-        handleDateChange={handleDateChange}
-        filterChange={filterChange}
-        state={state}
-        setState={setState}
+      
+      <BookingFilter 
+        isFiltersOpened={filterModalOpened}
+        toggleFilterDisplay={toggleFilterDisplay}
+        filtersFor = 'Logs' 
+        filterState={filterState}
+        setFilterState={setFilterState}
         loading={loading}
-        onClick={fetchData} />
+        applyFilters={fetchData}
+        />
 
     </div>
   );

@@ -5,7 +5,7 @@ import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { useRouter } from 'next/router'
 import { supabase } from '@/utils/supabase/client';
 import SearchInput from './ui/SearchInput';
-import BookingFilter from './BookingFilter';
+import BookingFilter, { Filter } from './BookingFilter';
 import LoadingButton from './ui/LoadingButton';
 
 // interface BookingProps {
@@ -14,12 +14,6 @@ import LoadingButton from './ui/LoadingButton';
 
 interface ListBookingsState {
   searchText: string | null;
-  filter: {
-    checkIn: Date | null;
-    properties: Property[] | null;
-    starred: boolean | null;
-    paymentPending: boolean | null;
-  }
   date: Date | null;
   dbBookings: BookingDB[];
 }
@@ -31,14 +25,15 @@ export default function ListBooking() {
     searchText: null,
     date: null,
     dbBookings: [],
-    filter: {
-      checkIn: null,
-      properties: null,
-      starred: null,
-      paymentPending: null
-    }
   });
-  //Loading data
+
+  const [filterState, setFilterState] = useState<Filter>({
+    checkIn: null,
+    properties: null,
+    starred: null,
+    paymentPending: null
+  });
+  
   const [loading, setLoading] = useState<boolean>(false)
   async function fetchData() {
     setLoading(true)
@@ -50,19 +45,20 @@ export default function ListBooking() {
     if (state.searchText) {
       bookingsData = bookingsData
         .or(`client_name.ilike.%${state.searchText}%,client_phone_number.ilike.%${state.searchText}%`)
-    } else if (state.filter.checkIn || state.filter.properties || state.filter.starred || state.filter.paymentPending) {
-      if (state.filter.checkIn) {
+    } else if (filterState.checkIn || filterState.properties || filterState.starred || filterState.paymentPending) {
+      if (filterState.checkIn) {
+        console.log("Filtering by checkIn: ", filterState.checkIn)
         bookingsData = bookingsData
-          .gte('check_in', convertDateToIndianDate({date: new Date(state.filter.checkIn)}))
-          .lte('check_in', convertDateToIndianDate({date: new Date(state.filter.checkIn), addDays: 1}))
+          .gte('check_in', convertDateToIndianDate({date: new Date(filterState.checkIn)}))
+          .lte('check_in', convertDateToIndianDate({date: new Date(filterState.checkIn), addDays: 1}))
       }
-      if (state.filter.properties) {
-        bookingsData = bookingsData.contains('properties', convertPropertiesForDb(state.filter.properties))
+      if (filterState.properties) {
+        bookingsData = bookingsData.contains('properties', convertPropertiesForDb(filterState.properties))
       }
-      if (state.filter.starred) {
-        bookingsData = bookingsData.eq('starred', state.filter.starred)
+      if (filterState.starred) {
+        bookingsData = bookingsData.eq('starred', filterState.starred)
       }
-      if (state.filter.paymentPending) {
+      if (filterState.paymentPending) {
         bookingsData = bookingsData.gt('outstanding', 0)
       }
     } else {
@@ -149,26 +145,10 @@ export default function ListBooking() {
     }
   }
   //Filter modal
-  const [filterModalOpened, setFilterModalOpened] = useState<Boolean>(false)
-  const showFilterModal = () => {
+  const [filterModalOpened, setFilterModalOpened] = useState<boolean>(false)
+  const toggleFilterDisplay = () => {
     setFilterModalOpened(!filterModalOpened)
   }
-  const filterChange = ({ name, value }: { name: string, value: string | null | boolean }) => {
-    setState((prevState) => ({
-      ...prevState,
-      filter: {
-        ...prevState.filter,
-        [name]: prevState.filter[name as keyof typeof prevState.filter] == value ? null : value
-      }
-    }));
-  }
-
-  const handleDateChange = (name: string, value: string | null) => {
-    setState((prevState) => ({
-      ...prevState,
-      filter: { ...prevState.filter, [name]: value }
-    }));
-  };
 
   return (
     <div className="w-full  ">
@@ -181,7 +161,7 @@ export default function ListBooking() {
       {/* Top Nav */}
       <SearchInput value={state.searchText || undefined}
         onChange={handleChangeSearch}
-        onFilterClick={showFilterModal} />
+        onFilterClick={toggleFilterDisplay} />
       {/* <div className="relative my-3 mb-4 flex w-full flex-wrap items-stretch bg-inputBoxbg rounded-xl">
        
          <div className="relative flex items-center m-0 block w-full rounded-xl border border-solid border-neutral-300 bg-transparent px-3 text-base font-normal leading-[1.6] outline-none transition duration-200 ease-in-out focus-within:border-primary dark:border-neutral-600">
@@ -249,14 +229,15 @@ export default function ListBooking() {
       ))}
       {/* Filter modal */}
 
-      <BookingFilter filterModalOpened={filterModalOpened}
-        showFilterModal={showFilterModal}
-        handleDateChange={handleDateChange}
-        filterChange={filterChange}
-        state={state}
-        setState={setState}
+      <BookingFilter 
+        isFiltersOpened={filterModalOpened}
+        toggleFilterDisplay={toggleFilterDisplay}
+        filtersFor = 'Bookings' 
+        filterState={filterState}
+        setFilterState={setFilterState}
         loading={loading}
-        onClick={fetchData} />
+        applyFilters={fetchData}
+        />
 
 
     </div>

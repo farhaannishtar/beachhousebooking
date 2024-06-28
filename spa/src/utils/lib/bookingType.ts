@@ -115,7 +115,6 @@ export function organizedByCreatedDate(bookings: BookingDB[]): { [key: string]: 
     let organizedBookings: { [key: string]: BookingDB[] } = {}
     
     for (let booking of bookings) {
-        // date in indian format
         let date = new Date(booking.createdDateTime).toLocaleDateString("en-IN", {
             timeZone: "Asia/Kolkata"
         });

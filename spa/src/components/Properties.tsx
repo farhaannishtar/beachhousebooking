@@ -1,3 +1,4 @@
+import { Filter } from "./BookingFilter";
 import { CreateBookingState } from "./BookingForm";
 import { ListLogsState } from "./ListLogs";
 import PropertyBadge from "./PropertyBadge";
@@ -5,11 +6,11 @@ import { Event, Property } from "@/utils/lib/bookingType";
 interface PropertiesProps {
   setFormState?: React.Dispatch<React.SetStateAction<CreateBookingState>> | undefined
   setEventState?: React.Dispatch<React.SetStateAction<Event>> | undefined
-  setLogListState?:React.Dispatch<React.SetStateAction<ListLogsState>> | undefined
+  setFilterState?:React.Dispatch<React.SetStateAction<Filter>> | undefined
   properties: Property[];
 }
 
-const Properties: React.FC<PropertiesProps> = ({ setLogListState, setFormState, setEventState, properties }) => {
+const Properties: React.FC<PropertiesProps> = ({ setFilterState, setFormState, setEventState, properties }) => {
   const handlePropertyChange = (property: Property) => {
     if (setFormState) {
       setFormState((prevState: CreateBookingState) => {
@@ -45,21 +46,17 @@ const Properties: React.FC<PropertiesProps> = ({ setLogListState, setFormState, 
         };
       })
     }
-    if (setLogListState) {
-      setLogListState((prevEvent: ListLogsState) => {
-        let updatedValues = [...prevEvent?.filter?.properties ?? []];
+    if (setFilterState) {
+      setFilterState((prevFilter: Filter) => {
+        let updatedValues = [...prevFilter?.properties ?? []];
         if (updatedValues.includes(property)) {
           updatedValues = updatedValues.filter((item) => item !== property);
         } else {
           updatedValues.push(property);
         }
         return {
-          ...prevEvent,
-          filter: {
-            ...prevEvent.filter,
+            ...prevFilter,
             properties: updatedValues
-          }
-
         };
 
       })

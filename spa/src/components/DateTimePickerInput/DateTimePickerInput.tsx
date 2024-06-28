@@ -12,28 +12,32 @@ interface DateTimePickerInputProps {
   value?: string | null;
   className?: string;
   cleanable?: boolean;
+  showTime?: boolean;
 }
 
-export default function DateTimePickerInput({ label, onChange, name, value, className, cleanable }: DateTimePickerInputProps) {
+export default function DateTimePickerInput({ label, onChange, name, value, className, cleanable, showTime }: DateTimePickerInputProps) {
   const [date, setDate] = useState<Date | null>(null);
   if (value && date === null) {
     setDate(new Date(value))
   }
+  let timeFormat = (showTime === false) ? "" : " hh:mmaa";
+
   return (
     <Stack spacing={10} direction="column" className={`${className}`}>
       <DatePicker
-        format="dd/MM/yy hh:mmaa"
+        format={`dd/MM/yy${timeFormat}`}
         renderValue={value => {
           const currentYear = new Date().getFullYear();
           const year = value.getFullYear();
           if (year === currentYear) {
-            return format(value, "MMM d hh:mmaa");
+            return format(value, `MMM d${timeFormat}`);
           }
-          return format(value, "dd/MM/yy hh:mmaa");
+          return format(value, `dd/MM/yy${timeFormat}`);
         }}
         block
         onSelect={(date) => {
           setDate(new Date(date));
+          onChange!(name!, date ? date.toISOString() : null)
         }}
         value={date}
         appearance="subtle"

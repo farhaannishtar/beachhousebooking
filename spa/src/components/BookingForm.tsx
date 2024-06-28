@@ -464,7 +464,11 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                                 <BaseInput className="flex-1 h-14" type="text" placeholder="Phone Number"
                                     name="phone"
                                     value={formState.form.client.phone}
-                                    onChange={handleClientChange} />
+                                    onChange={(e) => {
+                                      // remove spaces, plus, brackets and hyphens
+                                      e.target.value = e.target.value.replace(/[\s\+\(\)\-]/g, '');
+                                      handleClientChange(e);
+                                    }} />
                                 {formErrors.phone &&
                                     <div role="alert" className="text-red-500 p-1 mt-1">
                                         <span>Phone number is invalid</span>
@@ -654,6 +658,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                                                         <DateTimePickerInput label="Date"
                                                             name="dateTime"
                                                             value={payment.dateTime}
+                                                            showTime = {false}
                                                             onChange={(name, newDateTime) => {
                                                                 handlePaymentChange(name, newDateTime!, index)
                                                             }}
