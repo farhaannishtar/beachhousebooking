@@ -7,7 +7,9 @@ interface IncomeFromReservationProps {
 }
 
 const IncomeFromReservation: React.FC<IncomeFromReservationProps> = ({ data }) => {
-
+    const indianFormatter = new Intl.NumberFormat('en-IN', {
+        maximumFractionDigits: 0
+      });
 
     useEffect(() => {
         console.log({ data });
@@ -26,7 +28,7 @@ const IncomeFromReservation: React.FC<IncomeFromReservationProps> = ({ data }) =
                         left: 0,
                         right: 0,
                     },
-                    data: Object.values(data?.daily).map((d: any) => d.confirmedSum / 1000),
+                    data: Object.values(data?.daily).map((d: any) => d.confirmedSum / 100000),
                 },
             ],
         };
@@ -68,7 +70,14 @@ const IncomeFromReservation: React.FC<IncomeFromReservationProps> = ({ data }) =
                         if (index === 0) {
                             return '';
                         }
-                        return `${value}k`;
+                        return `${value}`;
+                    }
+                },
+                title: {
+                    display: true,
+                    text: 'In Lakhs',
+                    font: {
+                        size: 14,
                     }
                 }
             },
@@ -100,7 +109,7 @@ const IncomeFromReservation: React.FC<IncomeFromReservationProps> = ({ data }) =
                     label: function (context: any) {
                         const label = context.dataset.label || '';
                         const value = context.raw;
-                        return `${label}: ₹${value}K`;
+                        return `${label}: ₹${indianFormatter.format(value*100000)}`;
                     },
                     title: function (context: any) {
                         const date = new Date();  // 2009-11-10

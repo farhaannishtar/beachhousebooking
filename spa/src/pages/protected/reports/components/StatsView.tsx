@@ -31,6 +31,10 @@ function getCurrentMonth(): Month {
 export default function StatsView() {
     const router = useRouter();
 
+    const indianFormatter = new Intl.NumberFormat('en-IN', {
+        maximumFractionDigits: 0
+      });
+
     useEffect(() => {
         fetchData()
     }, []);
@@ -137,7 +141,7 @@ export default function StatsView() {
                         </div>
                         <div className="flex-1 rounded-xl h-28 bg-typo_light-100 flex flex-col justify-end py-2 gap-5 px-6">
                             <label className="label !p-0 !font-medium"> Total Income  reservations</label>
-                            <label className="title">{'₹' + (parseInt(formState?.rawReservationsResponse?.monthly?.confirmedSum)).toLocaleString()}</label>
+                            <label className="title">{'₹' + (indianFormatter.format(formState?.rawReservationsResponse?.monthly?.confirmedSum))}</label>
                         </div>
                     </div>
                 </div>
@@ -163,7 +167,7 @@ export default function StatsView() {
                         </div>
                         <div className="flex-1 rounded-xl h-28 bg-typo_light-100 flex flex-col justify-end py-2 gap-5 px-6">
                             <label className="label !p-0 !font-medium"> Total Income  reservations</label>
-                            <label className="title">{'₹' + (parseInt(formState?.rawReservationsResponse?.daily[dayOfMonth]?.confirmedSum)).toLocaleString()}</label>
+                            <label className="title">{'₹' + (indianFormatter.format(formState?.rawReservationsResponse?.daily[dayOfMonth]?.confirmedSum))}</label>
                         </div>
                     </div>
                 </div>
@@ -186,19 +190,19 @@ export default function StatsView() {
                 <div className="flex flex-col gap-2">
                     <div className="flex justify-between items-center">
                         <label className="label !pt-0">Total Reservations Value</label>
-                        <label className="label !pt-0 !font-semibold">{'₹' + (parseInt(formState?.rawReservationsResponse?.monthly?.confirmedSum)).toLocaleString()}</label>
+                        <label className="label !pt-0 !font-semibold">{'₹' + (indianFormatter.format(formState?.rawReservationsResponse?.monthly?.confirmedSum))}</label>
                     </div>
                     <div className="flex justify-between items-center">
                         <label className="label">Average Reservation Value</label>
-                        <label className="label !font-semibold">{'₹' + (parseFloat(formState?.rawReservationsResponse?.monthly?.confirmedAvg)).toLocaleString()}</label>
+                        <label className="label !font-semibold">{'₹' + (indianFormatter.format(formState?.rawReservationsResponse?.monthly?.confirmedAvg))}</label>
                     </div>
                     <div className="flex justify-between items-center">
                         <label className="label">Total Checkin Value</label>
-                        <label className="label !font-semibold">{'₹' + (parseInt(formState?.rawCheckinsResponse?.monthly?.sum)).toLocaleString()}</label>
+                        <label className="label !font-semibold">{'₹' + (indianFormatter.format(formState?.rawCheckinsResponse?.monthly?.sum))}</label>
                     </div>
                     <div className="flex justify-between items-center">
                         <label className="label">Average Checkin Value</label>
-                        <label className="label !font-semibold">{'₹' + (parseFloat(formState?.rawCheckinsResponse?.monthly?.average)).toLocaleString()}</label>
+                        <label className="label !font-semibold">{'₹' + (indianFormatter.format(formState?.rawCheckinsResponse?.monthly?.average))}</label>
                     </div>
 
 

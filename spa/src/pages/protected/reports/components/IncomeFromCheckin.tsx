@@ -7,6 +7,9 @@ interface IncomeFromCheckinProps {
 }
 
 const IncomeFromCheckin: React.FC<IncomeFromCheckinProps> = ({ data }) => {
+    const indianFormatter = new Intl.NumberFormat('en-IN', {
+        maximumFractionDigits: 0
+      });
     useEffect(() => {
         console.log({ data });
 
@@ -24,7 +27,7 @@ const IncomeFromCheckin: React.FC<IncomeFromCheckinProps> = ({ data }) => {
                         left: 0,
                         right: 0,
                     },
-                    data: Object.values(data?.daily).map((d: any) => d.sum / 1000),
+                    data: Object.values(data?.daily).map((d: any) => d.sum / 100000),
                 },
             ],
         };
@@ -67,7 +70,14 @@ const IncomeFromCheckin: React.FC<IncomeFromCheckinProps> = ({ data }) => {
                         if (index === 0) {
                             return '';
                         }
-                        return `${value}k`;
+                        return `${value}`;
+                    }
+                },
+                title: {
+                    display: true,
+                    text: 'In Lakhs',
+                    font: {
+                        size: 14,
                     }
                 }
 
@@ -101,7 +111,7 @@ const IncomeFromCheckin: React.FC<IncomeFromCheckinProps> = ({ data }) => {
                     label: function (context: any) {
                         const label = context.dataset.label || '';
                         const value = context.raw;
-                        return `${label}: ₹${value}K`;
+                        return `${label}: ₹${indianFormatter.format(value*100000)}`;
                     },
                     title: function (context: any) {
                         const date = new Date();  // 2009-11-10
