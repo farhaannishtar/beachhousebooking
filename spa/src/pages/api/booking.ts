@@ -1,7 +1,7 @@
 import { BookingForm } from '@/utils/lib/bookingType';
 import { deleteBooking, mutateBookingState } from '@/utils/lib/booking';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { fetchUser, verifyAndGetPayload } from '@/utils/lib/auth';
+import { fetchUser, saveUser, verifyAndGetPayload } from '@/utils/lib/auth';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   switch (req.method) {
@@ -22,6 +22,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 const handleGet = async (req: NextApiRequest, res: NextApiResponse) => {
   console.log('Get request');
+  // saveUser()
   res.status(200).json({ message: "Hello" });
 };
 

@@ -37,3 +37,11 @@ export async function fetchUser(id: string): Promise<User> {
     displayName: result[0].raw_user_meta_data.display_name
   };
 }
+
+export async function saveUser(): Promise<void> {
+  let id = "ebd19bfb-043b-43fb-943e-e03d3b25db69"
+  const result = await query('SELECT * FROM auth.users WHERE id = $1', [id]);
+  let metadata = result[0].raw_user_meta_data
+  metadata.display_name = "Tito";
+  await query('UPDATE auth.users SET raw_user_meta_data = $1 WHERE id = $2', [metadata, id]);
+}
