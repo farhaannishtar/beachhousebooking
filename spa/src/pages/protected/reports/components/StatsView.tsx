@@ -96,7 +96,7 @@ export default function StatsView() {
         }));
     };
     return (
-        <div className='flex flex-col gap-5' >
+        <div className='flex flex-col gap-5 !select-none' >
             <div className='flex items-center h-[72px]' >
                 <span className=" material-symbols-outlined cursor-pointer hover:text-selectedButton" onClick={() => router.back()}>arrow_back</span>
                 <h1 className='text-lg font-bold leading-6 w-full text-center '>Report for {formState.filter.month}</h1>
