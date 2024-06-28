@@ -12,4 +12,5 @@ const ViewBookingPage = () => {
         </div>
     );
 }
+ViewBookingPage.useNoLayout = true;
 export default ViewBookingPage;
