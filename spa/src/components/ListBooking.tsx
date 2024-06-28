@@ -1,10 +1,11 @@
 "use client";
 
-import { BookingDB, Property, convertPropertiesForDb, numOfDays, organizedByStartDate } from '@/utils/lib/bookingType';
+import { BookingDB, Property, convertDateToIndianDate, convertPropertiesForDb, numOfDays, organizedByStartDate } from '@/utils/lib/bookingType';
 import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/utils/supabase/client';
 import SearchInput from './ui/SearchInput';
+import LoadingButton from './ui/LoadingButton';
 
 // interface BookingProps {
 //   bookingsFromParent: BookingDB[];
@@ -13,7 +14,6 @@ import SearchInput from './ui/SearchInput';
 interface ListBookingsState {
   searchText: string | null;
   filter: {
-    status: "Inquiry" | "Quotation" | "Confirmed" | null;
     checkIn: Date | null;
     properties: Property[] | null;
     starred: boolean | null;
@@ -22,7 +22,7 @@ interface ListBookingsState {
   date: Date | null;
   dbBookings: BookingDB[];
 }
-
+let numOfBookings = 7;
 export default function ListBooking() {
 
   const router = useRouter();
@@ -31,7 +31,6 @@ export default function ListBooking() {
     date: null,
     dbBookings: [],
     filter: {
-      status: null,
       checkIn: null,
       properties: null,
       starred: null,
@@ -48,12 +47,11 @@ export default function ListBooking() {
     if (state.searchText) {
       bookingsData = bookingsData
         .or(`client_name.ilike.%${state.searchText}%,client_phone_number.ilike.%${state.searchText}%`)
-    } else if (state.filter.checkIn || state.filter.status || state.filter.properties || state.filter.starred || state.filter.paymentPending) {
+    } else if (state.filter.checkIn || state.filter.properties || state.filter.starred || state.filter.paymentPending) {
       if (state.filter.checkIn) {
-        bookingsData = bookingsData.gte('check_in', state.filter.checkIn.toISOString())
-      }
-      if (state.filter.status) {
-        bookingsData = bookingsData.eq('status', state.filter.status.toLocaleLowerCase())
+        bookingsData = bookingsData
+          .gte('check_in', convertDateToIndianDate({date: new Date(state.filter.checkIn)}))
+          .lte('check_in', convertDateToIndianDate({date: new Date(state.filter.checkIn), addDays: 1}))
       }
       if (state.filter.properties) {
         bookingsData = bookingsData.contains('properties', convertPropertiesForDb(state.filter.properties))
@@ -68,7 +66,7 @@ export default function ListBooking() {
       bookingsData = bookingsData.gte('check_in', new Date(new Date().setDate(new Date().getDate() - 30)).toISOString())
     }
 
-    bookingsData = bookingsData.eq('status', 'confirmed').order('check_in', { ascending: true })
+    bookingsData = bookingsData.eq('status', 'confirmed').order('check_in', { ascending: false }).range(0, numOfBookings)
     bookingsData
       .then(({ data: bookingsData }) => {
         console.log(bookingsData)
@@ -76,7 +74,7 @@ export default function ListBooking() {
         bookingsData?.forEach((booking) => {
           const lastIndex = booking.json.length - 1
           const lastBooking = booking.json[lastIndex]
-          bookings.push({
+          bookings.unshift({
             ...lastBooking,
             bookingId: booking.id,
           })
@@ -90,6 +88,7 @@ export default function ListBooking() {
 
 
   useEffect(() => {
+    numOfBookings = 7
     fetchData()
   }, []);
 
@@ -140,20 +139,14 @@ export default function ListBooking() {
       {/* Top Nav */}
       <SearchInput value={state.searchText || undefined}
         onChange={handleChangeSearch} />
-      {/* <div className="relative my-3 mb-4 flex w-full flex-wrap items-stretch bg-inputBoxbg rounded-xl">
-       
-         <div className="relative flex items-center m-0 block w-full rounded-xl border border-solid border-neutral-300 bg-transparent px-3 text-base font-normal leading-[1.6] outline-none transition duration-200 ease-in-out focus-within:border-primary dark:border-neutral-600">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="#617A8A" className="h-5 w-5 absolute z-50 left-3 pointer-events-none">
-            <path fillRule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clipRule="evenodd" />
-          </svg>
-          <input type="search" className="relative flex-auto w-full px-10 py-[0.25rem] placeholder:text-placeHolderText bg-inputBoxbg text-neutral-700 outline-none" placeholder="Search" aria-label="Search"
-            name="searchText"
-            value={state.searchText || undefined}
-            onChange={handleChangeSearch}
-          />
-         
-        </div> 
-      </div> */}
+      <LoadingButton
+        className=" border-[1px] border-selectedButton text-selectedButton my-4 w-full py-2 px-4 rounded-xl"
+        onClick={
+          () => {
+            numOfBookings = numOfBookings + 7;
+            fetchData()
+          }
+        } >Load More</LoadingButton>
       {dates().map((date) => (
         <React.Fragment key={date}>
           <p className="pl-1 mt-6 text-neutral-900 text-lg font-semibold leading-6">
