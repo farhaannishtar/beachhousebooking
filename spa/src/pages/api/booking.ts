@@ -29,7 +29,7 @@ const handlePost = async (req: NextApiRequest, res: NextApiResponse) => {
   console.log('Post request');
   try {
     const payload = await verifyAndGetPayload(req);
-    const booking: BookingForm = req.body;
+    const booking: BookingForm = JSON.parse(req.body);
     const user = await fetchUser(payload.sub);
     const bookingId = await mutateBookingState(booking, user);
     res.status(200).json({ bookingId });
@@ -43,7 +43,7 @@ const handleDelete = async (req: NextApiRequest, res: NextApiResponse) => {
   console.log('Delete request');
   try {
     const payload = await verifyAndGetPayload(req);
-    const { bookingId } = req.body
+    const { bookingId } = JSON.parse(req.body)
     console.log('Booking id:', bookingId);
     await deleteBooking(bookingId);
     res.status(200).json({ message: "Booking deleted" });

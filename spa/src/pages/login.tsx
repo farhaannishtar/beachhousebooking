@@ -49,7 +49,7 @@ const Login = () => {
     } else {
       console.log(session);
     }
-    return router.push("/protected");
+    return router.push("/protected/logs");
   };
 
   return (

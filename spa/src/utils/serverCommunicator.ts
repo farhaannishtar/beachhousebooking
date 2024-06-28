@@ -35,7 +35,7 @@ export const deleteBooking = async (bookingId: number) => {
 
   try {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
-    const response = await fetch(`${apiUrl}/api/submit`, {
+    const response = await fetch(`${apiUrl}/api/booking`, {
       method: "DELETE",
       headers: {
         'Authorization': `Bearer ${token}`

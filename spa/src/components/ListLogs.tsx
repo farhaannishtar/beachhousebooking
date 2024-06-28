@@ -24,46 +24,9 @@ export interface ListLogsState {
   dbBookings: BookingDB[];
 }
 
-let lastScrollToCeilingTime = Date.now();
-let lastNumOfDays = 1;
+let lastNumOfDays = 0;
 
 export default function ListLogs() {
-  let scrollLock = false;
-  const [lastScrollY, setLastScrollY] = useState(0);
-
-  const handleScroll = () => {
-    const currentScrollY = window.scrollY;
-
-    if (currentScrollY < lastScrollY && currentScrollY === 0 && !scrollLock) {
-
-      console.log(`User has hit ceiling ${Date.now()}, ${lastScrollToCeilingTime}, ${Date.now() - lastScrollToCeilingTime}`);
-
-      if (Date.now() - lastScrollToCeilingTime < 2000) {
-        console.log('User has hit ceiling twice in less than 1 second');
-        scrollLock = true;
-        lastNumOfDays = lastNumOfDays + 1;
-        fetchData()
-        setTimeout(() => {
-          scrollLock = false;
-        }, 1000);
-      }
-      lastScrollToCeilingTime = Date.now();
-
-    }
-
-    setLastScrollY(currentScrollY);
-  };
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      // Only add the event listener in the browser environment
-      window.addEventListener('scroll', handleScroll);
-
-      return () => {
-        window.removeEventListener('scroll', handleScroll);
-      };
-    }
-  }, [lastScrollY]);
 
   const router = useRouter();
   //Scroll smoothely to page section
@@ -142,6 +105,7 @@ export default function ListLogs() {
 
 
   useEffect(() => {
+    lastNumOfDays = 0
     fetchData()
   }, []);
 

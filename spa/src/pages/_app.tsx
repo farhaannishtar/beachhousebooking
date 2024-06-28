@@ -22,19 +22,42 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 
 import type { AppProps } from 'next/app';
 import ProtectedLayout from 'src/layouts/ProtectedLayout';
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useEffect } from 'react';
+import { useRouter } from 'next/router';
+import { supabase } from '@/utils/supabase/client';
 
 const DefaultLayout = ({ children }: { children: ReactNode }) => {
   return (
     <>
-
       {children}
-
     </>
   );
 };
 function MyApp({ Component, pageProps }: AppProps) {
-  const useNoLayout = (Component as { noLayout?: boolean }).noLayout || false;
+  const router = useRouter();
+
+  const currentPath = router.pathname;
+  useEffect(() => {
+    const checkUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      const userId = user?.id;
+      
+      if (userId) {
+        if (currentPath === '/login') {
+          router.push('/protected/logs');
+        }
+      } else {
+        if (currentPath !== '/login') {
+          router.push('/login');
+        }
+      }
+    };
+
+    checkUser();
+  }, [currentPath, router]);
+
+
+  const useNoLayout = currentPath === '/login' || currentPath === '/protected/booking/create' || currentPath === '/protected/booking/[id]'
   const Layout = !useNoLayout ? ProtectedLayout : DefaultLayout;
   return <main className={`${plusJakartaSans.className} min-h-screen flex flex-col items-center w-full container`}> <Layout><Component {...pageProps} /></Layout> </main>
 }
