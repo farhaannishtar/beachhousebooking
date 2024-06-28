@@ -1,7 +1,7 @@
 "use client"
 import { BookingDB, Property, convertDateToIndianDate, convertPropertiesForDb, printInIndianTime, numOfDays, organizedByCreatedDate } from '@/utils/lib/bookingType';
 import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
-import { useRouter } from 'next/navigation'
+import { useRouter } from 'next/router'
 
 import SearchInput from './ui/SearchInput';
 import LoadingButton from './ui/LoadingButton';
@@ -29,6 +29,7 @@ let numOfBookings = 7;
 export default function ListLogs() {
 
   const router = useRouter();
+  //Scroll smoothely to page section
 
   const [state, setState] = useState<ListLogsState>({
     searchText: null,
@@ -48,7 +49,7 @@ export default function ListLogs() {
   async function fetchData() {
     setLoading(true)
     let bookingsData = supabase.from("bookings").select()
-    
+
     if (state.searchText) {
       bookingsData = bookingsData
         .or(`client_name.ilike.%${state.searchText}%,client_phone_number.ilike.%${state.searchText}%`)
@@ -91,6 +92,11 @@ export default function ListLogs() {
       ...prevState,
       dbBookings: bookings,
     }));
+    //Scroll smoothely to page section
+    if (router.asPath.includes('#')) {
+      const id = router.asPath.split('#')[1];
+      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+    }
     setLoading(false);
     setFilterModalOpened(false)
 
@@ -147,12 +153,13 @@ export default function ListLogs() {
   const showFilterModal = () => {
     setFilterModalOpened(!filterModalOpened)
   }
-  const filterChange = ({name, value}: {name: string, value: string | null | boolean}) => {
+  const filterChange = ({ name, value }: { name: string, value: string | null | boolean }) => {
     setState((prevState) => ({
       ...prevState,
-      filter: { 
-        ...prevState.filter, 
-        [name]: prevState.filter[name as keyof typeof prevState.filter] == value ? null : value }
+      filter: {
+        ...prevState.filter,
+        [name]: prevState.filter[name as keyof typeof prevState.filter] == value ? null : value
+      }
     }));
   }
 
@@ -172,7 +179,7 @@ export default function ListLogs() {
       </div>
       {/* Top Nav */}
       <SearchInput value={state.searchText || undefined}
-        onChange={handleChangeSearch} 
+        onChange={handleChangeSearch}
         onFilterClick={showFilterModal} />
       <LoadingButton
         className=" border-[1px] border-selectedButton text-selectedButton my-4 w-full py-2 px-4 rounded-xl"
@@ -192,9 +199,10 @@ export default function ListLogs() {
             <div
               className="flex mt-3 w-full justify-between"
               key={booking.bookingId}
-              onClick={() => router.push(`/protected/booking/${booking.bookingId}`)}
+              id={`${booking.bookingId}-id`}
+              onClick={() => router.push(`/protected/booking/${booking.bookingId}?returnTo=/protected/logs`)}
             >
-              <div className="pl-3 flex flex-col gap-1">
+              <div className="pl-3 flex flex-col gap-0">
                 <label className='flex items-center gap-1'>
                   <span className="text-neutral-900 text-base font-medium ">{booking.client.name}</span> <span className="text-slate-500 text-sm font-normal ">{booking.status}</span>{booking?.starred && <span className='material-symbols-filled text-2xl'>star_rate</span>}
                 </label>
@@ -212,9 +220,9 @@ export default function ListLogs() {
                 )}
                 {booking.totalCost > 0 && (
                   <div className='flex items-center gap-4 text-sm'>
-                  <label >Rs {booking.outstanding == 0 ? booking.paid : booking.outstanding}</label>
-                  <div className={`${booking.outstanding == 0 ? ' bg-green-500/30' : 'bg-error/20'} px-3 rounded-xl`}>{booking.outstanding == 0 ? 'Paid' : 'Unpaid'}</div>
-                </div>
+                    <label >Rs {booking.outstanding == 0 ? booking.paid : booking.outstanding}</label>
+                    <div className={`${booking.outstanding == 0 ? ' bg-green-500/30' : 'bg-error/20'} px-3 rounded-xl`}>{booking.outstanding == 0 ? 'Paid' : 'Unpaid'}</div>
+                  </div>
                 )}
                 {booking.updatedBy.name && (
                   <label className="text-slate-500 text-sm font-normal ">@{booking.createdBy.name} {printInIndianTime(booking.createdDateTime, true)}</label>
@@ -239,7 +247,7 @@ export default function ListLogs() {
         {/* overlay background */}
         <div className="overlay h-full w-full bg-black/40 absolute z-10" onClick={showFilterModal}></div>
         {/* Filter part  */}
-        <div className='bg-white flex flex-col p-4 relative gap-4 z-20'>
+        <div className='bg-white flex flex-col p-4 relative gap-4 z-20 max-h-[80vh] overflow-y-auto'>
           {/* filters */}
           <label className='subheading'>Filters</label>
           <DateTimePickerInput label="Pick Date" name="createdTime" onChange={handleDateChange} value={state.filter.createdTime} className='filterDatePicker' cleanable={true}/>
@@ -249,20 +257,20 @@ export default function ListLogs() {
           {/* Booking Types */}
           <label className='subheading'>Booking Types</label>
           <div className='flex items-center flex-wrap gap-4' >
-            <div onClick={() => filterChange({ name: 'status', value: 'Inquiry' } )} className={`badge badge-lg text-center w-32 ${state.filter.status == 'Inquiry' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
+            <div onClick={() => filterChange({ name: 'status', value: 'Inquiry' })} className={`badge badge-lg text-center w-32 ${state.filter.status == 'Inquiry' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
               } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Inquiries</div>
-            <div onClick={() => filterChange({name: 'status', value: 'Quotation' } )} className={`badge badge-lg text-center w-32 ${state.filter.status == 'Quotation' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
+            <div onClick={() => filterChange({ name: 'status', value: 'Quotation' })} className={`badge badge-lg text-center w-32 ${state.filter.status == 'Quotation' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
               } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Quotations</div>
-            <div onClick={() => filterChange({ name: 'status', value: 'Confirmed' } )} className={`badge badge-lg text-center w-32 ${state.filter.status == 'Confirmed' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
+            <div onClick={() => filterChange({ name: 'status', value: 'Confirmed' })} className={`badge badge-lg text-center w-32 ${state.filter.status == 'Confirmed' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
               } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Confirmed</div>
 
           </div>
           {/* Other */}
           <label className='subheading'>Other</label>
           <div className='flex items-center flex-wrap gap-4' >
-            <div onClick={() => filterChange({ name: 'paymentPending', value: !state.filter.paymentPending  })} className={`badge badge-lg text-center w-44 ${state.filter.paymentPending ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
+            <div onClick={() => filterChange({ name: 'paymentPending', value: !state.filter.paymentPending })} className={`badge badge-lg text-center w-44 ${state.filter.paymentPending ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
               } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Payment Pending</div>
-            <div onClick={() => filterChange({ name: 'starred', value: !state.filter.starred  })} className={`badge badge-lg text-center w-32 ${state.filter.starred ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
+            <div onClick={() => filterChange({ name: 'starred', value: !state.filter.starred })} className={`badge badge-lg text-center w-32 ${state.filter.starred ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
               } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Starred</div>
 
 
@@ -270,13 +278,13 @@ export default function ListLogs() {
           {/* Employees */}
           <label className='subheading'>Employees</label>
           <div className='flex items-center flex-wrap gap-4' >
-            <div onClick={() => filterChange({ name: 'createdBy', value: 'Nusrat' } )} className={`badge badge-lg text-center w-32 ${state.filter.createdBy == 'Nusrat' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
+            <div onClick={() => filterChange({ name: 'createdBy', value: 'Nusrat' })} className={`badge badge-lg text-center w-32 ${state.filter.createdBy == 'Nusrat' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
               } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Nusrat</div>
-            <div onClick={() => filterChange({ name: 'createdBy', value: 'Prabhu' } )} className={`badge badge-lg text-center w-32 ${state.filter.createdBy == 'Prabhu' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
+            <div onClick={() => filterChange({ name: 'createdBy', value: 'Prabhu' })} className={`badge badge-lg text-center w-32 ${state.filter.createdBy == 'Prabhu' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
               } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Prabhu</div>
-            <div onClick={() => filterChange({ name: 'createdBy', value: 'Yasmeen' } )} className={`badge badge-lg text-center w-32 ${state.filter.createdBy == 'Yasmeen' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
+            <div onClick={() => filterChange({ name: 'createdBy', value: 'Yasmeen' })} className={`badge badge-lg text-center w-32 ${state.filter.createdBy == 'Yasmeen' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
               } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Yasmeen</div>
-            <div onClick={() => filterChange({ name: 'createdBy', value: 'Rafica' } )} className={`badge badge-lg text-center w-32 ${state.filter.createdBy == 'Rafica' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
+            <div onClick={() => filterChange({ name: 'createdBy', value: 'Rafica' })} className={`badge badge-lg text-center w-32 ${state.filter.createdBy == 'Rafica' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
               } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Rafica</div>
           </div>
           {/* Apply filters */}
