@@ -1,11 +1,12 @@
 "use client";
 
-import { BookingDB, Property, convertPropertiesForDb, numOfDays, organizedByStartDate } from '@/utils/lib/bookingType';
+import { BookingDB, Property, convertDateToIndianDate, convertPropertiesForDb, numOfDays, organizedByStartDate } from '@/utils/lib/bookingType';
 import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { useRouter } from 'next/router'
 import { supabase } from '@/utils/supabase/client';
 import SearchInput from './ui/SearchInput';
 import BookingFilter from './BookingFilter';
+import LoadingButton from './ui/LoadingButton';
 
 // interface BookingProps {
 //   bookingsFromParent: BookingDB[];
@@ -14,7 +15,6 @@ import BookingFilter from './BookingFilter';
 interface ListBookingsState {
   searchText: string | null;
   filter: {
-    status: "Inquiry" | "Quotation" | "Confirmed" | null;
     checkIn: Date | null;
     properties: Property[] | null;
     starred: boolean | null;
@@ -23,7 +23,7 @@ interface ListBookingsState {
   date: Date | null;
   dbBookings: BookingDB[];
 }
-
+let numOfBookings = 7;
 export default function ListBooking() {
 
   const router = useRouter();
@@ -32,7 +32,6 @@ export default function ListBooking() {
     date: null,
     dbBookings: [],
     filter: {
-      status: null,
       checkIn: null,
       properties: null,
       starred: null,
@@ -51,12 +50,11 @@ export default function ListBooking() {
     if (state.searchText) {
       bookingsData = bookingsData
         .or(`client_name.ilike.%${state.searchText}%,client_phone_number.ilike.%${state.searchText}%`)
-    } else if (state.filter.checkIn || state.filter.status || state.filter.properties || state.filter.starred || state.filter.paymentPending) {
+    } else if (state.filter.checkIn || state.filter.properties || state.filter.starred || state.filter.paymentPending) {
       if (state.filter.checkIn) {
-        bookingsData = bookingsData.gte('check_in', state.filter.checkIn.toISOString())
-      }
-      if (state.filter.status) {
-        bookingsData = bookingsData.eq('status', state.filter.status.toLocaleLowerCase())
+        bookingsData = bookingsData
+          .gte('check_in', convertDateToIndianDate({date: new Date(state.filter.checkIn)}))
+          .lte('check_in', convertDateToIndianDate({date: new Date(state.filter.checkIn), addDays: 1}))
       }
       if (state.filter.properties) {
         bookingsData = bookingsData.contains('properties', convertPropertiesForDb(state.filter.properties))
@@ -71,7 +69,7 @@ export default function ListBooking() {
       bookingsData = bookingsData.gte('check_in', new Date(new Date().setDate(new Date().getDate() - 30)).toISOString())
     }
 
-    bookingsData = bookingsData.eq('status', 'confirmed').order('check_in', { ascending: true })
+    bookingsData = bookingsData.eq('status', 'confirmed').order('check_in', { ascending: false }).range(0, numOfBookings)
     bookingsData
       .then(({ data: bookingsData }) => {
         console.log(bookingsData)
@@ -79,7 +77,7 @@ export default function ListBooking() {
         bookingsData?.forEach((booking) => {
           const lastIndex = booking.json.length - 1
           const lastBooking = booking.json[lastIndex]
-          bookings.push({
+          bookings.unshift({
             ...lastBooking,
             bookingId: booking.id,
           })
@@ -101,6 +99,17 @@ export default function ListBooking() {
 
 
   useEffect(() => {
+    numOfBookings = 7
+    setState((prevState) => ({
+      ...prevState,
+      searchText: null,
+      filter: {
+        checkIn: null,
+        properties: null,
+        starred: null,
+        paymentPending: null
+      }
+    }));
     fetchData()
   }, []);
 
@@ -187,6 +196,15 @@ export default function ListBooking() {
          
         </div> 
       </div> */}
+       
+      <LoadingButton
+        className=" border-[1px] border-selectedButton text-selectedButton my-4 w-full py-2 px-4 rounded-xl"
+        onClick={
+          () => {
+            numOfBookings = numOfBookings + 7;
+            fetchData()
+          }
+        } >Load More</LoadingButton>
       {dates().map((date) => (
         <React.Fragment key={date}>
           <p className="pl-1 mt-6 text-neutral-900 text-lg font-semibold leading-6">

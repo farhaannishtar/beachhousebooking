@@ -152,13 +152,13 @@ export function printInIndianTime(utcDateTimeString: string | undefined, onlyTim
     return ret
 }
 
-export function convertDateToIndianDate({date, subtractDays}: {date?: Date | undefined, subtractDays?: number | undefined}) {
+export function convertDateToIndianDate({date, addDays}: {date?: Date | undefined, addDays?: number | undefined}) {
     let indianDate = new Date()
     if (date) {
       indianDate = new Date(date)
     }
-    if (subtractDays) {
-      indianDate.setDate(indianDate.getDate() - subtractDays);
+    if (addDays) {
+      indianDate.setDate(indianDate.getDate() + addDays);
     }
     indianDate.setUTCHours(0, 0, 0, 0);
     // set to midnight in indian time

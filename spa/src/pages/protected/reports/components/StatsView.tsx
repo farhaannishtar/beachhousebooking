@@ -8,9 +8,11 @@ import BaseSelect from "@/components/ui/BaseSelect";
 import { supabase } from "@/utils/supabase/client";
 import IncomeFromCheckin from "./IncomeFromCheckin";
 
+// define month type
+type Month = "June" | "July" | "August" | "September" | "October" | "November" | "December"
 export interface StatsState {
     filter: {
-        month: "June" | "July",
+        month: Month,
         employee: "Prabhu" | "Yasmeen" | "Rafica" | "Nusrat" | null
         referral: "Google" | "Instagram" | "Facebook" | "Other" | null
     }
@@ -18,7 +20,13 @@ export interface StatsState {
     rawCheckinsResponse: any
 }
 
-const monthConvert = { "June": 6, "July": 7 }
+const monthConvert: { [key in Month]: number } = { "June": 6, "July": 7, "August": 8, "September": 9, "October": 10, "November": 11, "December": 12 };
+
+function getCurrentMonth(): Month {
+    const monthIndex = new Date().getMonth() + 1; // JavaScript months are 0-based, add 1 to match the dictionary values
+    return Object.keys(monthConvert).find(key => monthConvert[key as Month] === monthIndex) as Month;
+}
+
 
 export default function StatsView() {
     const router = useRouter();
@@ -28,7 +36,7 @@ export default function StatsView() {
     }, []);
     const fetchData = () => {
         setLoading(true)
-        supabase.rpc('get_booking_stats', { month: monthConvert[formState.filter.month], year: 2024, employee: formState.filter.employee, referral: formState.filter.referral }).then(({ data, error }) => {
+        supabase.rpc('get_booking_stats', { month: monthConvert[formState.filter.month], year: new Date().getFullYear(), employee: formState.filter.employee, referral: formState.filter.referral }).then(({ data, error }) => {
             if (error) {
                 console.log("error ", error);
             }
@@ -42,7 +50,7 @@ export default function StatsView() {
 
         })
 
-        supabase.rpc('get_checkin_stats', { month: monthConvert[formState.filter.month], year: 2024, employee: formState.filter.employee, referral: formState.filter.referral }).then(({ data, error }) => {
+        supabase.rpc('get_checkin_stats', { month: monthConvert[formState.filter.month], year: new Date().getFullYear(), employee: formState.filter.employee, referral: formState.filter.referral }).then(({ data, error }) => {
             if (error) {
                 console.log("error ", error);
             }
@@ -58,10 +66,11 @@ export default function StatsView() {
         })
 
     }
+
     const [formState, setFormState] = useState<StatsState>(
         {
             filter: {
-                month: "June",
+                month: getCurrentMonth(),
                 employee: null,
                 referral: null
             },
@@ -89,12 +98,18 @@ export default function StatsView() {
         }));
 
     }
-    const handleDateChange = (name: string, value: string | null) => {
+    useEffect(() => {
         setFormState((prevState) => ({
             ...prevState,
-            filter: { ...prevState.filter, [name]: value }
+            filter: {
+                month: getCurrentMonth(),
+                employee: null,
+                referral: null
+            },
         }));
-    };
+        fetchData()
+      }, []);
+
     return (
         <div className='flex flex-col gap-5 !select-none' >
             <div className='flex items-center h-[72px]' >
@@ -198,7 +213,8 @@ export default function StatsView() {
                 <div className='bg-white flex flex-col p-4 relative gap-5 z-20 max-h-[80vh] overflow-y-auto'>
                     {/* filters */}
                     <label className='subheading'>Filters</label>
-                    <BaseSelect value={formState.filter.month} data={[{ label: 'June', value: 'June' }, { label: 'July', value: 'July' }]}
+                    <BaseSelect value={formState.filter.month} 
+                    data={(Object.keys(monthConvert) as Month[]).map((month) => ({ label: month, value: month }))}
                         onChange={(value) => filterChange({ name: 'month', value: value })}
                         name="month" />
 

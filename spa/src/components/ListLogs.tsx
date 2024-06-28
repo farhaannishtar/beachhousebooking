@@ -25,7 +25,7 @@ export interface ListLogsState {
   dbBookings: BookingDB[];
 }
 
-let lastNumOfDays = 0;
+let numOfBookings = 7;
 
 export default function ListLogs() {
 
@@ -55,9 +55,10 @@ export default function ListLogs() {
       bookingsData = bookingsData
         .or(`client_name.ilike.%${state.searchText}%,client_phone_number.ilike.%${state.searchText}%`)
     } else if (state.filter.createdTime || state.filter.status || state.filter.properties.length > 0 || state.filter.starred || state.filter.paymentPending || state.filter.createdBy) {
-
       if (state.filter.createdTime) {
-        bookingsData = bookingsData.gte('created_at', convertDateToIndianDate({ date: new Date(state.filter.createdTime) }))
+        bookingsData = bookingsData
+          .gte('created_at', convertDateToIndianDate({date: new Date(state.filter.createdTime)}))
+          .lte('created_at', convertDateToIndianDate({date: new Date(state.filter.createdTime), addDays: 1}))
       }
       if (state.filter.status) {
 
@@ -73,19 +74,17 @@ export default function ListLogs() {
         bookingsData = bookingsData.gt('outstanding', 0)
       }
       if (state.filter.createdBy) {
-        bookingsData = bookingsData.eq('email', state.filter.createdBy).gte('updated_at', convertDateToIndianDate({ subtractDays: lastNumOfDays }))
+        bookingsData = bookingsData.eq('email', state.filter.createdBy)
       }
-    } else {
-      bookingsData = bookingsData.gte('created_at', convertDateToIndianDate({ subtractDays: lastNumOfDays }))
-    }
+    } 
 
-    bookingsData = bookingsData.order('created_at', { ascending: true })
+    bookingsData = bookingsData.order('created_at', { ascending: false }).range(0, numOfBookings)
     let { data: result } = await bookingsData
     let bookings: BookingDB[] = []
     result?.forEach((booking: any) => {
       const lastIndex = booking.json.length - 1
       const lastBooking: BookingDB = booking.json[lastIndex]
-      bookings.push({
+      bookings.unshift({
         ...lastBooking,
         bookingId: booking.id,
       })
@@ -106,7 +105,19 @@ export default function ListLogs() {
 
 
   useEffect(() => {
-    lastNumOfDays = 0
+    numOfBookings = 7
+    setState((prevState) => ({
+      ...prevState,
+      searchText: null,
+      filter: {
+        status: null,
+        createdTime: null,
+        properties: [],
+        starred: null,
+        paymentPending: null,
+        createdBy: null
+      }
+    }));
     fetchData()
   }, []);
 
@@ -187,7 +198,7 @@ export default function ListLogs() {
         className=" border-[1px] border-selectedButton text-selectedButton my-4 w-full py-2 px-4 rounded-xl"
         onClick={
           () => {
-            lastNumOfDays = lastNumOfDays + 1;
+            numOfBookings = numOfBookings + 7;
             fetchData()
           }
         } >Load More</LoadingButton>
