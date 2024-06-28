@@ -98,7 +98,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
 
         });
     const [EventStaySwitchValue, setIsSwitchOn] = useState<boolean>(formState.form.bookingType === "Stay" ? false : true);
-    const [textareaHeight, setTextareaHeight] = useState<number>(40);
+    const [textareaHeight, setTextareaHeight] = useState<number>(120);
 
     const validateForm = async () => {
         const formDataToValidate = {
@@ -142,9 +142,9 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
     ]);
 
     useEffect(() => {
-        const newHeight = Math.ceil(formState.form.notes.length / 41) * 32
-        setTextareaHeight(newHeight + 16);
-        console.log(newHeight);
+        let numberOfNewlines = (formState.form.notes.match(/\n/g) || []).length + 1;
+        const newHeight = Math.ceil(numberOfNewlines * 26); //formState.form.notes.length / 41) * 28 +
+        setTextareaHeight(Math.max(120, newHeight));
 
     }, [formState.form.notes]);
 
