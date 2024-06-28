@@ -8,6 +8,7 @@ import LoadingButton from './ui/LoadingButton';
 import DateTimePickerInput from './DateTimePickerInput/DateTimePickerInput';
 import Properties from './Properties';
 import { supabase } from '@/utils/supabase/client';
+import { set } from 'rsuite/esm/internals/utils/date';
 
 
 export interface ListLogsState {
@@ -105,6 +106,18 @@ export default function ListLogs() {
 
   useEffect(() => {
     numOfBookings = 7
+    setState((prevState) => ({
+      ...prevState,
+      searchText: null,
+      filter: {
+        status: null,
+        createdTime: null,
+        properties: [],
+        starred: null,
+        paymentPending: null,
+        createdBy: null
+      }
+    }));
     fetchData()
   }, []);
 

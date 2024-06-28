@@ -94,6 +94,16 @@ export default function ListBooking() {
 
   useEffect(() => {
     numOfBookings = 7
+    setState((prevState) => ({
+      ...prevState,
+      searchText: null,
+      filter: {
+        checkIn: null,
+        properties: null,
+        starred: null,
+        paymentPending: null
+      }
+    }));
     fetchData()
   }, []);
 
