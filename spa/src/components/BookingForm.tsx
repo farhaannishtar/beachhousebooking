@@ -406,7 +406,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
     await deleteBooking(bookingId!);
     setLoading(false)
 
-    router.push('/protected/booking/list')
+    router.back()
   }
 
   return (
