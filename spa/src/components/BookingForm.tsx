@@ -16,26 +16,26 @@ import { supabase } from '@/utils/supabase/client';
 import { createBooking, deleteBooking } from '@/utils/serverCommunicator';
 
 enum Page {
-    BookingPage,
-    EventPage
+  BookingPage,
+  EventPage
 }
 
 export interface CreateBookingState {
-    form: BookingForm;
-    bookingDB?: BookingDB | undefined;
-    allData: BookingDB[];
-    pageToShow: Page;
-    currentIndex: number;
+  form: BookingForm;
+  bookingDB?: BookingDB | undefined;
+  allData: BookingDB[];
+  pageToShow: Page;
+  currentIndex: number;
 }
 
 interface formDataToValidate {
-    name: string | undefined;
-    phone: string | undefined;
-    startDateTime: string | undefined;
+  name: string | undefined;
+  phone: string | undefined;
+  startDateTime: string | undefined;
 }
 
 interface BookingFormProps {
-    bookingId?: number | undefined;
+  bookingId?: number | undefined;
 }
 
 export default function BookingFormComponent({ bookingId }: BookingFormProps) {
@@ -158,7 +158,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
     }));
     setIsSwitchOn(!EventStaySwitchValue);
   };
-    //********************** Global Params and methods **********************
+  //********************** Global Params and methods **********************
   const [loading, setLoading] = useState<boolean>(false)
   //********************** Event Params and methods **********************
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
@@ -190,7 +190,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
     }
     );
   };
-    //**********************End Events settings **********************
+  //**********************End Events settings **********************
 
   //********************** Stay Params and methods **********************
   const handleCostsChange = (index: number, e: ChangeEvent<HTMLInputElement>) => {
@@ -354,19 +354,19 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
         /^\d{4}-[01]\d-[0-3]\d[T][0-2]\d:[0-5]\d:[0-5]\d.\d+Z$/,
         "Start date and time must be in ISO format"
       )
-    //     .test(
-    //         "is-same-or-after-current-date",
-    //         "Start date and time must be the same as or after the current date and time",
-    //         (value) => {
-    //             if (bookingId) return true;
-    //             const currentDateEST = moment().tz("America/New_York"); // Get current date in EST, accounting for DST
-    //             const twentyFourHoursBeforeCurrentDateEST = currentDateEST
-    //                 .clone()
-    //                 .subtract(24, "hours"); // Subtract 24 hours from the current date in EST
-    //             const startDate = moment(value).tz("America/New_York"); // Convert startDateTime to EST
-    //             return startDate.isSameOrAfter(twentyFourHoursBeforeCurrentDateEST);
-    //         }
-    //     )
+      //     .test(
+      //         "is-same-or-after-current-date",
+      //         "Start date and time must be the same as or after the current date and time",
+      //         (value) => {
+      //             if (bookingId) return true;
+      //             const currentDateEST = moment().tz("America/New_York"); // Get current date in EST, accounting for DST
+      //             const twentyFourHoursBeforeCurrentDateEST = currentDateEST
+      //                 .clone()
+      //                 .subtract(24, "hours"); // Subtract 24 hours from the current date in EST
+      //             const startDate = moment(value).tz("America/New_York"); // Convert startDateTime to EST
+      //             return startDate.isSameOrAfter(twentyFourHoursBeforeCurrentDateEST);
+      //         }
+      //     )
       .test(
         "is-before-end-date",
         "Start date and time must be before the end date and time",
@@ -419,13 +419,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                 <button
                   type="button"
                   onClick={() => {
-                    console.log(searchParams);
-
-                    if (returnTo) {
-                      bookingId ? router.push(`${returnTo}#${bookingId}-id`) : router.push(`${returnTo}`)
-                    } else {
-                      router.back()
-                    }
+                    router.back()
 
                   }}
                 >
@@ -436,18 +430,18 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
               </div>
               <h1 className='text-lg font-bold leading-6 w-full text-center'>{bookingId ? formState.form.client.name : "Create Booking"}</h1>
               {bookingId && formState.pageToShow === Page.BookingPage &&
-                                <span className={`${formState.form.starred ? 'material-symbols-filled ' : 'material-symbols-outlined'}  cursor-pointer text-2xl `}
-                                  onClick={() =>
-                                    setFormState((prevState) => ({
-                                      ...prevState,
-                                      form: {
-                                        ...prevState.form,
-                                        starred: !prevState.form.starred
-                                      }
-                                    }))
-                                  }>
-                                    star_rate
-                                </span>}
+                <span className={`${formState.form.starred ? 'material-symbols-filled ' : 'material-symbols-outlined'}  cursor-pointer text-2xl `}
+                  onClick={() =>
+                    setFormState((prevState) => ({
+                      ...prevState,
+                      form: {
+                        ...prevState.form,
+                        starred: !prevState.form.starred
+                      }
+                    }))
+                  }>
+                  star_rate
+                </span>}
             </div>
             <div className='flex flex-col gap-y-4 mt-6 '>
               {/* Name Input */}
@@ -456,9 +450,9 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                   name="name" value={formState.form.client.name}
                   onChange={handleClientChange} />
                 {formErrors.name &&
-                                    <div role="alert" className="text-red-500  p-1 mt-1">
-                                      <span>Name is invalid</span>
-                                    </div>
+                  <div role="alert" className="text-red-500  p-1 mt-1">
+                    <span>Name is invalid</span>
+                  </div>
                 }
               </div>
               {/* Phone Input */}
@@ -472,9 +466,9 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                     handleClientChange(e);
                   }} />
                 {formErrors.phone &&
-                                    <div role="alert" className="text-red-500 p-1 mt-1">
-                                      <span>Phone number is invalid</span>
-                                    </div>
+                  <div role="alert" className="text-red-500 p-1 mt-1">
+                    <span>Phone number is invalid</span>
+                  </div>
                 }
               </div>
               <div className='w-full'>
@@ -484,24 +478,24 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                 <div className="w-1/2">
                   <DateTimePickerInput label={'Start Date'} onChange={handleDateChange} name="startDateTime" value={formState.form.startDateTime} />
                   {formErrors.startDateTime === "Start date and time is required" &&
-                                        <div role="alert" className="text-red-500 p-1 mt-1">
-                                          <span>Start Date is invalid</span>
-                                        </div>
+                    <div role="alert" className="text-red-500 p-1 mt-1">
+                      <span>Start Date is invalid</span>
+                    </div>
                   }
                 </div>
                 <div className="w-1/2">
                   <DateTimePickerInput label={'End Date'} onChange={handleDateChange} name="endDateTime" value={formState.form.endDateTime} />
                   {formErrors.startDateTime === "Start date and time must be before the end date and time" &&
-                                        <div role="alert" className="text-red-500 p-1 mt-1">
-                                          <span>End Date is invalid</span>
-                                        </div>
+                    <div role="alert" className="text-red-500 p-1 mt-1">
+                      <span>End Date is invalid</span>
+                    </div>
                   }
                 </div>
               </div>
               <div className='flex gap-3 flex-wrap'>
                 {formState.form.bookingType === "Event" &&
-                                    <BaseInput className="flex-1" preIcon='tag' name="numberOfEvents" placeholder="Events" value={formState.form.numberOfEvents ?? 0}
-                                      onChange={handleChange} />
+                  <BaseInput className="flex-1" preIcon='tag' name="numberOfEvents" placeholder="Events" value={formState.form.numberOfEvents ?? 0}
+                    onChange={handleChange} />
 
                 }
                 <BaseInput className="flex-1" type="text" placeholder="Guests"
@@ -526,7 +520,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                 <label className='flex pl-20 gap-x-4'>
                   <div className='flex items-center'>
                     <p className='text-base font-bold leading-normal'>
-                                            Status
+                      Status
                     </p>
                   </div>
                   <select
@@ -545,7 +539,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                 <label className='flex pl-16 gap-x-4'>
                   <div className='flex items-center'>
                     <p className='text-base font-bold leading-normal'>
-                                            Referral
+                      Referral
                     </p>
                   </div>
                   <select
@@ -586,7 +580,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                   {formState.form.bookingType == "Event" && (
                     <div className='flex flex-col gap-4'>
                       <p className='text-base font-bold leading-normal '>
-                                                Events
+                        Events
                       </p>
                       {formState.form.events.map((event, index) => (
                         <div key={index} className='flex items-center justify-between rounded-xl bg-typo_light-100 px-4 cursor-pointer' onClick={() => {
@@ -603,7 +597,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                       }
                       }>
                         <button type='button' className='btn btn-wide bg-selectedButton text-center text-white text-base font-bold leading-normal '>
-                                                    Add Event </button>
+                          Add Event </button>
                       </div>
 
 
@@ -615,7 +609,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                   {/* Stay options */}
                   {formState.form.bookingType == "Stay" && (<div className='flex flex-col gap-4'>
                     <p className='text-base font-bold leading-normal my-4'>
-                                            Costs
+                      Costs
                     </p>
                     <div className='cost-list flex flex-col gap-4'>
                       {formState.form.costs && formState.form.costs.map((cost, index) => (
@@ -652,7 +646,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                 <div>
                   <div className='flex flex-col gap-4'>
                     <p className='text-base font-bold leading-normal '>
-                                            Payments
+                      Payments
                     </p>
                     <div className='cost-list flex flex-col gap-4'>
                       {formState.form.payments.map((payment, index) => (
@@ -661,7 +655,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                             <DateTimePickerInput label="Date"
                               name="dateTime"
                               value={payment.dateTime}
-                              showTime = {false}
+                              showTime={false}
                               onChange={(name, newDateTime) => {
                                 handlePaymentChange(name, newDateTime!, index)
                               }}
@@ -728,7 +722,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                     type='button'
                   >
                     <span className="material-symbols-outlined cursor-pointer">
-                                            arrow_back
+                      arrow_back
                     </span>
                   </button>)}
                 {formState.currentIndex == 0 && (
@@ -744,7 +738,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                     type='button'
                   >
                     <span className="material-symbols-outlined cursor-pointer">
-                                            arrow_forward
+                      arrow_forward
                     </span>
                   </button>)}
                 {formState.currentIndex == formState.allData.length - 1 && (
@@ -771,7 +765,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
             onClick={() => deleteCurrentBooking()}
             loading={loading}
           >
-                        Delete
+            Delete
           </LoadingButton>
         </div>
       )}
