@@ -14,6 +14,7 @@ import BaseInput from './ui/BaseInput';
 import LoadingButton from './ui/LoadingButton';
 import { supabase } from '@/utils/supabase/client';
 import { createBooking, deleteBooking } from '@/utils/serverCommunicator';
+import ToggleButton from './ui/ToggleButton';
 
 enum Page {
   BookingPage,
@@ -148,6 +149,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
 
   }, [formState.form.notes]);
 
+
   const handleSwitchChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setFormState((prevState) => ({
       ...prevState,
@@ -242,6 +244,41 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
   //**********************End Stay settings **********************
 
 
+  //**********************start tax settings **********************
+
+  useEffect(() => {
+    const afterTaxTotal = addTax ? formState.form.totalCost + (formState.form.totalCost / 100) * 18 : formState.form.totalCost;
+    const tax = addTax ? ((formState.form.totalCost / 100) * 18) : 0;
+    setFormState((prevState) => ({
+      ...prevState,
+      form: {
+        ...prevState.form,
+        tax: tax,
+        afterTaxTotal: afterTaxTotal,
+        outstanding: afterTaxTotal - formState.form.paid
+      },
+    }));
+  }, [formState.form.totalCost]);
+  const [addTax, setAddTax] = useState<boolean>(false)
+  const addTaxChanged = (e: ChangeEvent<HTMLInputElement>) => {
+    const { checked } = e.target;
+    const afterTaxTotal = checked ? formState.form.totalCost + (formState.form.totalCost / 100) * 18 : formState.form.totalCost;
+    const tax = checked ? ((formState.form.totalCost / 100) * 18) : 0;
+    setFormState((prevState) => ({
+      ...prevState,
+      form: {
+        ...prevState.form,
+        tax: tax,
+        afterTaxTotal: afterTaxTotal,
+        outstanding: afterTaxTotal - prevState.form.paid
+      },
+    }));
+    setAddTax(checked)
+  }
+
+  //**********************End tax settings **********************
+
+
   //********************** Payment Params and methods **********************
   const addPayment = () => {
     let newPayments = formState.form.payments
@@ -266,7 +303,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
         ...prevState.form,
         payments: updatedPayments,
         paid: updatedPaid,
-        outstanding: prevState.form.totalCost - updatedPaid
+        outstanding: prevState.form.afterTaxTotal - updatedPaid
       },
     }));
   }
@@ -287,7 +324,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
         ...prevState.form,
         payments: updatedPayments,
         paid: updatedPaid,
-        outstanding: prevState.form.totalCost - updatedPaid
+        outstanding: prevState.form.afterTaxTotal - updatedPaid
       },
 
     }));
@@ -564,6 +601,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                   </div>
                 </div>
               )}
+
               {formState.form.status != "Inquiry" && (
                 <div>
                   {/* Event option */}
@@ -635,7 +673,20 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                     <div />
 
                   </div>)}
+                  {/* Tax part */}
+                  <div className='flex items-center justify-end'>
+                    <ToggleButton
+                      name="tax"
+                      checked={addTax}
+                      onChange={addTaxChanged}
+                      label="GST" />
+                  </div>
+                  {addTax && (<div>
+                    <h3 className='title w-full text-right'>Tax 18% : {formState.form.tax ? `₹ ${formState.form.tax}` : '₹ 0'} </h3>
+                    <h3 className='title w-full text-right'>Total after tax : {formState.form.afterTaxTotal ? `₹ ${formState.form.afterTaxTotal}` : '₹ 0'} </h3>
+                  </div>)}
                 </div>)}
+
               {/*Confirmed option */}
               {formState.form.status == "Confirmed" && (
                 <div>
