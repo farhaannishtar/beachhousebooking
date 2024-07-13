@@ -327,7 +327,11 @@ export default function BookingDetailsComponent({ bookingId }: BookingDetailsPro
                                                     setSelectedEvent(event)
                                                     handlePageChange(Page.EventPage)
                                                 }}>
-                                                    <h3 className='label p-0'>{`${event.eventName}  (${event.numberOfGuests})`}</h3>
+                                                    <div>
+                                                        <h3 className='label p-0'>{` ${event.eventName}  (${event.numberOfGuests}) (₹${event.finalCost} )`}</h3>
+                                                        <h3 className='label p-0'>{`${event.startDateTime}  ${event.properties.toString()}`}</h3>
+
+                                                    </div>
                                                     <span className='material-symbols-outlined '>chevron_right</span>
                                                 </div>
                                             ))}

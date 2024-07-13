@@ -193,6 +193,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
   //**********************End Events settings **********************
 
   //********************** Stay Params and methods **********************
+  const [openedDropDown, setOpenedDropDown] = useState<Boolean>(false)
   const handleCostsChange = (index: number, e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     const updatedCosts = [...formState.form.costs];
@@ -211,9 +212,9 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
     }));
   };
 
-  const addCost = () => {
+  const addCost = (name?: string) => {
     let newCosts = formState.form.costs
-    newCosts.push({ name: "", amount: 0 })
+    newCosts.push({ name: name || '', amount: 0 })
     setFormState((prevState) => ({
       ...prevState,
       form: {
@@ -221,6 +222,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
         costs: newCosts
       }
     }));
+    setOpenedDropDown(false)
   };
 
 
@@ -354,19 +356,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
         /^\d{4}-[01]\d-[0-3]\d[T][0-2]\d:[0-5]\d:[0-5]\d.\d+Z$/,
         "Start date and time must be in ISO format"
       )
-      //     .test(
-      //         "is-same-or-after-current-date",
-      //         "Start date and time must be the same as or after the current date and time",
-      //         (value) => {
-      //             if (bookingId) return true;
-      //             const currentDateEST = moment().tz("America/New_York"); // Get current date in EST, accounting for DST
-      //             const twentyFourHoursBeforeCurrentDateEST = currentDateEST
-      //                 .clone()
-      //                 .subtract(24, "hours"); // Subtract 24 hours from the current date in EST
-      //             const startDate = moment(value).tz("America/New_York"); // Convert startDateTime to EST
-      //             return startDate.isSameOrAfter(twentyFourHoursBeforeCurrentDateEST);
-      //         }
-      //     )
+
       .test(
         "is-before-end-date",
         "Start date and time must be before the end date and time",
@@ -632,8 +622,13 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                       ))}
 
                     </div>
-                    <div className='flex items-center justify-end'>
-                      <button onClick={addCost} type='button' className='bg-typo_light-100 text-center rounded-xl py-2 px-6 title w-20'>+</button>
+                    <div className='flex items-center justify-end relative'>
+                      <button onClick={() => setOpenedDropDown(!openedDropDown)} type='button' className='bg-typo_light-100 text-center rounded-xl py-2 px-6 title w-20'>+</button>
+                      <div className={`${openedDropDown ? 'flex ' : 'hidden '}bg-white rounded-xl shadow-lg absolute top-12  flex-col z-50 w-28`}>
+                        <label className='p-4 rounded-t-xl hover:bg-typo_light-100 ' onClick={() => addCost('Rent')}>Rent</label>
+                        <label className='p-4 hover:bg-typo_light-100 ' onClick={() => addCost('Eb')}>EB</label>
+                        <label className='p-4 rounded-b-xl hover:bg-typo_light-100 ' onClick={() => addCost()}>Other</label>
+                      </div>
                     </div>
                     <h3 className='title w-full text-right'>Total : {formState.form.totalCost ? `₹ ${formState.form.totalCost}` : '₹ 0'} </h3>
 
