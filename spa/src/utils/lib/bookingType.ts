@@ -216,19 +216,20 @@ export interface Payment {
 }
 
 export interface Event {
-  eventId?: number | undefined
-  eventName: string
-  calendarIds?: { [key: string]: string } | undefined
-  notes: string
-  startDateTime: string
-  endDateTime: string
-  numberOfGuests: number
-  properties: Property[]
-  valetService: boolean
-  djService: boolean
-  kitchenService: boolean
-  overNightStay: boolean
-  overNightGuests: number
-  costs: Cost[]
-  finalCost: number
+    eventId?: number | undefined
+    eventName: string
+    calendarIds?: { [key: string]: string } | undefined
+    notes: string
+    startDateTime: string
+    endDateTime: string
+    numberOfGuests: number
+    properties: Property[]
+    valetService: boolean
+    djService: boolean
+    kitchenService: boolean
+    overNightStay: boolean
+    overNightGuests: number
+    deleted: "none" | "marked" | "deleted"
+    costs:  Cost[]
+    finalCost: number
 }

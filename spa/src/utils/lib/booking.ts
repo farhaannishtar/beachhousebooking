@@ -1,6 +1,6 @@
 import { User } from "./auth";
 import { BookingDB, BookingForm, getProperties, convertPropertiesForDb } from "./bookingType";
-import { deleteEvent, insertEvent } from "./calendar";
+import { deleteEvent, insertEvent, patchEvent } from "./calendar";
 import { query } from "./helper";
 
 export async function createBooking(booking: BookingDB, name: string): Promise<number> {
@@ -118,16 +118,17 @@ export async function mutateBookingState(booking: BookingForm, user: User): Prom
   if(newBooking.bookingId) {
     console.log("mutateBookingState modify booking")
     await modifyExistingBooking(newBooking); 
+    await addToCalendar(newBooking);
     return newBooking.bookingId
   } else {
     console.log("mutateBookingState create booking")
     let bookingId = createBooking(newBooking, user.displayName ?? user.id)
-    // await insertToCalendarIfConfirmed(newBooking);
+    await addToCalendar(newBooking);
     return bookingId
   }
 }
 
-export async function insertToCalendarIfConfirmed(newBooking: BookingDB): Promise<BookingDB> {
+export async function addToCalendar(newBooking: BookingDB): Promise<BookingDB> {
   if (newBooking.status === "Confirmed") {
     for(let i = 0; i < newBooking.events.length; i++) {
       let event = newBooking.events[i];
@@ -141,19 +142,42 @@ export async function insertToCalendarIfConfirmed(newBooking: BookingDB): Promis
 
       
       for (let property of event.properties) {
-        let id = await insertEvent(process.env.CALENDAR_ID!, {
-          summary: summary,
-          location: property,
-          description: description,
-          start: {
-            dateTime: event.startDateTime
-          },
-          end: {
-            dateTime: event.endDateTime
+        if(event.calendarIds && event.calendarIds[property]) {
+          if(event.deleted == "none") {
+            patchEvent(process.env.CALENDAR_ID!, event.calendarIds[property], {
+              summary: summary,
+              location: property,
+              description: description,
+              start: {
+                dateTime: event.startDateTime
+              },
+              end: {
+                dateTime: event.endDateTime
+              }
+            });
+          } else if (event.deleted == "marked") {
+            await deleteEvent(process.env.CALENDAR_ID!, event.calendarIds[property]);
           }
-        });
-        newBooking.events[i].calendarIds![property] = id;
+        } else {
+          let id = await insertEvent(process.env.CALENDAR_ID!, {
+            summary: summary,
+            location: property,
+            description: description,
+            start: {
+              dateTime: event.startDateTime
+            },
+            end: {
+              dateTime: event.endDateTime
+            }
+          });
+          newBooking.events[i].calendarIds![property] = id;
+        }
       }
+
+      if (event.deleted == "marked") {
+        newBooking.events[i].deleted = "deleted";
+      }
+
     }
   }
   return newBooking;
