@@ -3,7 +3,7 @@
 import * as yup from 'yup';
 import moment from 'moment-timezone';
 import { BookingForm, Event, defaultForm, BookingDB, printInIndianTime } from '@/utils/lib/bookingType';
-import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
+import React, { useState, useEffect } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import EventDetailsComponent from './EventDetails';
 import CreateEventComponent from './CreateEventForm';
@@ -290,7 +290,7 @@ export default function BookingDetailsComponent({ bookingId }: BookingDetailsPro
                                 <label className='label !font-semibold'>Properties: </label>
                                 <div className='flex flex-col gap-2'>
 
-                                    {formState.form.properties && formState.form.properties.map(p => <label className='label'>{p}</label>)}
+                                    {formState.form.properties && formState.form.properties.map((p, i) => <label className='label' key={i}>{p}</label>)}
                                 </div>
                             </div>
                             {/* Status  */}

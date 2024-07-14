@@ -75,7 +75,7 @@ const EditEventComponent: React.FC<EditEventFormProps> = ({ cancelAddEvent, onEd
                 <label className='label !font-semibold'>Properties: </label>
                 <div className='flex flex-col gap-2 pl-4'>
 
-                    {event.properties && event.properties.map(p => <label className='label'>{p}</label>)}
+                    {event.properties && event.properties.map((p,i) => <label className='label' key={`prop-${i}`}>{p}</label>)}
                 </div>
             </div>
 
@@ -97,7 +97,7 @@ const EditEventComponent: React.FC<EditEventFormProps> = ({ cancelAddEvent, onEd
                 </label>
                 <div className='cost-list flex flex-col '>
                     {event.costs.map((cost, index) => (
-                        <div className='flex items-center pl-4 ' key={index}>
+                        <div className='flex items-center pl-4 ' key={`cost-${index}`}>
                             <label className='label !font-semibold'>{cost.name}: </label>
                             <label className='label'>
 

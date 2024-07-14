@@ -258,7 +258,7 @@ const CreateEventComponent: React.FC<CreateEventFormProps> = ({ onAddEvent, canc
         </p>
         <div className='cost-list flex flex-col gap-4'>
           {event.costs.map((cost, index) => (
-            <div className='flex items-center gap-4 ' key={index}>
+            <div className='flex items-center gap-4 ' key={`cost-${index}`}>
               <BaseInput type="text"
                 name="name"
                 value={cost.name}

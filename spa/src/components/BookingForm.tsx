@@ -611,7 +611,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                         Events
                       </p>
                       {formState.form.events.map((event, index) => (
-                        <div key={index} className='flex items-center justify-between rounded-xl bg-typo_light-100 px-4 cursor-pointer' onClick={() => {
+                        <div key={`event-${index}`} className='flex items-center justify-between rounded-xl bg-typo_light-100 px-4 cursor-pointer' onClick={() => {
                           setSelectedEvent(event)
                           handlePageChange(Page.EventPage)
                         }}>
@@ -641,7 +641,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                     </p>
                     <div className='cost-list flex flex-col gap-4'>
                       {formState.form.costs && formState.form.costs.map((cost, index) => (
-                        <div className='flex items-center gap-4 ' key={index}>
+                        <div className='flex items-center gap-4 ' key={`cost-${index}`}>
                           <BaseInput type="text"
                             name="name"
                             value={cost.name}
@@ -696,7 +696,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                     </p>
                     <div className='cost-list flex flex-col gap-4'>
                       {formState.form.payments.map((payment, index) => (
-                        <div className='flex items-center gap-4 justify-between' key={index}>
+                        <div className='flex items-center gap-4 justify-between' key={`payment-${index}`}>
                           <div className='flex flex-wrap items-center gap-2'>
                             <DateTimePickerInput label="Date"
                               name="dateTime"
