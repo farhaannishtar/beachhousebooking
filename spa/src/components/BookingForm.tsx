@@ -64,6 +64,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
             currentIndex: currentIndex,
           }));
           setIsSwitchOn(newData.bookingType === "Stay" ? false : true);
+          setAddTax(!!newData.tax)
         });
     }
   }, []);
@@ -191,6 +192,31 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
       )
     }
     );
+  };
+  const handleDeleteEvent = (event: Event) => {
+    setFormState((prevState) => {
+      let events = [...prevState.form.events];
+      events = events.filter((e) => e.eventId !== event.eventId);
+      let totalCost = events.reduce(
+        (acc, event) => acc + event.finalCost,
+        0
+      )
+      return (
+        {
+          ...prevState,
+          form: {
+            ...prevState.form,
+            events: events,
+            totalCost: totalCost,
+            outstanding: totalCost - prevState.form.paid
+          },
+        }
+      )
+
+    }
+
+    );
+    handlePageChange(Page.BookingPage)
   };
   //**********************End Events settings **********************
 
@@ -331,6 +357,24 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
   }
 
   //********************** End Payment settings **********************
+
+
+  //********************** Start Security deposit settings **********************
+  const handleSecurityDepositChange = (name: string, value: string | number) => {
+    setFormState((prevState) => ({
+      ...prevState,
+      form: {
+        ...prevState.form,
+        securityDeposit: {
+          ...prevState.form.securityDeposit,
+          [name]: value
+        }
+      },
+
+    }));
+  }
+  //********************** End Security deposit settings **********************
+
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
@@ -690,6 +734,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
               {/*Confirmed option */}
               {formState.form.status == "Confirmed" && (
                 <div>
+                  {/* Payments part */}
                   <div className='flex flex-col gap-4'>
                     <p className='text-base font-bold leading-normal '>
                       Payments
@@ -743,6 +788,53 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
 
 
                   </div>
+                  {/* Security deposit part */}
+                  <div className='flex flex-col gap-4'>
+                    <p className='text-base font-bold leading-normal '>
+                      Security Deposit
+                    </p>
+                    <div className='cost-list flex flex-col gap-4'>
+                      <BaseInput type="number"
+                        name="originAmount"
+                        value={formState.form?.securityDeposit?.originalSecurityAmount}
+
+                        placeholder="Amount"
+                        onChange={(e) => {
+                          handleSecurityDepositChange('originalSecurityAmount', e.target.value)
+                        }}
+                      />
+                      <div className='flex flex-wrap items-center gap-4'>
+                        <DateTimePickerInput label="Date returned"
+                          name="dateReturned"
+                          value={formState.form?.securityDeposit?.dateReturned}
+                          showTime={false}
+                          onChange={(name, newDateTime) => {
+                            handleSecurityDepositChange('dateReturned', newDateTime!)
+                          }}
+                        />
+                        <div className='flex items-center gap-2 w-full'>
+                          <BaseInput type="number"
+                            name="amountReturned"
+                            value={formState.form?.securityDeposit?.amountReturned}
+                            className='!flex-1'
+                            placeholder="Amount returned"
+                            onChange={(e) => {
+                              handleSecurityDepositChange('amountReturned', e.target.value)
+                            }}
+                          />
+                          <BaseInput type="text"
+                            name="paymentMethod"
+                            value={formState.form?.securityDeposit?.paymentMethod}
+                            className='!flex-1'
+                            placeholder="Method"
+                            onChange={(e) => {
+                              handleSecurityDepositChange('paymentMethod', e.target.value)
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
@@ -751,7 +843,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
         }
         {
           formState.pageToShow === Page.EventPage && (
-            <CreateEventComponent onAddEvent={handleAddEvent} cancelAddEvent={() => handlePageChange(Page.BookingPage)} status={formState.form.status} selectedEvent={selectedEvent} />
+            <CreateEventComponent deleteEvent={handleDeleteEvent} onAddEvent={handleAddEvent} cancelAddEvent={() => handlePageChange(Page.BookingPage)} status={formState.form.status} selectedEvent={selectedEvent} />
           )
         }
         {/* Version History  */}

@@ -2,6 +2,7 @@
 
 import * as yup from 'yup';
 import moment from 'moment-timezone';
+import format from 'date-fns/format';
 import { BookingForm, Event, defaultForm, BookingDB, printInIndianTime } from '@/utils/lib/bookingType';
 import React, { useState, useEffect } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
@@ -266,8 +267,11 @@ export default function BookingDetailsComponent({ bookingId }: BookingDetailsPro
                             {/* Dates  */}
                             <div className='flex flex-col gap-3 w-full'>
                                 <label className='label !font-semibold'>Dates</label>
-                                <label className='label '>{formState.form.startDateTime} -</label>
-                                <label className='label '>{formState.form.startDateTime}</label>
+                                <div className='flex items-center'>
+                                    {formState.form.startDateTime && <label className='label '><strong>From &nbsp;</strong> {format(new Date(`${formState.form.startDateTime || ''}`), "MMM d - hh:mmaa")}  </label>}
+                                    {formState.form.endDateTime && <label className='label '><strong> to &nbsp;</strong> {format(new Date(`${formState.form.endDateTime || ''}`), "MMM d - hh:mmaa")}  </label>}
+                                </div>
+
                             </div>
                             {/* Numbers  */}
                             <div className='flex gap-3 flex-wrap'>
@@ -329,7 +333,7 @@ export default function BookingDetailsComponent({ bookingId }: BookingDetailsPro
                                                 }}>
                                                     <div>
                                                         <h3 className='label p-0'>{` ${event.eventName}  (${event.numberOfGuests}) (₹${event.finalCost} )`}</h3>
-                                                        <h3 className='label p-0'>{`${event.startDateTime}  ${event.properties.toString()}`}</h3>
+                                                        <h3 className='label p-0'>{`${format(new Date(`${event.startDateTime || ''}`), "MMM d - hh:mmaa")} - ${event.properties.toString()}`}</h3>
 
                                                     </div>
                                                     <span className='material-symbols-outlined '>chevron_right</span>
@@ -362,7 +366,7 @@ export default function BookingDetailsComponent({ bookingId }: BookingDetailsPro
 
                                         </div>
 
-                                        <h3 className='title w-full text-right'>Total : {formState.form.totalCost ? `₹ ${formState.form.totalCost}` : '₹ 0'} </h3>
+                                        <h3 className='title w-full text-right'>Total : {formState.form.afterTaxTotal ? `₹ ${formState.form.afterTaxTotal}` : (formState.form.totalCost ? `₹ ${formState.form.totalCost}` : '₹ 0')} </h3>
 
                                         <div />
 
@@ -378,7 +382,7 @@ export default function BookingDetailsComponent({ bookingId }: BookingDetailsPro
                                         <div className='cost-list flex flex-col gap-2'>
                                             {formState.form.payments.map((payment, index) => (
                                                 <div className='flex items-center gap-4 justify-between' key={index}>
-                                                    <label className='label !font-semibold'>{payment.dateTime}: </label>
+                                                    <label className='label !font-semibold'>{format(new Date(`${payment.dateTime || ''}`), "MMM d - hh:mmaa")}: </label>
                                                     <div className='flex items-center w-full justify-start label'>
                                                         <label >
                                                             {payment.amount}-</label>

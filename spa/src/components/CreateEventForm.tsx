@@ -13,6 +13,7 @@ const properties = Object.values(Property)
 interface CreateEventFormProps {
   onAddEvent: (event: Event) => void;
   cancelAddEvent: () => void;
+  deleteEvent: (event: Event) => void;
   status?: string,
   selectedEvent?: Event | null
 }
@@ -21,7 +22,7 @@ interface formDataToValidate {
 
 }
 
-const CreateEventComponent: React.FC<CreateEventFormProps> = ({ onAddEvent, cancelAddEvent, status, selectedEvent }) => {
+const CreateEventComponent: React.FC<CreateEventFormProps> = ({ deleteEvent, onAddEvent, cancelAddEvent, status, selectedEvent }) => {
   const [event, setEvent] = useState<Event>({
     eventName: '',
     calendarIds: {},
@@ -293,6 +294,9 @@ const CreateEventComponent: React.FC<CreateEventFormProps> = ({ onAddEvent, canc
         <button type='button' className='border-2 border-typo_dark-100 rounded-xl h-12 px-6 text-typo_dark-100 w-full title' onClick={() => cancelAddEvent()}>
           Cancel
         </button>
+        {event.eventId && <button type='button' className='border-2 border-error rounded-xl h-12 px-6 text-error w-full title' onClick={() => deleteEvent(event)}>
+          Delete
+        </button>}
         <button type='button' className='border-2 rounded-xl h-12 px-6 text-white bg-selectedButton w-full title' onClick={() => handleSubmit()}>
           {selectedEvent?.eventId ? 'Update' : 'Create'}
         </button>
