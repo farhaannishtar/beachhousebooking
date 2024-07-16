@@ -332,7 +332,7 @@ export default function BookingDetailsComponent({ bookingId }: BookingDetailsPro
                                                     handlePageChange(Page.EventPage)
                                                 }}>
                                                     <div>
-                                                        <h3 className='label p-0'>{` ${event.eventName}  (${event.numberOfGuests}) (₹${event.finalCost} )`}</h3>
+                                                        <h3 className='label p-0'>{` ${event.eventName}  (${event.numberOfGuests}) (₹${event.finalCost.toLocaleString('en-IN')} )`}</h3>
                                                         <h3 className='label p-0'>{`${format(new Date(`${event.startDateTime || ''}`), "MMM d - hh:mmaa")} - ${event.properties.toString()}`}</h3>
 
                                                     </div>
@@ -342,7 +342,7 @@ export default function BookingDetailsComponent({ bookingId }: BookingDetailsPro
 
 
 
-                                            <h3 className='subheading text-right !font-normal'> <strong>Final cost:</strong> ₹{formState.form.totalCost}</h3>
+                                            <h3 className='subheading text-right !font-normal'> <strong>Final cost:</strong> ₹{formState.form.totalCost.toLocaleString('en-IN')}</h3>
 
 
                                         </div>
@@ -366,7 +366,7 @@ export default function BookingDetailsComponent({ bookingId }: BookingDetailsPro
 
                                         </div>
 
-                                        <h3 className='title w-full text-right !font-normal'><strong>Total :</strong> {formState.form.afterTaxTotal ? `₹ ${formState.form.afterTaxTotal}` : (formState.form.totalCost ? `₹ ${formState.form.totalCost}` : '₹ 0')} </h3>
+                                        <h3 className='title w-full text-right !font-normal'><strong>Total :</strong> {formState.form.afterTaxTotal ? `₹ ${formState.form.afterTaxTotal.toLocaleString('en-IN')}` : (formState.form.totalCost ? `₹ ${formState.form.totalCost}` : '₹ 0')} </h3>
 
                                         <div />
 
@@ -374,8 +374,8 @@ export default function BookingDetailsComponent({ bookingId }: BookingDetailsPro
                                     {/* Tax part */}
 
                                     {!!formState.form.tax && (<div>
-                                        <h3 className='title w-full text-right !font-normal'><strong>Tax 18% :</strong> {formState.form.tax ? `₹ ${formState.form.tax}` : '₹ 0'} </h3>
-                                        <h3 className='title w-full text-right !font-normal'><strong>Total after tax :</strong> {formState.form.afterTaxTotal ? `₹ ${formState.form.afterTaxTotal}` : '₹ 0'} </h3>
+                                        <h3 className='title w-full text-right !font-normal'><strong>Tax 18% :</strong> {formState.form.tax ? `₹ ${formState.form.tax.toLocaleString('en-IN')}` : '₹ 0'} </h3>
+                                        <h3 className='title w-full text-right !font-normal'><strong>Total after tax :</strong> {formState.form.afterTaxTotal ? `₹ ${formState.form.afterTaxTotal.toLocaleString('en-IN')}` : '₹ 0'} </h3>
                                     </div>)}
                                 </div>)}
                             {/*Confirmed option */}
@@ -402,8 +402,8 @@ export default function BookingDetailsComponent({ bookingId }: BookingDetailsPro
 
 
 
-                                        <h3 className='subheading text-right !font-normal'> <strong>Paid:</strong> ₹{formState.form.paid}</h3>
-                                        <h3 className='subheading text-right !font-normal'> <strong>Outstanding:</strong> ₹{formState.form.outstanding}</h3>
+                                        <h3 className='subheading text-right !font-normal'> <strong>Paid:</strong> ₹{formState.form.paid.toLocaleString('en-IN')}</h3>
+                                        <h3 className='subheading text-right !font-normal'> <strong>Outstanding:</strong> ₹{formState.form.outstanding.toLocaleString('en-IN')}</h3>
 
 
                                     </div>
@@ -413,12 +413,12 @@ export default function BookingDetailsComponent({ bookingId }: BookingDetailsPro
                                             Security deposit
                                         </p>
                                         <div >
-                                            <h3 className=' text-right !font-normal subheading'> <strong>Original amount:</strong> ₹{formState.form?.securityDeposit?.originalSecurityAmount}</h3>
+                                            <h3 className=' text-right !font-normal subheading'> <strong>Original amount:</strong> ₹{formState.form?.securityDeposit?.originalSecurityAmount.toLocaleString('en-IN')}</h3>
                                             <h3 className=' subheading text-right !font-normal'> <strong>Payment method:</strong> {formState.form?.securityDeposit?.paymentMethod}</h3>
                                         </div>
                                         {
                                             !!formState.form?.securityDeposit?.amountReturned && <div >
-                                                <h3 className=' subheading text-right !font-normal'> <strong>Returned amount:</strong> ₹{formState.form?.securityDeposit?.amountReturned}</h3>
+                                                <h3 className=' subheading text-right !font-normal'> <strong>Returned amount:</strong> ₹{formState.form?.securityDeposit?.amountReturned.toLocaleString('en-IN')}</h3>
                                                 <h3 className=' subheading text-right !font-normal'> <strong>Returned date:</strong> {format(new Date(`${formState.form?.securityDeposit?.dateReturned || ''}`), "MMM d - hh:mmaa")}</h3>
                                             </div>
                                         }

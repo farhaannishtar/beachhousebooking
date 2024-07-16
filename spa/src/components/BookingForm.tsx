@@ -714,7 +714,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                       </div>
 
 
-                      <h3 className='subheading text-right'> Final cost: ₹{formState.form.totalCost}</h3>
+                      <h3 className='subheading text-right'> Final cost: ₹{formState.form.totalCost.toLocaleString('en-IN')}</h3>
 
 
                     </div>
@@ -753,7 +753,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                         <label className='p-4 rounded-b-xl hover:bg-typo_light-100 ' onClick={() => addCost()}>Other</label>
                       </div>
                     </div>
-                    <h3 className='title w-full text-right'>Total : {formState.form.totalCost ? `₹ ${formState.form.totalCost}` : '₹ 0'} </h3>
+                    <h3 className='title w-full text-right'>Total : {formState.form.totalCost ? `₹ ${formState.form.totalCost.toLocaleString('en-IN')}` : '₹ 0'} </h3>
 
                     <div />
 
@@ -767,8 +767,8 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                       label="GST" />
                   </div>
                   {addTax && (<div>
-                    <h3 className='title w-full text-right'>Tax 18% : {formState.form.tax ? `₹ ${formState.form.tax}` : '₹ 0'} </h3>
-                    <h3 className='title w-full text-right'>Total after tax : {formState.form.afterTaxTotal ? `₹ ${formState.form.afterTaxTotal}` : '₹ 0'} </h3>
+                    <h3 className='title w-full text-right'>Tax 18% : {formState.form.tax ? `₹ ${formState.form.tax.toLocaleString('en-IN')}` : '₹ 0'} </h3>
+                    <h3 className='title w-full text-right'>Total after tax : {formState.form.afterTaxTotal ? `₹ ${formState.form.afterTaxTotal.toLocaleString('en-IN')}` : '₹ 0'} </h3>
                   </div>)}
                 </div>)}
 
@@ -824,8 +824,8 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
 
 
 
-                    <h3 className='subheading text-right'> Paid: ₹{formState.form.paid}</h3>
-                    <h3 className='title text-right'> Outstanding: ₹{formState.form.outstanding}</h3>
+                    <h3 className='subheading text-right'> Paid: ₹{formState.form.paid.toLocaleString('en-IN')}</h3>
+                    <h3 className='title text-right'> Outstanding: ₹{formState.form.outstanding.toLocaleString('en-IN')}</h3>
 
 
                   </div>

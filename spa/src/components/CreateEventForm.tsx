@@ -286,7 +286,7 @@ const CreateEventComponent: React.FC<CreateEventFormProps> = ({ deleteEvent, onA
             <label className='p-4 rounded-b-xl hover:bg-typo_light-100 ' onClick={() => addCost()}>Other</label>
           </div>
         </div>
-        <h3 className='title w-full text-right'>Total : {event.finalCost ? `₹ ${event.finalCost}` : '₹ 0'} </h3>
+        <h3 className='title w-full text-right'>Total : {event.finalCost ? `₹ ${event.finalCost.toLocaleString('en-IN')}` : '₹ 0'} </h3>
 
       </div>
       <div className='flex items-center justify-end gap-4 flex-wrap'>

@@ -51,8 +51,8 @@ export default function ListLogs() {
     } else if (filterState.createdTime || filterState.status || (filterState.properties?.length ?? 0) > 0 || filterState.starred || filterState.paymentPending || filterState.createdBy) {
       if (filterState.createdTime) {
         bookingsData = bookingsData
-          .gte('created_at', convertDateToIndianDate({date: new Date(filterState.createdTime)}))
-          .lte('created_at', convertDateToIndianDate({date: new Date(filterState.createdTime), addDays: 1}))
+          .gte('created_at', convertDateToIndianDate({ date: new Date(filterState.createdTime) }))
+          .lte('created_at', convertDateToIndianDate({ date: new Date(filterState.createdTime), addDays: 1 }))
       }
       if (filterState.status) {
 
@@ -70,7 +70,7 @@ export default function ListLogs() {
       if (filterState.createdBy) {
         bookingsData = bookingsData.eq('email', filterState.createdBy)
       }
-    } 
+    }
 
     bookingsData = bookingsData.order('created_at', { ascending: false }).range(0, numOfBookings)
     let { data: result } = await bookingsData
@@ -212,8 +212,8 @@ export default function ListLogs() {
                 )}
                 {booking.totalCost > 0 && (
                   <div className='flex items-center gap-4 text-sm'>
-                    <label >Rs {booking.outstanding == 0 ? booking.paid : booking.outstanding}</label>
-                    <div className={`${booking.outstanding == 0 ? ' bg-green-500/30' : 'bg-error/20'} px-3 rounded-xl`}>{booking.outstanding == 0 ? 'Paid' : 'Unpaid'}</div>
+                    <label >Rs {booking.outstanding == 0 ? booking.paid.toLocaleString('en-IN') : booking.outstanding.toLocaleString('en-IN')}</label>
+                    {booking.status == 'Confirmed' && <div className={`${booking.outstanding == 0 ? ' bg-green-500/30' : 'bg-error/20'} px-3 rounded-xl`}>{booking.outstanding == 0 ? 'Paid' : 'Unpaid'}</div>}
                   </div>
                 )}
                 {booking.updatedBy.name && (
@@ -235,11 +235,11 @@ export default function ListLogs() {
       ))}
       {/* Filter modal */}
 
-      
-      <BookingFilter 
+
+      <BookingFilter
         isFiltersOpened={filterModalOpened}
         toggleFilterDisplay={toggleFilterDisplay}
-        filtersFor = 'Logs' 
+        filtersFor='Logs'
         filterState={filterState}
         setFilterState={setFilterState}
         loading={loading}

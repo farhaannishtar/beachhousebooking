@@ -33,7 +33,7 @@ export default function ListBooking() {
     starred: null,
     paymentPending: null
   });
-  
+
   const [loading, setLoading] = useState<boolean>(false)
   async function fetchData() {
     setLoading(true)
@@ -49,8 +49,8 @@ export default function ListBooking() {
       if (filterState.checkIn) {
         console.log("Filtering by checkIn: ", filterState.checkIn)
         bookingsData = bookingsData
-          .gte('check_in', convertDateToIndianDate({date: new Date(filterState.checkIn)}))
-          .lte('check_in', convertDateToIndianDate({date: new Date(filterState.checkIn), addDays: 1}))
+          .gte('check_in', convertDateToIndianDate({ date: new Date(filterState.checkIn) }))
+          .lte('check_in', convertDateToIndianDate({ date: new Date(filterState.checkIn), addDays: 1 }))
       }
       if (filterState.properties) {
         bookingsData = bookingsData.contains('properties', convertPropertiesForDb(filterState.properties))
@@ -176,7 +176,7 @@ export default function ListBooking() {
          
         </div> 
       </div> */}
-       
+
       <LoadingButton
         className=" border-[1px] border-selectedButton text-selectedButton my-4 w-full py-2 px-4 rounded-xl"
         onClick={
@@ -199,17 +199,19 @@ export default function ListBooking() {
             >
               {/* Booking details */}
               <div className="pl-3 flex flex-col gap-0">
-                <label>
+                <label className='flex items-center gap-1'>
                   <span className="text-neutral-900 text-base font-medium leading-6">{booking.client.name}</span> <span className="text-slate-500 text-sm font-normal leading-5">{booking.status}</span>{booking?.starred && <span className='material-symbols-filled text-2xl'>star_rate</span>}
                 </label>
                 <label className="text-slate-500 text-sm font-normal ">{numOfDays(booking)} days, {booking.numberOfGuests} pax</label>
                 {booking.properties?.length > 0 && (
                   <label className="text-slate-500 text-sm font-normal ">{booking.properties.join(", ")}</label>
                 )}
-                <div className='flex items-center gap-4 text-sm'>
-                  <label >Rs {booking.outstanding == 0 ? booking.paid : booking.outstanding}</label>
-                  <div className={`${booking.outstanding == 0 ? ' bg-green-500/30' : 'bg-error/20'} px-3 rounded-xl`}>{booking.outstanding == 0 ? 'Paid' : 'Unpaid'}</div>
-                </div>
+                {
+                  <div className='flex items-center gap-4 text-sm'>
+                    <label >Rs {booking.outstanding == 0 ? booking.paid.toLocaleString('en-IN') : booking.outstanding.toLocaleString('en-IN')}</label>
+                    {booking.status == 'Confirmed' && <div className={`${booking.outstanding == 0 ? ' bg-green-500/30' : 'bg-error/20'} px-3 rounded-xl`}>{booking.outstanding == 0 ? 'Paid' : 'Unpaid'}</div>}
+                  </div>
+                }
                 {booking.refferral && (
                   <label className="text-slate-500 text-sm font-normal ">Referral: {booking.refferral}</label>
                 )}
@@ -229,10 +231,10 @@ export default function ListBooking() {
       ))}
       {/* Filter modal */}
 
-      <BookingFilter 
+      <BookingFilter
         isFiltersOpened={filterModalOpened}
         toggleFilterDisplay={toggleFilterDisplay}
-        filtersFor = 'Bookings' 
+        filtersFor='Bookings'
         filterState={filterState}
         setFilterState={setFilterState}
         loading={loading}

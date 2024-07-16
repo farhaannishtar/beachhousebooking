@@ -109,7 +109,7 @@ const EditEventComponent: React.FC<EditEventFormProps> = ({ cancelAddEvent, onEd
 
                 </div>
 
-                <h3 className='title w-full text-right'>Total : {event.finalCost ? `₹ ${event.finalCost}` : '₹ 0'} </h3>
+                <h3 className='title w-full text-right'>Total : {event.finalCost ? `₹ ${event.finalCost.toLocaleString('en-IN')}` : '₹ 0'} </h3>
 
             </div>
 
