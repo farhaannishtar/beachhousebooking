@@ -842,15 +842,6 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
 
 
                       <div className='flex flex-wrap items-center gap-2'>
-                        <BaseInput type="number"
-                          name="originAmount"
-                          value={formState.form?.securityDeposit?.originalSecurityAmount}
-                          className='!flex-1'
-                          placeholder="Amount"
-                          onChange={(e) => {
-                            handleSecurityDepositChange('originalSecurityAmount', e.target.value)
-                          }}
-                        />
                         <select
                           className="select select-bordered !flex-1 h-14 bg-inputBoxbg"
                           name="paymentMethod"
@@ -862,7 +853,17 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                           <option value="Cash">Cash</option>
                           <option value="Card">Card</option>
                           <option value="GPay">GPay</option>
-                        </select>
+                        </select> 
+                        <BaseInput type="number"
+                          name="originAmount"
+                          value={formState.form?.securityDeposit?.originalSecurityAmount}
+                          className='!flex-1'
+                          placeholder="Amount"
+                          onChange={(e) => {
+                            handleSecurityDepositChange('originalSecurityAmount', e.target.value)
+                          }}
+                        />
+
                       </div>
 
                       {/* Return Deposit */}
