@@ -342,7 +342,7 @@ export default function BookingDetailsComponent({ bookingId }: BookingDetailsPro
 
 
 
-                                            <h3 className='subheading text-right'> Final cost: ₹{formState.form.totalCost}</h3>
+                                            <h3 className='subheading text-right !font-normal'> <strong>Final cost:</strong> ₹{formState.form.totalCost}</h3>
 
 
                                         </div>
@@ -366,16 +366,22 @@ export default function BookingDetailsComponent({ bookingId }: BookingDetailsPro
 
                                         </div>
 
-                                        <h3 className='title w-full text-right'>Total : {formState.form.afterTaxTotal ? `₹ ${formState.form.afterTaxTotal}` : (formState.form.totalCost ? `₹ ${formState.form.totalCost}` : '₹ 0')} </h3>
+                                        <h3 className='title w-full text-right !font-normal'><strong>Total :</strong> {formState.form.afterTaxTotal ? `₹ ${formState.form.afterTaxTotal}` : (formState.form.totalCost ? `₹ ${formState.form.totalCost}` : '₹ 0')} </h3>
 
                                         <div />
 
+                                    </div>)}
+                                    {/* Tax part */}
+
+                                    {!!formState.form.tax && (<div>
+                                        <h3 className='title w-full text-right !font-normal'><strong>Tax 18% :</strong> {formState.form.tax ? `₹ ${formState.form.tax}` : '₹ 0'} </h3>
+                                        <h3 className='title w-full text-right !font-normal'><strong>Total after tax :</strong> {formState.form.afterTaxTotal ? `₹ ${formState.form.afterTaxTotal}` : '₹ 0'} </h3>
                                     </div>)}
                                 </div>)}
                             {/*Confirmed option */}
                             {formState.form.status == "Confirmed" && (
                                 <div>
-                                    <div className='flex flex-col gap-4'>
+                                    <div className='flex flex-col '>
                                         <p className='text-base font-bold leading-normal '>
                                             Payments
                                         </p>
@@ -396,11 +402,30 @@ export default function BookingDetailsComponent({ bookingId }: BookingDetailsPro
 
 
 
-                                        <h3 className='subheading text-right'> Paid: ₹{formState.form.paid}</h3>
-                                        <h3 className='title text-right'> Outstanding: ₹{formState.form.outstanding}</h3>
+                                        <h3 className='subheading text-right !font-normal'> <strong>Paid:</strong> ₹{formState.form.paid}</h3>
+                                        <h3 className='subheading text-right !font-normal'> <strong>Outstanding:</strong> ₹{formState.form.outstanding}</h3>
 
 
                                     </div>
+                                    {/* Security Deposit */}
+                                    {!!formState.form?.securityDeposit?.originalSecurityAmount && <div className='flex flex-col gap-2'>
+                                        <p className='text-base font-bold leading-normal '>
+                                            Security deposit
+                                        </p>
+                                        <div >
+                                            <h3 className=' text-right !font-normal subheading'> <strong>Original amount:</strong> ₹{formState.form?.securityDeposit?.originalSecurityAmount}</h3>
+                                            <h3 className=' subheading text-right !font-normal'> <strong>Payment method:</strong> {formState.form?.securityDeposit?.paymentMethod}</h3>
+                                        </div>
+                                        {
+                                            !!formState.form?.securityDeposit?.amountReturned && <div >
+                                                <h3 className=' subheading text-right !font-normal'> <strong>Returned amount:</strong> ₹{formState.form?.securityDeposit?.amountReturned}</h3>
+                                                <h3 className=' subheading text-right !font-normal'> <strong>Returned date:</strong> {format(new Date(`${formState.form?.securityDeposit?.dateReturned || ''}`), "MMM d - hh:mmaa")}</h3>
+                                            </div>
+                                        }
+
+
+
+                                    </div>}
                                 </div>
                             )}
                         </div>

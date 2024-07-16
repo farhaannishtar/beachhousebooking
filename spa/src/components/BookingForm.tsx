@@ -65,6 +65,8 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
           }));
           setIsSwitchOn(newData.bookingType === "Stay" ? false : true);
           setAddTax(!!newData.tax)
+          setShowSecurityDeposit(!!newData?.securityDeposit?.originalSecurityAmount)
+          setShowReturnDeposit(!!newData?.securityDeposit?.amountReturned)
         });
     }
   }, []);
@@ -374,7 +376,46 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
     }));
   }
   //********************** End Security deposit settings **********************
+  const [showSecurityDeposit, setShowSecurityDeposit] = useState<boolean>(false);
+  const [showReturnDeposit, setShowReturnDeposit] = useState<boolean>(false);
+  const onSecurityDepositClicked = () => {
+    if (showSecurityDeposit) {
+      setFormState((prevState) => ({
+        ...prevState,
+        form: {
+          ...prevState.form,
+          securityDeposit: {
+            originalSecurityAmount: 0,
+            paymentMethod: "Cash",
+            dateReturned: "",
+            amountReturned: 0
+          }
+        },
 
+      }));
+      setShowSecurityDeposit(false);
+      setShowReturnDeposit(false)
+    } else setShowSecurityDeposit(true)
+
+  }
+  const onReturnDepositClicked = () => {
+    if (showReturnDeposit) {
+      setFormState((prevState) => ({
+        ...prevState,
+        form: {
+          ...prevState.form,
+          securityDeposit: {
+            ...prevState.form.securityDeposit,
+            dateReturned: "",
+            amountReturned: 0
+          }
+        },
+
+      }));
+      setShowReturnDeposit(false)
+    } else setShowReturnDeposit(true)
+
+  }
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
@@ -791,19 +832,44 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                   {/* Security deposit part */}
                   <div className='flex flex-col gap-4'>
                     <p className='text-base font-bold leading-normal '>
-                      Security Deposit
+                      Security deposit
                     </p>
-                    <div className='cost-list flex flex-col gap-4'>
-                      <BaseInput type="number"
-                        name="originAmount"
-                        value={formState.form?.securityDeposit?.originalSecurityAmount}
+                    {/* Add deposit */}
+                    <div className='flex items-center justify-end'>
+                      <button type='button' className='text-center leading-6 h-12 py-3 px-8 bg-selectedButton text-white font-bold rounded-xl' onClick={() => { onSecurityDepositClicked() }}>{`${showSecurityDeposit ? 'Clear' : 'Add'} security deposit`}</button>
+                    </div>
+                    {(showSecurityDeposit || formState.form?.securityDeposit?.originalSecurityAmount) ? <div className='cost-list flex flex-col gap-4'>
 
-                        placeholder="Amount"
-                        onChange={(e) => {
-                          handleSecurityDepositChange('originalSecurityAmount', e.target.value)
-                        }}
-                      />
-                      <div className='flex flex-wrap items-center gap-4'>
+
+                      <div className='flex flex-wrap items-center gap-2'>
+                        <BaseInput type="number"
+                          name="originAmount"
+                          value={formState.form?.securityDeposit?.originalSecurityAmount}
+                          className='!flex-1'
+                          placeholder="Amount"
+                          onChange={(e) => {
+                            handleSecurityDepositChange('originalSecurityAmount', e.target.value)
+                          }}
+                        />
+                        <select
+                          className="select select-bordered !flex-1 h-14 bg-inputBoxbg"
+                          name="paymentMethod"
+                          value={formState.form?.securityDeposit?.paymentMethod}
+                          onChange={(e) => {
+                            handleSecurityDepositChange('paymentMethod', e.target.value)
+                          }}
+                        >
+                          <option value="Cash">Cash</option>
+                          <option value="Card">Card</option>
+                          <option value="GPay">GPay</option>
+                        </select>
+                      </div>
+
+                      {/* Return Deposit */}
+                      <div className='flex items-center justify-end'>
+                        <button type='button' className='text-center leading-6 h-12 py-3 px-8 bg-selectedButton text-white font-bold rounded-xl' onClick={() => { onReturnDepositClicked() }}>{`${showReturnDeposit ? 'Clear returned' : 'Returned'} security deposit`}</button>
+                      </div>
+                      {(showReturnDeposit || formState.form?.securityDeposit?.dateReturned) && <div className='flex flex-wrap items-center gap-2'>
                         <DateTimePickerInput label="Date returned"
                           name="dateReturned"
                           value={formState.form?.securityDeposit?.dateReturned}
@@ -811,29 +877,19 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                           onChange={(name, newDateTime) => {
                             handleSecurityDepositChange('dateReturned', newDateTime!)
                           }}
+                          className='flex-1'
                         />
-                        <div className='flex items-center gap-2 w-full'>
-                          <BaseInput type="number"
-                            name="amountReturned"
-                            value={formState.form?.securityDeposit?.amountReturned}
-                            className='!flex-1'
-                            placeholder="Amount returned"
-                            onChange={(e) => {
-                              handleSecurityDepositChange('amountReturned', e.target.value)
-                            }}
-                          />
-                          <BaseInput type="text"
-                            name="paymentMethod"
-                            value={formState.form?.securityDeposit?.paymentMethod}
-                            className='!flex-1'
-                            placeholder="Method"
-                            onChange={(e) => {
-                              handleSecurityDepositChange('paymentMethod', e.target.value)
-                            }}
-                          />
-                        </div>
-                      </div>
-                    </div>
+                        <BaseInput type="number"
+                          name="amountReturned"
+                          value={formState.form?.securityDeposit?.amountReturned}
+                          className='!flex-1'
+                          placeholder="Amount returned"
+                          onChange={(e) => {
+                            handleSecurityDepositChange('amountReturned', e.target.value)
+                          }}
+                        />
+                      </div>}
+                    </div> : ''}
                   </div>
                 </div>
               )}
