@@ -37,11 +37,11 @@ export default function Settings() {
       <div className="flex flex-col gap-4">
         <div className="flex items-center gap-2">
           <h3 className="subheading">Username :</h3>
-          <h3 className="label text-selectedButton">{user.user_metadata.display_name}</h3>
+          <h3 className="label_text text-selectedButton">{user.user_metadata.display_name}</h3>
         </div>
         <div className="flex items-center gap-2">
           <h3 className="subheading">Phone : </h3>
-          <h3 className="label text-selectedButton">{user.phone}</h3>
+          <h3 className="label_text text-selectedButton">{user.phone}</h3>
         </div>
         <LoadingButton
           className=" border-[1px] border-typo_dark-300 text-typo_dark-300 my-4 w-full py-2 px-4 rounded-xl"

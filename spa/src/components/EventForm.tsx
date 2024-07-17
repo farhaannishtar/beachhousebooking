@@ -95,25 +95,25 @@ export default function EventForm({ events, setEvents }: { events: Event[], setE
                   />
                 </div>
                 <div className="form-control">
-                  <label className="label cursor-pointer">
+                  <label className="label_text cursor-pointer">
                     <span className="label-text">Valet Service</span>
                     <input type="checkbox" className="checkbox" />
                   </label>
                 </div>
                 <div className="form-control">
-                  <label className="label cursor-pointer">
+                  <label className="label_text cursor-pointer">
                     <span className="label-text">Dj Service</span>
                     <input type="checkbox" className="checkbox" />
                   </label>
                 </div>
                 <div className="form-control">
-                  <label className="label cursor-pointer">
+                  <label className="label_text cursor-pointer">
                     <span className="label-text">Kitchen Service</span>
                     <input type="checkbox" className="checkbox" />
                   </label>
                 </div>
                 <div className="form-control">
-                  <label className="label cursor-pointer">
+                  <label className="label_text cursor-pointer">
                     <span className="label-text">Overnight stay</span>
                     <input type="checkbox" className="checkbox" />
                   </label>

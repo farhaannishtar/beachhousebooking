@@ -252,55 +252,59 @@ export default function BookingDetailsComponent({ bookingId }: BookingDetailsPro
                             <h1 className='text-lg font-bold leading-6 w-full text-center'>{bookingId ? formState.form.client.name : "Create Booking"}</h1>
                             <Link href={`${pathname}/edit`} className='material-symbols-outlined text-2xl !no-underline !text-typo_dark-300'>edit</Link>
                         </div>
-                        <div className='flex flex-col gap-y-4 mt-6 '>
+                        <div className='flex flex-col mt-6 gap-4'>
                             {/* Name  */}
-                            <div className='w-full'>
+                            <div className='w-full mb-2'>
                                 <label className='title'> {formState.form.client.name}</label>
                             </div>
                             {/* Phone  */}
                             <div className='w-full flex gap-3 items-center'>
-                                <label className='label'>{formState.form.client.phone}</label>
+                                <label className='label_text'>{formState.form.client.phone}</label>
                                 <a href={`https://api.whatsapp.com/send?phone=${formState.form.client.phone}`}>
 
                                     <svg height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7 .9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z" /></svg></a>
                             </div>
                             {/* Dates  */}
-                            <div className='flex flex-col gap-3 w-full'>
-                                <label className='label !font-semibold'>Dates</label>
-                                <div className='flex items-center'>
-                                    {formState.form.startDateTime && <label className='label '><strong>From &nbsp;</strong> {format(new Date(`${formState.form.startDateTime || ''}`), "MMM d - hh:mmaa")}  </label>}
-                                    {formState.form.endDateTime && <label className='label '><strong> to &nbsp;</strong> {format(new Date(`${formState.form.endDateTime || ''}`), "MMM d - hh:mmaa")}  </label>}
+                            <div className='flex flex-col  w-full gap-2'>
+                                <label className='label_text !font-medium'>Dates</label>
+                                <div className='flex  items-center pl-4'>
+                                    {formState.form.startDateTime && <label className='label_text '> {format(new Date(`${formState.form.startDateTime || ''}`), "iii LLL d, hh:mmaa")}  </label>}
+                                    <span className='label_text'>-</span>
+                                    {formState.form.endDateTime && <label className='label_text '>{format(new Date(`${formState.form.endDateTime || ''}`), "iii LLL d, hh:mmaa")}  </label>}
                                 </div>
 
                             </div>
-                            {/* Numbers  */}
-                            <div className='flex gap-3 flex-wrap'>
+                            {/* Numbers of events */}
+                            {formState.form.bookingType === "Event" &&
+                                <div className='flex  flex-col'>
+                                    <label className='label_text'><span className='!font-medium'>Number of Events: </span> {formState.form.numberOfEvents}</label>
 
-                                {formState.form.bookingType === "Event" &&
-                                    <label className='label'><span className='!font-semibold'>Number of Events: </span> {formState.form.numberOfEvents}</label>
-                                }
-                                <label className='label'><span className='!font-semibold'>Number of Guests: </span> {formState.form.numberOfGuests}</label>
+                                </div>
+                            }
+
+                            {/* Numbers of Guests */}
+                            <div className='flex  flex-col'>
+                                <label className='label_text'><span className='!font-medium'>Number of Guests: </span> {formState.form.numberOfGuests}</label>
                             </div>
                             {/* Notes  */}
-                            <div className='flex-col gap-3'>
-                                <label className='label !font-semibold'>Notes: </label>
-                                <label className='label'>
+                            {formState.form.notes && <div className='flex-col gap-2 flex'>
+                                <label className='label_text !font-medium'>Additional Services: </label>
+                                <label className='label_text'>
 
                                     {formState.form.notes}
                                 </label>
-                            </div>
+                            </div>}
                             {/* Properties  */}
-                            <div className='flex-col gap-3'>
-                                <label className='label !font-semibold'>Properties: </label>
-                                <div className='flex flex-col gap-2'>
-
-                                    {formState.form.properties && formState.form.properties.map((p, i) => <label className='label' key={i}>{p}</label>)}
+                            {formState.form.properties && <div className='flex-col gap-2 flex'>
+                                <label className='label_text !font-medium'>Properties: </label>
+                                <div className='flex pl-4'>
+                                    <label className='label_text'>{formState.form.properties.join()}</label>
                                 </div>
-                            </div>
+                            </div>}
                             {/* Status  */}
                             <div className='flex-col gap-3'>
-                                <label className='label !font-semibold'>Status: </label>
-                                <label className='label'>
+                                <label className='label_text !font-medium'>Status: </label>
+                                <label className='label_text'>
 
                                     {formState.form.status}
                                 </label>
@@ -308,8 +312,8 @@ export default function BookingDetailsComponent({ bookingId }: BookingDetailsPro
 
                             {/* Referral  */}
                             <div className='flex-col gap-3'>
-                                <label className='label !font-semibold'>Referral: </label>
-                                <label className='label'>
+                                <label className='label_text !font-medium'>Referral: </label>
+                                <label className='label_text'>
 
                                     {formState.form.refferral}
                                 </label>
@@ -332,8 +336,8 @@ export default function BookingDetailsComponent({ bookingId }: BookingDetailsPro
                                                     handlePageChange(Page.EventPage)
                                                 }}>
                                                     <div>
-                                                        <h3 className='label p-0'>{` ${event.eventName}  (${event.numberOfGuests}) (₹${event.finalCost.toLocaleString('en-IN')} )`}</h3>
-                                                        <h3 className='label p-0'>{`${format(new Date(`${event.startDateTime || ''}`), "MMM d - hh:mmaa")} - ${event.properties.toString()}`}</h3>
+                                                        <h3 className='label_text p-0'>{` ${event.eventName}  (${event.numberOfGuests}) (₹${event.finalCost.toLocaleString('en-IN')} )`}</h3>
+                                                        <h3 className='label_text p-0'>{`${format(new Date(`${event.startDateTime || ''}`), "iii LLL d, hh:mmaa")} - ${event.properties.toString()}`}</h3>
 
                                                     </div>
                                                     <span className='material-symbols-outlined '>chevron_right</span>
@@ -342,21 +346,21 @@ export default function BookingDetailsComponent({ bookingId }: BookingDetailsPro
 
 
 
-                                            <h3 className='subheading text-right !font-normal'> <strong>Final cost:</strong> ₹{formState.form.totalCost.toLocaleString('en-IN')}</h3>
+                                            <label className='title w-full text-right !font-bold flex items-center justify-start'><strong className=' w-1/2'>Final cost:</strong> <span className='flex-1'> ₹{formState.form.totalCost.toLocaleString('en-IN')}</span> </label>
 
 
                                         </div>
                                     )}
                                     {/* Stay options */}
-                                    {formState.form.bookingType == "Stay" && (<div className='flex flex-col gap-4'>
-                                        <p className='text-base font-bold leading-normal my-4'>
+                                    {formState.form.bookingType == "Stay" && (<div className='flex flex-col gap-2'>
+                                        <p className='text-base font-medium leading-normal'>
                                             Costs
                                         </p>
-                                        <div className='cost-list flex flex-col gap-4'>
+                                        <div className='cost-list flex flex-col gap-2'>
                                             {formState.form.costs && formState.form.costs.map((cost, index) => (
-                                                <div className='flex items-center gap-4 ' key={index}>
-                                                    <label className='label !font-semibold'>{cost.name}: </label>
-                                                    <label className='label'>
+                                                <div className='flex items-center pl-4 justify-between' key={`cost-${index}`}>
+                                                    <label className='label_text !font-medium'>{cost.name}: </label>
+                                                    <label className='label_text'>
 
                                                         {cost.amount}
                                                     </label>
@@ -366,61 +370,61 @@ export default function BookingDetailsComponent({ bookingId }: BookingDetailsPro
 
                                         </div>
 
-                                        <h3 className='title w-full text-right !font-normal'><strong>Total :</strong> {formState.form.afterTaxTotal ? `₹ ${formState.form.afterTaxTotal.toLocaleString('en-IN')}` : (formState.form.totalCost ? `₹ ${formState.form.totalCost}` : '₹ 0')} </h3>
+                                        <label className='title w-full text-right !font-bold flex items-center justify-start'><strong className=' w-1/2'>Total :</strong><span className='flex-1'> {formState.form.totalCost ? `₹ ${formState.form.totalCost.toLocaleString('en-IN')}` : (formState.form.totalCost ? `₹ ${formState.form.totalCost}` : '₹ 0')} </span></label>
 
                                         <div />
 
                                     </div>)}
                                     {/* Tax part */}
 
-                                    {!!formState.form.tax && (<div>
-                                        <h3 className='title w-full text-right !font-normal'><strong>Tax 18% :</strong> {formState.form.tax ? `₹ ${formState.form.tax.toLocaleString('en-IN')}` : '₹ 0'} </h3>
-                                        <h3 className='title w-full text-right !font-normal'><strong>Total after tax :</strong> {formState.form.afterTaxTotal ? `₹ ${formState.form.afterTaxTotal.toLocaleString('en-IN')}` : '₹ 0'} </h3>
+                                    {!!formState.form.tax && (<div className='flex flex-col gap-2 '>
+                                        <label className='title w-full text-right !font-bold flex items-center justify-start'><strong className=' w-1/2'>Tax 18% :</strong> <span className='flex-1'>{formState.form.tax ? `₹ ${formState.form.tax.toLocaleString('en-IN')}` : '₹ 0'}</span> </label>
+                                        <label className='title w-full text-right !font-bold flex items-center justify-start'><strong className=' w-1/2'>Total after tax :</strong> <span className='flex-1'>{formState.form.afterTaxTotal ? `₹ ${formState.form.afterTaxTotal.toLocaleString('en-IN')}` : '₹ 0'} </span></label>
                                     </div>)}
                                 </div>)}
                             {/*Confirmed option */}
                             {formState.form.status == "Confirmed" && (
-                                <div>
-                                    <div className='flex flex-col '>
+                                <div className='flex flex-col gap-4'>
+                                    <div className='flex flex-col gap-4'>
                                         <p className='text-base font-bold leading-normal '>
                                             Payments
                                         </p>
-                                        <div className='cost-list flex flex-col gap-2'>
+                                        <div className='cost-list flex flex-col gap-2 pl-4'>
                                             {formState.form.payments.map((payment, index) => (
                                                 <div className='flex items-center gap-4 justify-between' key={index}>
-                                                    <label className='label !font-semibold'>{format(new Date(`${payment.dateTime || ''}`), "MMM d - hh:mmaa")}: </label>
-                                                    <div className='flex items-center w-full justify-start label'>
-                                                        <label >
-                                                            {payment.amount}-</label>
-                                                        <label >{payment.paymentMethod}</label>
-
-                                                    </div>
+                                                    <label className='label_text !font-medium'>{format(new Date(`${payment.dateTime || ''}`), "iii LLL d, hh:mmaa")}: </label>
+                                                    <label className='label_text !font-medium'>{payment.amount}</label>
+                                                    <label className='label_text !font-medium'>{payment.paymentMethod}</label>
                                                 </div>
                                             ))}
 
                                         </div>
 
-
-
-                                        <h3 className='subheading text-right !font-normal'> <strong>Paid:</strong> ₹{formState.form.paid.toLocaleString('en-IN')}</h3>
-                                        <h3 className='subheading text-right !font-normal'> <strong>Outstanding:</strong> ₹{formState.form.outstanding.toLocaleString('en-IN')}</h3>
-
+                                        <div>
+                                            <div className='flex flex-col gap-2 '>
+                                                <label className='title w-full text-right !font-bold flex items-center justify-start'><strong className=' w-1/2'>Paid:</strong> <span className='flex-1'>₹{formState.form.paid.toLocaleString('en-IN')}</span> </label>
+                                                <label className='title w-full text-right !font-bold flex items-center justify-start'><strong className=' w-1/2'>Outstanding:</strong> <span className='flex-1'>₹{formState.form.outstanding.toLocaleString('en-IN')} </span></label>
+                                            </div>
+                                        </div>
 
                                     </div>
                                     {/* Security Deposit */}
-                                    {!!formState.form?.securityDeposit?.originalSecurityAmount && <div className='flex flex-col gap-2'>
+                                    {!!formState.form?.securityDeposit?.originalSecurityAmount && <div className='flex flex-col gap-4'>
                                         <p className='text-base font-bold leading-normal '>
                                             Security deposit
                                         </p>
-                                        <div >
-                                            <h3 className=' text-right !font-normal subheading'> <strong>Original amount:</strong> ₹{formState.form?.securityDeposit?.originalSecurityAmount.toLocaleString('en-IN')}</h3>
-                                            <h3 className=' subheading text-right !font-normal'> <strong>Payment method:</strong> {formState.form?.securityDeposit?.paymentMethod}</h3>
+                                        <div className='flex flex-col gap-2 '>
+                                            <label className='title w-full text-right !font-bold flex items-center justify-start'><strong className=' w-2/3'>Original amount:</strong> <span className='flex-1'>₹{formState.form?.securityDeposit?.originalSecurityAmount.toLocaleString('en-IN')}</span> </label>
+                                            <label className='title w-full text-right !font-bold flex items-center justify-start'><strong className=' w-2/3'>Payment method:</strong> <span className='flex-1'>{formState.form?.securityDeposit?.paymentMethod} </span></label>
                                         </div>
+
                                         {
-                                            !!formState.form?.securityDeposit?.amountReturned && <div >
-                                                <h3 className=' subheading text-right !font-normal'> <strong>Returned amount:</strong> ₹{formState.form?.securityDeposit?.amountReturned.toLocaleString('en-IN')}</h3>
-                                                <h3 className=' subheading text-right !font-normal'> <strong>Returned date:</strong> {format(new Date(`${formState.form?.securityDeposit?.dateReturned || ''}`), "MMM d - hh:mmaa")}</h3>
+                                            !!formState.form?.securityDeposit?.amountReturned &&
+                                            <div className='flex flex-col gap-2 '>
+                                                <label className='title w-full text-right !font-bold flex items-center justify-start'><strong className=' w-2/3'>Returned amount:</strong> <span className='flex-1'>₹{formState.form?.securityDeposit?.amountReturned.toLocaleString('en-IN')}</span> </label>
+                                                <label className='title w-full text-right !font-bold flex items-center justify-start'><strong className=' w-2/3'>Returned date:</strong> <span className='flex-1'>{format(new Date(`${formState.form?.securityDeposit?.dateReturned || ''}`), "iii LLL d, hh:mmaa")} </span></label>
                                             </div>
+
                                         }
 
 

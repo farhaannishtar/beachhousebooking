@@ -1,11 +1,11 @@
 import React, { useRef } from 'react';
 
 interface ToggleButtonProps {
-    checked: boolean;
-    onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-    className?: string;
-    name: string;
-    label?: string;
+  checked: boolean;
+  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  className?: string;
+  name: string;
+  label?: string;
 }
 
 const ToggleButton: React.FC<ToggleButtonProps> = ({ checked, onChange, className = '', name, label }) => {
@@ -32,11 +32,11 @@ const ToggleButton: React.FC<ToggleButtonProps> = ({ checked, onChange, classNam
         eventPhase: 0,
         isTrusted: true,
         nativeEvent: new Event('change', { bubbles: true }),
-        preventDefault: () => {},
+        preventDefault: () => { },
         isDefaultPrevented: () => false,
-        stopPropagation: () => {},
+        stopPropagation: () => { },
         isPropagationStopped: () => false,
-        persist: () => {},
+        persist: () => { },
         timeStamp: Date.now(),
         type: 'change',
       } as React.ChangeEvent<HTMLInputElement>;
@@ -47,7 +47,7 @@ const ToggleButton: React.FC<ToggleButtonProps> = ({ checked, onChange, classNam
 
   return (
     <div className={className + ' flex items-center gap-3'}>
-      <h3 className='label'>{label}</h3>
+      <h3 className='label_text'>{label}</h3>
       <div
         className={`${checked ? 'bg-selectedButton justify-end' : 'bg-typo_light-100 justify-start'} flex items-center h-8 p-1 rounded-full w-14 ${className}`}
         onClick={handleClick}

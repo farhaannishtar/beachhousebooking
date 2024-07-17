@@ -2,16 +2,16 @@ import { useState } from "react";
 
 interface BaseSelectProps {
 
-    value: string | number;
-    onChange?: (value: string) => void;
-    placeholder?: string;
-    type?: string;
-    className?: string;
-    name: string;
-    data: Array<{
-        label: string,
-        value: string
-    }> | []
+  value: string | number;
+  onChange?: (value: string) => void;
+  placeholder?: string;
+  type?: string;
+  className?: string;
+  name: string;
+  data: Array<{
+    label: string,
+    value: string
+  }> | []
 }
 const BaseSelect: React.FC<BaseSelectProps> = ({ className = '', type = 'text', value, onChange, placeholder = '', name, data }) => {
   const [popupOpened, setPopUpOpened] = useState<Boolean>(false)
@@ -32,7 +32,7 @@ const BaseSelect: React.FC<BaseSelectProps> = ({ className = '', type = 'text', 
                 onChange(d.value);
                 setPopUpOpened(!popupOpened)
               }
-            }} className="!leading-none py-3 label px-4 first-of-type:rounded-t-lg last-of-type:rounded-b-lg hover:bg-typo_light-100 text-typo_dark-300">{d.label}</h3>
+            }} className="!leading-none py-3 label_text px-4 first-of-type:rounded-t-lg last-of-type:rounded-b-lg hover:bg-typo_light-100 text-typo_dark-300">{d.label}</h3>
           })
         }
       </div>}

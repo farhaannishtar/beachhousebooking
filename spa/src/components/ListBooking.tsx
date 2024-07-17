@@ -219,7 +219,7 @@ export default function ListBooking() {
               {/* Booking type */}
               <div className="w-[84px] flex items-center">
                 <div className="w-[74px] h-8 px-5 bg-gray-100 rounded-[19px] justify-center items-center inline-flex items-center">
-                  <div className="w-11 label !font-medium left-[20px] top-[6px] text-center text-sky-500 text-base font-medium leading-normal">
+                  <div className="w-11 label_text !font-medium left-[20px] top-[6px] text-center text-sky-500 text-base font-medium leading-normal">
                     {booking.bookingType}
                   </div>
                 </div>

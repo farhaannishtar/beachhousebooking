@@ -11,13 +11,13 @@ import IncomeFromCheckin from "./IncomeFromCheckin";
 // define month type
 type Month = "June" | "July" | "August" | "September" | "October" | "November" | "December"
 export interface StatsState {
-    filter: {
-        month: Month,
-        employee: "Prabhu" | "Yasmeen" | "Rafica" | "Nusrat" | null
-        referral: "Google" | "Instagram" | "Facebook" | "Other" | null
-    }
-    rawReservationsResponse: any,
-    rawCheckinsResponse: any
+  filter: {
+    month: Month,
+    employee: "Prabhu" | "Yasmeen" | "Rafica" | "Nusrat" | null
+    referral: "Google" | "Instagram" | "Facebook" | "Other" | null
+  }
+  rawReservationsResponse: any,
+  rawCheckinsResponse: any
 }
 
 const monthConvert: { [key in Month]: number } = { "June": 6, "July": 7, "August": 8, "September": 9, "October": 10, "November": 11, "December": 12 };
@@ -126,21 +126,21 @@ export default function StatsView() {
         <div className="flex flex-col  gap-5">
           <div className="flex gap-5">
             <div className="flex-1 rounded-xl h-28 bg-typo_light-100 flex flex-col justify-end py-2 gap-5 px-6">
-              <label className="label !p-0 !font-medium">Inquiries</label>
+              <label className="label_text !p-0 !font-medium">Inquiries</label>
               <label className="title">{formState?.rawReservationsResponse?.monthly?.inquiriesCount}</label>
             </div>
             <div className="flex-1 rounded-xl h-28 bg-typo_light-100 flex flex-col justify-end py-2 gap-5 px-6">
-              <label className="label !p-0 !font-medium">Confirmed</label>
+              <label className="label_text !p-0 !font-medium">Confirmed</label>
               <label className="title">{formState?.rawReservationsResponse?.monthly?.confirmedCount}</label>
             </div>
           </div>
           <div className="flex gap-5">
             <div className="flex-1 rounded-xl h-28 bg-typo_light-100 flex flex-col justify-end py-2 gap-5 px-6">
-              <label className="label !p-0 !font-medium">Conversion Rate</label>
+              <label className="label_text !p-0 !font-medium">Conversion Rate</label>
               <label className="title">{conversionRateForMonth ? conversionRateForMonth.toFixed(1) + '%' : 0}</label>
             </div>
             <div className="flex-1 rounded-xl h-28 bg-typo_light-100 flex flex-col justify-end py-2 gap-5 px-6">
-              <label className="label !p-0 !font-medium"> Total Income  reservations</label>
+              <label className="label_text !p-0 !font-medium"> Total Income  reservations</label>
               <label className="title">{'₹' + (indianFormatter.format(formState?.rawReservationsResponse?.monthly?.confirmedSum))}</label>
             </div>
           </div>
@@ -152,21 +152,21 @@ export default function StatsView() {
         <div className="flex flex-col  gap-5">
           <div className="flex gap-5">
             <div className="flex-1 rounded-xl h-28 bg-typo_light-100 flex flex-col justify-end py-2 gap-5 px-6">
-              <label className="label !p-0 !font-medium">Inquiries</label>
+              <label className="label_text !p-0 !font-medium">Inquiries</label>
               <label className="title">{formState?.rawReservationsResponse?.daily[dayOfMonth]?.inquiriesCount}</label>
             </div>
             <div className="flex-1 rounded-xl h-28 bg-typo_light-100 flex flex-col justify-end py-2 gap-5 px-6">
-              <label className="label !p-0 !font-medium">Confirmed</label>
+              <label className="label_text !p-0 !font-medium">Confirmed</label>
               <label className="title">{formState?.rawReservationsResponse?.daily[dayOfMonth]?.confirmedCount}</label>
             </div>
           </div>
           <div className="flex gap-5">
             <div className="flex-1 rounded-xl h-28 bg-typo_light-100 flex flex-col justify-end py-2 gap-5 px-6">
-              <label className="label !p-0 !font-medium">Conversion Rate</label>
+              <label className="label_text !p-0 !font-medium">Conversion Rate</label>
               <label className="title">{conversionRateDaily ? conversionRateDaily.toFixed(1) + '%' : 0}</label>
             </div>
             <div className="flex-1 rounded-xl h-28 bg-typo_light-100 flex flex-col justify-end py-2 gap-5 px-6">
-              <label className="label !p-0 !font-medium"> Total Income  reservations</label>
+              <label className="label_text !p-0 !font-medium"> Total Income  reservations</label>
               <label className="title">{'₹' + (indianFormatter.format(formState?.rawReservationsResponse?.daily[dayOfMonth]?.confirmedSum))}</label>
             </div>
           </div>
@@ -189,20 +189,20 @@ export default function StatsView() {
         <h1 className="title">Booking Details</h1>
         <div className="flex flex-col gap-2">
           <div className="flex justify-between items-center">
-            <label className="label !pt-0">Total Reservations Value</label>
-            <label className="label !pt-0 !font-semibold">{'₹' + (indianFormatter.format(formState?.rawReservationsResponse?.monthly?.confirmedSum))}</label>
+            <label className="label_text !pt-0">Total Reservations Value</label>
+            <label className="label_text !pt-0 !font-semibold">{'₹' + (indianFormatter.format(formState?.rawReservationsResponse?.monthly?.confirmedSum))}</label>
           </div>
           <div className="flex justify-between items-center">
-            <label className="label">Average Reservation Value</label>
-            <label className="label !font-semibold">{'₹' + (indianFormatter.format(formState?.rawReservationsResponse?.monthly?.confirmedAvg))}</label>
+            <label className="label_text">Average Reservation Value</label>
+            <label className="label_text !font-semibold">{'₹' + (indianFormatter.format(formState?.rawReservationsResponse?.monthly?.confirmedAvg))}</label>
           </div>
           <div className="flex justify-between items-center">
-            <label className="label">Total Checkin Value</label>
-            <label className="label !font-semibold">{'₹' + (indianFormatter.format(formState?.rawCheckinsResponse?.monthly?.sum))}</label>
+            <label className="label_text">Total Checkin Value</label>
+            <label className="label_text !font-semibold">{'₹' + (indianFormatter.format(formState?.rawCheckinsResponse?.monthly?.sum))}</label>
           </div>
           <div className="flex justify-between items-center">
-            <label className="label">Average Checkin Value</label>
-            <label className="label !font-semibold">{'₹' + (indianFormatter.format(formState?.rawCheckinsResponse?.monthly?.average))}</label>
+            <label className="label_text">Average Checkin Value</label>
+            <label className="label_text !font-semibold">{'₹' + (indianFormatter.format(formState?.rawCheckinsResponse?.monthly?.average))}</label>
           </div>
 
 
@@ -217,7 +217,7 @@ export default function StatsView() {
         <div className='bg-white flex flex-col p-4 relative gap-5 z-20 max-h-[80vh] overflow-y-auto'>
           {/* filters */}
           <label className='subheading'>Filters</label>
-          <BaseSelect value={formState.filter.month} 
+          <BaseSelect value={formState.filter.month}
             data={(Object.keys(monthConvert) as Month[]).map((month) => ({ label: month, value: month }))}
             onChange={(value) => filterChange({ name: 'month', value: value })}
             name="month" />
@@ -226,14 +226,14 @@ export default function StatsView() {
           <label className='subheading'>Referrals</label>
           <div className='flex items-center flex-wrap gap-5' >
             <div onClick={() => filterChange({ name: 'referral', value: formState.filter.referral == 'Facebook' ? null : 'Facebook' })} className={`badge badge-lg text-center w-32 ${formState.filter.referral == 'Facebook' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
-            } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Facebook</div>
+              } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Facebook</div>
             <div onClick={() => filterChange({ name: 'referral', value: formState.filter.referral == 'Google' ? null : 'Google' })} className={`badge badge-lg text-center w-32 ${formState.filter.referral == 'Google' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
-            } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Google</div>
+              } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Google</div>
             <div onClick={() => filterChange({ name: 'referral', value: formState.filter.referral == 'Instagram' ? null : 'Instagram' })} className={`badge badge-lg text-center w-32 ${formState.filter.referral == 'Instagram' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
-            } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Instagram</div>
+              } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Instagram</div>
 
             <div onClick={() => filterChange({ name: 'referral', value: formState.filter.referral == 'Other' ? null : 'Other' })} className={`badge badge-lg text-center w-32 ${formState.filter.referral == 'Other' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
-            } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Other</div>
+              } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Other</div>
 
 
 
@@ -242,13 +242,13 @@ export default function StatsView() {
           <label className='subheading'>Employees</label>
           <div className='flex items-center flex-wrap gap-5' >
             <div onClick={() => filterChange({ name: 'employee', value: 'Nusrat' })} className={`badge badge-lg text-center w-32 ${formState.filter.employee == 'Nusrat' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
-            } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Nusrat</div>
+              } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Nusrat</div>
             <div onClick={() => filterChange({ name: 'employee', value: 'Prabhu' })} className={`badge badge-lg text-center w-32 ${formState.filter.employee == 'Prabhu' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
-            } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Prabhu</div>
+              } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Prabhu</div>
             <div onClick={() => filterChange({ name: 'employee', value: 'Yasmeen' })} className={`badge badge-lg text-center w-32 ${formState.filter.employee == 'Yasmeen' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
-            } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Yasmeen</div>
+              } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Yasmeen</div>
             <div onClick={() => filterChange({ name: 'employee', value: 'Rafica' })} className={`badge badge-lg text-center w-32 ${formState.filter.employee == 'Rafica' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
-            } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Rafica</div>
+              } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Rafica</div>
           </div>
           {/* Apply filters */}
           <LoadingButton

@@ -37,7 +37,8 @@ const CreateEventComponent: React.FC<CreateEventFormProps> = ({ deleteEvent, onA
     overNightStay: false,
     overNightGuests: 0,
     costs: [],
-    finalCost: 0
+    finalCost: 0,
+    deleted: 'none'
   });
   useEffect(() => {
     console.log({ selectedEvent });

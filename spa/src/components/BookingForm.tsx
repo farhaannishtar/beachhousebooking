@@ -700,7 +700,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                           setSelectedEvent(event)
                           handlePageChange(Page.EventPage)
                         }}>
-                          <h3 className='label p-0'>{`${event.eventName}  (${event.numberOfGuests})`}</h3>
+                          <h3 className='label_text p-0'>{`${event.eventName}  (${event.numberOfGuests})`}</h3>
                           <span className='material-symbols-outlined '>chevron_right</span>
                         </div>
                       ))}
@@ -853,7 +853,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                           <option value="Cash">Cash</option>
                           <option value="Card">Card</option>
                           <option value="GPay">GPay</option>
-                        </select> 
+                        </select>
                         <BaseInput type="number"
                           name="originAmount"
                           value={formState.form?.securityDeposit?.originalSecurityAmount}
