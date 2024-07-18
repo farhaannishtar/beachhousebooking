@@ -198,7 +198,11 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
   const handleDeleteEvent = (event: Event) => {
     setFormState((prevState) => {
       let events = [...prevState.form.events];
-      events = events.filter((e) => e.eventId !== event.eventId);
+      events = events.map((e) => {
+        if (e.eventId === event.eventId) {
+          return { ...e, deleted: 'marked' }
+        } else return e
+      });
       let totalCost = events.reduce(
         (acc, event) => acc + event.finalCost,
         0
@@ -504,7 +508,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
       let form = formState.form;
       form.bookingId = bookingId;
       const id = await createBooking(formState.form);
-      if (!bookingId && id != null && id != "null") {
+      if (id != null && id != "null") {
         // Assuming `id` is the success condition
         router.push(`/protected/booking/${id}`);
       }
@@ -518,7 +522,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
     await deleteBooking(bookingId!);
     setLoading(false)
 
-    router.back()
+    router.push('/protected/booking/list')
   }
 
   return (
@@ -695,15 +699,17 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                       <p className='text-base font-bold leading-normal '>
                         Events
                       </p>
-                      {formState.form.events.map((event, index) => (
-                        <div key={`event-${index}`} className='flex items-center justify-between rounded-xl bg-typo_light-100 px-4 cursor-pointer' onClick={() => {
-                          setSelectedEvent(event)
-                          handlePageChange(Page.EventPage)
-                        }}>
-                          <h3 className='label_text p-0'>{`${event.eventName}  (${event.numberOfGuests})`}</h3>
-                          <span className='material-symbols-outlined '>chevron_right</span>
-                        </div>
-                      ))}
+                      {formState.form.events.map((event, index) => {
+                        return (
+                          event.deleted == 'none' && <div key={`event-${index}`} className='flex items-center justify-between rounded-xl bg-typo_light-100 px-4 cursor-pointer' onClick={() => {
+                            setSelectedEvent(event)
+                            handlePageChange(Page.EventPage)
+                          }}>
+                            <h3 className='label_text p-0'>{`${event.eventName}  (${event.numberOfGuests})`}</h3>
+                            <span className='material-symbols-outlined '>chevron_right</span>
+                          </div>
+                        )
+                      })}
                       <div className='flex items-center justify-center w-full my-5' onClick={() => {
                         setSelectedEvent(null)
                         handlePageChange(Page.EventPage)

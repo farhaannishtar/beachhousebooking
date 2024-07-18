@@ -29,8 +29,8 @@ export async function createBooking(booking: BookingDB, name: string): Promise<n
 }
 
 export function updateBooking(booking: BookingDB[], id: number) {
-  console.log("updateBooking", booking[0].bookingType)
   const lastBooking = booking[booking.length - 1];
+  
   query(`
     UPDATE bookings 
       SET 
@@ -117,8 +117,9 @@ export async function mutateBookingState(booking: BookingForm, user: User): Prom
   }
   if(newBooking.bookingId) {
     console.log("mutateBookingState modify booking")
-    await modifyExistingBooking(newBooking); 
     await addToCalendar(newBooking);
+   
+    await modifyExistingBooking(newBooking); 
     return newBooking.bookingId
   } else {
     console.log("mutateBookingState create booking")
@@ -132,18 +133,23 @@ export async function addToCalendar(newBooking: BookingDB): Promise<BookingDB> {
   if (newBooking.status === "Confirmed") {
     for(let i = 0; i < newBooking.events.length; i++) {
       let event = newBooking.events[i];
-      newBooking.events[i].calendarIds = {};
+      //newBooking.events[i].calendarIds = {};
       let summary = `${newBooking.client.name}(${newBooking.numberOfGuests} pax) by ${newBooking.createdBy.name}`;
       let description = `
       Total Amount: ${newBooking.totalCost} 
       Payment Method: ${newBooking.paymentMethod}
       Paid Amount: ${newBooking.payments.reduce((acc, payment) => acc + payment.amount, 0)}
       `;
-
+      console.log('====================================');
+      console.log('inside event loop',event.calendarIds,event.deleted);
+      console.log('====================================');
       
       for (let property of event.properties) {
+        
         if(event.calendarIds && event.calendarIds[property]) {
+          
           if(event.deleted == "none") {
+           
             patchEvent(process.env.CALENDAR_ID!, event.calendarIds[property], {
               summary: summary,
               location: property,
@@ -170,16 +176,19 @@ export async function addToCalendar(newBooking: BookingDB): Promise<BookingDB> {
               dateTime: event.endDateTime
             }
           });
-          newBooking.events[i].calendarIds![property] = id;
+          newBooking.events[i].calendarIds={...newBooking.events[i].calendarIds,[property]:id};
         }
       }
-
+      console.log('====================================');
+      console.log('after loop',event.calendarIds,event.deleted);
+      console.log('====================================');
       if (event.deleted == "marked") {
         newBooking.events[i].deleted = "deleted";
       }
 
     }
   }
+ 
   return newBooking;
 }
 
@@ -191,6 +200,7 @@ async function modifyExistingBooking(newBooking: BookingDB) {
   let oldBooking = bookings[bookings.length - 1];
   newBooking.createdBy = oldBooking.createdBy;
   newBooking.createdDateTime = oldBooking.createdDateTime;
+  
   bookings.push(newBooking);
   updateBooking(bookings, newBooking.bookingId!);
 }

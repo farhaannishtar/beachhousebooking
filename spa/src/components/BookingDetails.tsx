@@ -177,6 +177,31 @@ export default function BookingDetailsComponent({ bookingId }: BookingDetailsPro
         }
         );
     };
+    const handleDeleteEvent = (event: Event) => {
+        setFormState((prevState) => {
+            let events = [...prevState.form.events];
+            events = events.filter((e) => e.eventId !== event.eventId);
+            let totalCost = events.reduce(
+                (acc, event) => acc + event.finalCost,
+                0
+            )
+            return (
+                {
+                    ...prevState,
+                    form: {
+                        ...prevState.form,
+                        events: events,
+                        totalCost: totalCost,
+                        outstanding: totalCost - prevState.form.paid
+                    },
+                }
+            )
+
+        }
+
+        );
+        handlePageChange(Page.BookingPage)
+    };
     //**********************End Events settings **********************
 
 
@@ -334,20 +359,22 @@ export default function BookingDetailsComponent({ bookingId }: BookingDetailsPro
                                             <p className='text-base font-bold leading-normal '>
                                                 Events
                                             </p>
-                                            {formState.form.events.map((event, index) => (
-                                                <div key={index} className='flex items-center justify-between rounded-xl bg-typo_light-100 p-4 cursor-pointer ' onClick={() => {
-                                                    setSelectedEvent(event)
-                                                    handlePageChange(Page.EventPage)
-                                                }}>
-                                                    <div className='flex flex-col gap-2'>
-                                                        <label className='label_text p-0'>{` ${event.eventName}  (${event.numberOfGuests}) (₹${event.finalCost.toLocaleString('en-IN')} )`}</label>
-                                                        <label className='label_text p-0'>{`${format(new Date(`${event.startDateTime || ''}`), "iii LLL d, hh:mmaa")} `}</label>
-                                                        <label className='label_text p-0'>{`${event.properties.toString()}`}</label>
+                                            {formState.form.events.map((event, index) => {
+                                                return (
+                                                    event.deleted == 'none' && <div key={index} className='flex items-center justify-between rounded-xl bg-typo_light-100 p-4 cursor-pointer ' onClick={() => {
+                                                        setSelectedEvent(event)
+                                                        handlePageChange(Page.EventPage)
+                                                    }}>
+                                                        <div className='flex flex-col gap-2'>
+                                                            <label className='label_text p-0'>{` ${event.eventName}  (${event.numberOfGuests}) (₹${event.finalCost.toLocaleString('en-IN')} )`}</label>
+                                                            <label className='label_text p-0'>{`${format(new Date(`${event.startDateTime || ''}`), "iii LLL d, hh:mmaa")} `}</label>
+                                                            <label className='label_text p-0'>{`${event.properties.toString()}`}</label>
 
+                                                        </div>
+                                                        <span className='material-symbols-outlined '>chevron_right</span>
                                                     </div>
-                                                    <span className='material-symbols-outlined '>chevron_right</span>
-                                                </div>
-                                            ))}
+                                                )
+                                            })}
 
 
 
@@ -447,7 +474,7 @@ export default function BookingDetailsComponent({ bookingId }: BookingDetailsPro
                 }
                 {
                     formState.pageToShow === Page.EventEdit && (
-                        <CreateEventComponent onAddEvent={handleAddEvent} cancelAddEvent={() => handlePageChange(Page.BookingPage)} status={formState.form.status} selectedEvent={selectedEvent} />
+                        <CreateEventComponent deleteEvent={handleDeleteEvent} onAddEvent={handleAddEvent} cancelAddEvent={() => handlePageChange(Page.BookingPage)} status={formState.form.status} selectedEvent={selectedEvent} />
                     )
                 }
                 {/* Version History  */}

@@ -41,6 +41,9 @@ export async function listEvents(calendarId: string, maxResults: number = 10, mi
 
 export async function patchEvent(calendarId: string, eventId: string, event: calendar_v3.Schema$Event): Promise<void> {
   let calendar = getCalendar();
+  console.log('====================================');
+  console.log({patchEventEventId:eventId});
+  console.log('====================================');
   await calendar.events.patch({
     calendarId: calendarId,
     eventId: eventId,
@@ -51,8 +54,14 @@ export async function patchEvent(calendarId: string, eventId: string, event: cal
 
 export async function deleteEvent(calendarId: string, eventId: string): Promise<void> {
   let calendar = getCalendar();
+ try {
   await calendar.events.delete({
     calendarId: calendarId,
     eventId: eventId
   });
+ } catch (error) {
+  console.log('====================================');
+  console.log(error);
+  console.log('====================================');
+ }
 }
