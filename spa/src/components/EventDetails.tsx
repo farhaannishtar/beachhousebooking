@@ -88,10 +88,10 @@ const EditEventComponent: React.FC<EditEventFormProps> = ({ cancelAddEvent, onEd
             <div className='flex-col flex gap-2'>
                 <label className='label_text !font-medium'>Additional services: </label>
                 <div className='flex flex-col gap-2 pl-4'>
-                    {event.djService && <label className='label'>DJ</label>}
+                    {event.djService && <label className='label_text'>DJ</label>}
                     {event.kitchenService && <label className='label_text'>Kitchen</label>}
                     {event.valetService && <label className='label_text'>Valet</label>}
-                    {event.overNightStay && <label className='label_text'>Overnight: {event.overNightGuests}</label>}
+                    {event.overNightStay && <label className='label_text'>Overnight Stay: {event.overNightGuests} guests</label>}
                 </div>
             </div>
 
@@ -100,13 +100,13 @@ const EditEventComponent: React.FC<EditEventFormProps> = ({ cancelAddEvent, onEd
                 <label className='label_text  !font-medium '>
                     Costs
                 </label>
-                <div className='cost-list flex flex-col '>
+                <div className='cost-list flex flex-col gap-2'>
                     {event.costs.map((cost, index) => (
                         <div className='flex items-center pl-4 justify-between' key={`cost-${index}`}>
                             <label className='label_text !font-medium'>{cost.name}: </label>
                             <label className='label_text'>
 
-                                {cost.amount}
+                                ₹{cost.amount.toLocaleString('en-IN')}
                             </label>
 
                         </div>
