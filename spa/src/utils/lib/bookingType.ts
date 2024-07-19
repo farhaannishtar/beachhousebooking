@@ -33,6 +33,7 @@ export function defaultForm(): BookingForm {
     costs: [],
     totalCost: 0,
     payments: [],
+    calendarIds:{},
     refferral: undefined,
     starred: false,
     outstanding: 0,
@@ -67,6 +68,7 @@ export interface BookingForm {
   costs: Cost[]
   totalCost: number
   payments: Payment[]
+  calendarIds?: { [key: string]: string } | undefined
   refferral?: string | undefined
   otherRefferal?: string | undefined
   paymentMethod: "Cash" | "Card" | "GPay"

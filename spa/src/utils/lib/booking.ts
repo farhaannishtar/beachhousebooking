@@ -123,26 +123,26 @@ export async function mutateBookingState(booking: BookingForm, user: User): Prom
     return newBooking.bookingId
   } else {
     console.log("mutateBookingState create booking")
-    let bookingId = createBooking(newBooking, user.displayName ?? user.id)
     await addToCalendar(newBooking);
+    let bookingId = createBooking(newBooking, user.displayName ?? user.id)
     return bookingId
   }
 }
 
 export async function addToCalendar(newBooking: BookingDB): Promise<BookingDB> {
   if (newBooking.status === "Confirmed") {
+   //Booking type event
+   if(newBooking.bookingType=='Event'){
     for(let i = 0; i < newBooking.events.length; i++) {
       let event = newBooking.events[i];
       //newBooking.events[i].calendarIds = {};
       let summary = `${newBooking.client.name}(${newBooking.numberOfGuests} pax) by ${newBooking.createdBy.name}`;
       let description = `
-      Total Amount: ${newBooking.totalCost} 
+      Total Amount: ${newBooking.tax?newBooking.afterTaxTotal:newBooking.totalCost} 
       Payment Method: ${newBooking.paymentMethod}
       Paid Amount: ${newBooking.payments.reduce((acc, payment) => acc + payment.amount, 0)}
       `;
-      console.log('====================================');
-      console.log('inside event loop',event.calendarIds,event.deleted);
-      console.log('====================================');
+     
       
       for (let property of event.properties) {
         
@@ -179,13 +179,56 @@ export async function addToCalendar(newBooking: BookingDB): Promise<BookingDB> {
           newBooking.events[i].calendarIds={...newBooking.events[i].calendarIds,[property]:id};
         }
       }
-      console.log('====================================');
-      console.log('after loop',event.calendarIds,event.deleted);
-      console.log('====================================');
+    
       if (event.deleted == "marked") {
         newBooking.events[i].deleted = "deleted";
       }
 
+    }
+   }
+    //Booking type stay
+    else{
+      
+      let stay = newBooking;
+      //newBooking.events[i].calendarIds = {};
+      let summary = `${newBooking.client.name}(${newBooking.numberOfGuests} pax) by ${newBooking.createdBy.name}`;
+      let description = `
+      Total Amount: ${newBooking.tax?newBooking.afterTaxTotal:newBooking.totalCost} 
+      Payment Method: ${newBooking.paymentMethod}
+      Paid Amount: ${newBooking.payments.reduce((acc, payment) => acc + payment.amount, 0)}
+      `;
+     
+      
+      for (let property of stay.properties) {
+        
+        if(stay.calendarIds && stay.calendarIds[property]) {
+          
+          patchEvent(process.env.CALENDAR_ID!, stay.calendarIds[property], {
+            summary: summary,
+            location: property,
+            description: description,
+            start: {
+              dateTime: stay.startDateTime
+            },
+            end: {
+              dateTime: stay.endDateTime
+            }
+          });
+        } else {
+          let id = await insertEvent(process.env.CALENDAR_ID!, {
+            summary: summary,
+            location: property,
+            description: description,
+            start: {
+              dateTime: stay.startDateTime
+            },
+            end: {
+              dateTime: stay.endDateTime
+            }
+          });
+          newBooking.calendarIds={...newBooking.calendarIds,[property]:id};
+        }
+      }
     }
   }
  
@@ -212,10 +255,21 @@ export async function deleteBooking(bookingId: number) {
     throw new Error("Booking not found");
   }
   let booking = bookings[0].json[0] as BookingDB;
-  // for (let event of booking.events) {
-  //   for (let property of event.properties) {
-  //     await deleteEvent(process.env.CALENDAR_ID!, event.calendarIds![property]);
-  //   }
-  // }
+  if (booking.bookingType=='Event') {
+    for (let event of booking.events) {
+      for (let property of event.properties) {
+       
+        await deleteEvent(process.env.CALENDAR_ID!, event.calendarIds![property]);
+      }
+    }
+  }
+  //Booking type stay
+  else{
+    for (let property of booking.properties) {
+       
+      await deleteEvent(process.env.CALENDAR_ID!, booking.calendarIds![property]);
+    }
+  }
+
   query('DELETE FROM bookings WHERE id = $1', [bookingId]);
 }
