@@ -5,8 +5,8 @@ import { query } from "./helper";
 
 export async function createBooking(booking: BookingDB, name: string): Promise<number> {
   let resp = await query(`
-      INSERT INTO bookings(email, json, client_name, client_phone_number, referred_by, status, properties, check_in, check_out, created_at, updated_at, starred, total_cost, paid, outstanding)
-      VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
+      INSERT INTO bookings(email, json, client_name, client_phone_number, referred_by, status, properties, check_in, check_out, created_at, updated_at, starred, total_cost, paid, outstanding, tax, after_tax_total)
+      VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
       RETURNING id`, 
   [
     name, 
@@ -23,7 +23,9 @@ export async function createBooking(booking: BookingDB, name: string): Promise<n
     booking.starred ?? false,
     booking.totalCost ?? 0,
     booking.paid ?? 0,
-    booking.outstanding ?? 0
+    booking.outstanding ?? 0,
+    booking.tax ?? 0,
+    booking.afterTaxTotal ?? 0
   ]);
   return resp[0].id;
 }
@@ -46,7 +48,9 @@ export function updateBooking(booking: BookingDB[], id: number) {
         starred = $11,
         total_cost = $12,
         paid = $13,
-        outstanding = $14
+        outstanding = $14,
+        tax = $15,
+        after_tax_total = $16
       WHERE id = $1`, 
   [id, 
     booking, 
@@ -61,7 +65,9 @@ export function updateBooking(booking: BookingDB[], id: number) {
     lastBooking.starred ?? false,
     lastBooking.totalCost ?? 0,
     lastBooking.paid ?? 0,
-    lastBooking.outstanding ?? 0
+    lastBooking.outstanding ?? 0,
+    lastBooking.tax ?? 0,
+    lastBooking.afterTaxTotal ?? 0
   ])
 }
 
