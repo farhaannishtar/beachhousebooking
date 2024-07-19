@@ -9,6 +9,19 @@ export enum Property {
   Castle = "Castle"
 }
 
+export const calendarKeys: { [key: string]: string } = {
+  [Property.Bluehouse]: "BLUEHOUSE_CALENDAR_ID",
+  [Property.Glasshouse]: "GLASSHOUSE_CALENDAR_ID",
+  [Property.MeadowLane]: "MEADOWLANE_CALENDAR_ID",
+  [Property.LeChalet]: "LECHALET_CALENDAR_ID",
+  [Property.VillaArmati]: "ARMATI_CALENDAR_ID",
+  [Property.Castle]: "CASTLE_CALENDAR_ID"
+}
+
+export function getEnvKey(property: Property): string {
+  return process.env[calendarKeys[property]]!
+}
+
 export interface Employee {
   id: string
   name: string

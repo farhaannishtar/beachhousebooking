@@ -17,7 +17,8 @@ interface ListBookingsState {
   date: Date | null;
   dbBookings: BookingDB[];
 }
-let numOfBookings = 7;
+let numOfBookingsForward = 7;
+let numOfBookingsBackward = 0;
 export default function ListBooking() {
 
   const router = useRouter();
@@ -62,18 +63,29 @@ export default function ListBooking() {
         bookingsData = bookingsData.gt('outstanding', 0)
       }
     } else {
-      bookingsData = bookingsData.gte('check_in', new Date(new Date().setDate(new Date().getDate() - 30)).toISOString())
+      bookingsData = bookingsData.gte('check_in', new Date(new Date().setDate(new Date().getDate() - 2)).toISOString())
     }
 
-    bookingsData = bookingsData.eq('status', 'confirmed').order('check_in', { ascending: false }).range(0, numOfBookings)
-    bookingsData
-      .then(({ data: bookingsData }) => {
-        console.log(bookingsData)
+    let bookingsDataBackward = bookingsData.eq('status', 'confirmed').order('check_in', { ascending: false }).range(0, numOfBookingsForward)
+    let bookingsDataForward = bookingsData.eq('status', 'confirmed').order('check_in', { ascending: true }).range(0, numOfBookingsBackward)
+    Promise.all([bookingsDataBackward, bookingsDataForward])
+    .then(results => {
+      // .then(({ data: bookingsData }) => {
+        
+        console.log("RESULTS ", results[0].data?.length, results[1].data?.length)
         let bookings: BookingDB[] = []
-        bookingsData?.forEach((booking) => {
+        results[0].data?.forEach((booking) => {
           const lastIndex = booking.json.length - 1
           const lastBooking = booking.json[lastIndex]
           bookings.unshift({
+            ...lastBooking,
+            bookingId: booking.id,
+          })
+        })
+        results[1].data?.forEach((booking) => {
+          const lastIndex = booking.json.length - 1
+          const lastBooking = booking.json[lastIndex]
+          bookings.push({
             ...lastBooking,
             bookingId: booking.id,
           })
@@ -95,7 +107,7 @@ export default function ListBooking() {
 
 
   useEffect(() => {
-    numOfBookings = 7
+    numOfBookingsForward = 7
     setState((prevState) => ({
       ...prevState,
       searchText: null,
@@ -181,7 +193,7 @@ export default function ListBooking() {
         className=" border-[1px] border-selectedButton text-selectedButton my-4 w-full py-2 px-4 rounded-xl"
         onClick={
           () => {
-            numOfBookings = numOfBookings + 7;
+            numOfBookingsBackward = numOfBookingsBackward + 7;
             fetchData()
           }
         } >Load More</LoadingButton>

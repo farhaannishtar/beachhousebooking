@@ -1,5 +1,5 @@
 import { User } from "./auth";
-import { BookingDB, BookingForm, getProperties, convertPropertiesForDb } from "./bookingType";
+import { BookingDB, BookingForm, getProperties, convertPropertiesForDb, Property, getEnvKey } from "./bookingType";
 import { deleteEvent, insertEvent, patchEvent } from "./calendar";
 import { query } from "./helper";
 
@@ -153,9 +153,9 @@ export async function addToCalendar(newBooking: BookingDB): Promise<BookingDB> {
       for (let property of event.properties) { 
         if(event.calendarIds && event.calendarIds[property]) {
           if (event.markForDeletion) {
-            await deleteEvent(process.env.CALENDAR_ID!, event.calendarIds[property]);
+            await deleteEvent(getEnvKey(property), event.calendarIds[property]);
           } else {
-            patchEvent(process.env.CALENDAR_ID!, event.calendarIds[property], {
+            patchEvent(getEnvKey(property), event.calendarIds[property], {
               summary: summary,
               location: property,
               description: description,
@@ -168,7 +168,7 @@ export async function addToCalendar(newBooking: BookingDB): Promise<BookingDB> {
             });
           }
         } else {
-          let id = await insertEvent(process.env.CALENDAR_ID!, {
+          let id = await insertEvent(getEnvKey(property), {
             summary: summary,
             location: property,
             description: description,
@@ -180,6 +180,13 @@ export async function addToCalendar(newBooking: BookingDB): Promise<BookingDB> {
             }
           });
           newBooking.events[i].calendarIds={...newBooking.events[i].calendarIds,[property]:id};
+        }
+      }
+      // find properties inside event.calendarIds that are not inside event.properties and delete them
+      for (let property in event.calendarIds) {
+        if (!event.properties.includes(property as Property)) {
+          await deleteEvent(getEnvKey(property as Property), event.calendarIds[property]);
+          delete event.calendarIds[property];
         }
       }
       if (event.markForDeletion) {
@@ -204,8 +211,7 @@ export async function addToCalendar(newBooking: BookingDB): Promise<BookingDB> {
       for (let property of stay.properties) {
         
         if(stay.calendarIds && stay.calendarIds[property]) {
-          
-          patchEvent(process.env.CALENDAR_ID!, stay.calendarIds[property], {
+          patchEvent(getEnvKey(property), stay.calendarIds[property], {
             summary: summary,
             location: property,
             description: description,
@@ -217,7 +223,7 @@ export async function addToCalendar(newBooking: BookingDB): Promise<BookingDB> {
             }
           });
         } else {
-          let id = await insertEvent(process.env.CALENDAR_ID!, {
+          let id = await insertEvent(getEnvKey(property), {
             summary: summary,
             location: property,
             description: description,
@@ -229,6 +235,16 @@ export async function addToCalendar(newBooking: BookingDB): Promise<BookingDB> {
             }
           });
           newBooking.calendarIds={...newBooking.calendarIds,[property]:id};
+        }
+
+
+      }
+
+      // find properties inside event.calendarIds that are not inside event.properties and delete them
+      for (let property in stay.calendarIds) {
+        if (!stay.properties.includes(property as Property)) {
+          await deleteEvent(getEnvKey(property as Property), stay.calendarIds[property]);
+          delete stay.calendarIds[property];
         }
       }
     }
@@ -260,16 +276,14 @@ export async function deleteBooking(bookingId: number) {
   if (booking.bookingType=='Event') {
     for (let event of booking.events) {
       for (let property of event.properties) {
-       
-        await deleteEvent(process.env.CALENDAR_ID!, event.calendarIds![property]);
+        await deleteEvent(getEnvKey(property), event.calendarIds![property]);
       }
     }
   }
   //Booking type stay
   else{
     for (let property of booking.properties) {
-       
-      await deleteEvent(process.env.CALENDAR_ID!, booking.calendarIds![property]);
+      await deleteEvent(getEnvKey(property), booking.calendarIds![property]);
     }
   }
 
