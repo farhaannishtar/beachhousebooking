@@ -5,8 +5,8 @@ import { query } from "./helper";
 
 export async function createBooking(booking: BookingDB, name: string): Promise<number> {
   let resp = await query(`
-      INSERT INTO bookings(email, json, client_name, client_phone_number, referred_by, status, properties, check_in, check_out, created_at, updated_at, starred, total_cost, paid, outstanding, tax, after_tax_total)
-      VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
+      INSERT INTO bookings(email, json, client_name, client_phone_number, referred_by, status, properties, check_in, check_out, created_at, updated_at, starred, total_cost, paid, outstanding, tax, after_tax_total, client_view_id)
+      VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)
       RETURNING id`, 
   [
     name, 
@@ -25,7 +25,8 @@ export async function createBooking(booking: BookingDB, name: string): Promise<n
     booking.paid ?? 0,
     booking.outstanding ?? 0,
     booking.tax ?? 0,
-    booking.afterTaxTotal ?? 0
+    booking.afterTaxTotal ?? 0,
+    booking.clientViewId!
   ]);
   return resp[0].id;
 }
@@ -120,6 +121,9 @@ export async function mutateBookingState(booking: BookingForm, user: User): Prom
   }
   for (let payment of newBooking.payments) {
     payment.paymentId = payment.paymentId || Math.floor(Math.random() * 1000000);
+  }
+  if(newBooking.clientViewId === undefined) {
+    newBooking.clientViewId = Math.floor(Math.random() * 1000000).toString();
   }
   if(newBooking.bookingId) {
     console.log("mutateBookingState modify booking")

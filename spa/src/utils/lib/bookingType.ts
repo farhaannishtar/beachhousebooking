@@ -58,7 +58,7 @@ export function defaultForm(): BookingForm {
       paymentMethod: "Cash",
       dateReturned: undefined,
       amountReturned:0
-     }
+    }
   }
 }
 
@@ -208,6 +208,7 @@ export interface BookingDB extends BookingForm {
   updatedBy: Employee
   confirmedDateTime?: string | undefined
   confirmedBy?: Employee | undefined
+  clientViewId?: string | undefined
 }
 
 export interface Refferal {
