@@ -29,7 +29,7 @@ const EditEventComponent: React.FC<EditEventFormProps> = ({ cancelAddEvent, onEd
         overNightGuests: 0,
         costs: [],
         finalCost: 0,
-        deleted: "none"
+        markForDeletion: false
     });
     useEffect(() => {
         console.log({ selectedEvent });

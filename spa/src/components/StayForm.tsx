@@ -22,7 +22,7 @@ const StayFormComponent: React.FC<StayFormProps> = ({ status }) => {
     overNightGuests: 0,
     costs: [],
     finalCost: 0,
-    deleted: "none"
+    markForDeletion: false
   });
 
 

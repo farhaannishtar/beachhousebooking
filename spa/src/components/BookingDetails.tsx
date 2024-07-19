@@ -361,7 +361,7 @@ export default function BookingDetailsComponent({ bookingId }: BookingDetailsPro
                                             </p>
                                             {formState.form.events.map((event, index) => {
                                                 return (
-                                                    event.deleted == 'none' && <div key={index} className='flex items-center justify-between rounded-xl bg-typo_light-100 p-4 cursor-pointer ' onClick={() => {
+                                                    event.markForDeletion == false && <div key={index} className='flex items-center justify-between rounded-xl bg-typo_light-100 p-4 cursor-pointer ' onClick={() => {
                                                         setSelectedEvent(event)
                                                         handlePageChange(Page.EventPage)
                                                     }}>

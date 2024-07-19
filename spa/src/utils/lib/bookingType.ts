@@ -231,7 +231,7 @@ export interface Event {
     kitchenService: boolean
     overNightStay: boolean
     overNightGuests: number
-    deleted: "none" | "marked" | "deleted"
+    markForDeletion: boolean
     costs:  Cost[]
     finalCost: number
 }

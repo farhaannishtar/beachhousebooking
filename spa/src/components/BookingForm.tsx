@@ -197,10 +197,10 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
   };
   const handleDeleteEvent = (event: Event) => {
     setFormState((prevState) => {
-      let events = [...prevState.form.events];
-      events = events.map((e) => {
+      let events: Event[] = [...prevState.form.events];
+      events = events.map((e:Event): Event => {
         if (e.eventId === event.eventId) {
-          return { ...e, deleted: 'marked' }
+          return { ...e, markForDeletion: true }
         } else return e
       });
       let totalCost = events.reduce(
@@ -701,7 +701,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                       </p>
                       {formState.form.events.map((event, index) => {
                         return (
-                          event.deleted == 'none' && <div key={`event-${index}`} className='flex items-center justify-between rounded-xl bg-typo_light-100 px-4 cursor-pointer' onClick={() => {
+                          event.markForDeletion == false && <div key={`event-${index}`} className='flex items-center justify-between rounded-xl bg-typo_light-100 px-4 cursor-pointer' onClick={() => {
                             setSelectedEvent(event)
                             handlePageChange(Page.EventPage)
                           }}>

@@ -150,12 +150,11 @@ export async function addToCalendar(newBooking: BookingDB): Promise<BookingDB> {
       `;
      
       
-      for (let property of event.properties) {
-        
+      for (let property of event.properties) { 
         if(event.calendarIds && event.calendarIds[property]) {
-          
-          if(event.deleted == "none") {
-           
+          if (event.markForDeletion) {
+            await deleteEvent(process.env.CALENDAR_ID!, event.calendarIds[property]);
+          } else {
             patchEvent(process.env.CALENDAR_ID!, event.calendarIds[property], {
               summary: summary,
               location: property,
@@ -167,8 +166,6 @@ export async function addToCalendar(newBooking: BookingDB): Promise<BookingDB> {
                 dateTime: event.endDateTime
               }
             });
-          } else if (event.deleted == "marked") {
-            await deleteEvent(process.env.CALENDAR_ID!, event.calendarIds[property]);
           }
         } else {
           let id = await insertEvent(process.env.CALENDAR_ID!, {
@@ -185,11 +182,10 @@ export async function addToCalendar(newBooking: BookingDB): Promise<BookingDB> {
           newBooking.events[i].calendarIds={...newBooking.events[i].calendarIds,[property]:id};
         }
       }
-    
-      if (event.deleted == "marked") {
-        newBooking.events[i].deleted = "deleted";
+      if (event.markForDeletion) {
+        newBooking.events.splice(i, 1);
+        i--;
       }
-
     }
    }
     //Booking type stay
