@@ -33,7 +33,8 @@ export default function EventForm({ events, setEvents }: { events: Event[], setE
       overNightStay: false,
       overNightGuests: 0,
       costs: [],
-      finalCost: 0
+      finalCost: 0,
+      deleted: 'none'
     }])
   };
 

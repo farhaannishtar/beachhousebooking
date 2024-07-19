@@ -4,9 +4,9 @@ import React, { useState, ChangeEvent } from 'react';
 import { Event } from '@/utils/lib/bookingType';
 
 type StayFormProps = {
-    status: string;
-  };
-const StayFormComponent: React.FC<StayFormProps> = ({ status })=> {
+  status: string;
+};
+const StayFormComponent: React.FC<StayFormProps> = ({ status }) => {
   const [event, setEvent] = useState<Event>({
     eventName: '',
     calendarIds: {},
@@ -22,6 +22,7 @@ const StayFormComponent: React.FC<StayFormProps> = ({ status })=> {
     overNightGuests: 0,
     costs: [],
     finalCost: 0,
+    deleted: "none"
   });
 
 
@@ -37,7 +38,7 @@ const StayFormComponent: React.FC<StayFormProps> = ({ status })=> {
     <div>
       <div>
         <label>
-                    Number of Guests:
+          Number of Guests:
           <input
             type="number"
             name="numberOfGuests"
@@ -46,7 +47,7 @@ const StayFormComponent: React.FC<StayFormProps> = ({ status })=> {
           />
         </label>
       </div>
-            
+
     </div>
   );
 };
