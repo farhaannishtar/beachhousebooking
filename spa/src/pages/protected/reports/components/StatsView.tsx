@@ -144,6 +144,13 @@ export default function StatsView() {
               <label className="title">{'₹' + (indianFormatter.format(formState?.rawReservationsResponse?.monthly?.confirmedSum))}</label>
             </div>
           </div>
+          <div className="flex gap-5">
+            <div className="flex-1 rounded-xl h-28 bg-typo_light-100 flex flex-col justify-end py-2 gap-5 px-6">
+              <label className="label_text !p-0 !font-medium">Total Tax</label>
+              <label className="title">{'₹' + (indianFormatter.format(formState?.rawReservationsResponse?.monthly?.taxTotal))}</label>
+            </div>
+
+          </div>
         </div>
       </div>
 
