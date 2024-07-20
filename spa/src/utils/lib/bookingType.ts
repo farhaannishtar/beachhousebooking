@@ -96,6 +96,8 @@ export interface BookingForm {
    dateReturned: string|undefined
    amountReturned: number
   }
+  clientViewId?: string | undefined
+
 }
 
 export function numOfDays(bookingForm: BookingForm): number {

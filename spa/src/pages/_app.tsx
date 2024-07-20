@@ -57,7 +57,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   }, [currentPath, router]);
 
 
-  const useNoLayout = currentPath === '/login' || currentPath === '/protected/booking/create' || currentPath === '/protected/booking/[id]'
+  const useNoLayout = currentPath === '/login' || currentPath === '/protected/booking/create' || currentPath === '/protected/booking/[id]' || currentPath === '/client/[id]'
   const Layout = !useNoLayout ? ProtectedLayout : DefaultLayout;
   return <main className={`${plusJakartaSans.className} min-h-screen flex flex-col items-center w-full container !select-none`}> <Layout><Component {...pageProps} /></Layout> </main>
 }
