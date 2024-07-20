@@ -40,6 +40,7 @@ export default function ListBooking() {
     setLoading(true)
     console.log("Fetching Data")
     let bookingsData = supabase.from("bookings").select()
+    let oldBookingsData = supabase.from("bookings").select()
 
 
 
@@ -64,15 +65,16 @@ export default function ListBooking() {
       }
     } else {
       bookingsData = bookingsData.gte('check_in', new Date(new Date().setDate(new Date().getDate() - 2)).toISOString())
+      oldBookingsData = oldBookingsData.lte('check_in', new Date(new Date().setDate(new Date().getDate() - 2)).toISOString())
     }
 
-    let bookingsDataBackward = bookingsData.eq('status', 'confirmed').order('check_in', { ascending: false }).range(0, numOfBookingsForward)
-    let bookingsDataForward = bookingsData.eq('status', 'confirmed').order('check_in', { ascending: true }).range(0, numOfBookingsBackward)
+    let bookingsDataBackward = oldBookingsData.eq('status', 'confirmed').order('check_in', { ascending: false }).range(0, numOfBookingsBackward)
+    let bookingsDataForward = bookingsData.eq('status', 'confirmed').order('check_in', { ascending: true }).range(0, numOfBookingsForward)
+
     Promise.all([bookingsDataBackward, bookingsDataForward])
-    .then(results => {
-      // .then(({ data: bookingsData }) => {
-        
-        console.log("RESULTS ", results[0].data?.length, results[1].data?.length)
+      .then(results => {
+        // .then(({ data: bookingsData }) => {
+
         let bookings: BookingDB[] = []
         results[0].data?.forEach((booking) => {
           const lastIndex = booking.json.length - 1
@@ -241,6 +243,14 @@ export default function ListBooking() {
           ))}
         </React.Fragment>
       ))}
+      <LoadingButton
+        className=" border-[1px] border-selectedButton text-selectedButton my-4 w-full py-2 px-4 rounded-xl"
+        onClick={
+          () => {
+            numOfBookingsForward = numOfBookingsForward + 7;
+            fetchData()
+          }
+        } >Load More</LoadingButton>
       {/* Filter modal */}
 
       <BookingFilter
