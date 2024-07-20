@@ -44,6 +44,9 @@ export default function BookingDetailsComponent({ bookingId }: BookingDetailsPro
     const [isFormSubmitted, setIsFormSubmitted] = useState<boolean>(false);
     const pathname = usePathname()
     useEffect(() => {
+        console.log('====================================');
+        console.log('useEffect booking id', bookingId);
+        console.log('====================================');
         if (bookingId) {
             supabase
                 .from("bookings")
@@ -63,7 +66,7 @@ export default function BookingDetailsComponent({ bookingId }: BookingDetailsPro
                     setIsSwitchOn(newData.bookingType === "Stay" ? false : true);
                 });
         }
-    }, []);
+    }, [bookingId]);
 
     function moveFormState(direction: "next" | "previous") {
         if (direction === "next") {
@@ -264,7 +267,7 @@ export default function BookingDetailsComponent({ bookingId }: BookingDetailsPro
                                         if (returnTo) {
                                             bookingId ? router.push(`${returnTo}#${bookingId}-id`) : router.push(`${returnTo}`)
                                         } else {
-                                            router.back()
+                                            router.push('/protected/booking/list')
                                         }
 
                                     }}
@@ -291,48 +294,46 @@ export default function BookingDetailsComponent({ bookingId }: BookingDetailsPro
                             </div>
                             {/* Dates  */}
                             <div className='flex flex-col  w-full gap-2'>
-                                <label className='label_text !font-medium'>Dates</label>
-                                <div className='flex  items-center pl-4'>
-                                    {formState.form.startDateTime && <label className='label_text '> {format(new Date(`${formState.form.startDateTime || ''}`), "iii LLL d, hh:mmaa")}  </label>}
-                                    <span className='label_text'>-</span>
+                                <label className='label_text !font-semibold'>Dates</label>
+                                <div className='flex flex-col gap-1  pl-4'>
+                                    {formState.form.startDateTime && <label className='label_text '> {format(new Date(`${formState.form.startDateTime || ''}`), "iii LLL d, hh:mmaa")} - </label>}
+
                                     {formState.form.endDateTime && <label className='label_text '>{format(new Date(`${formState.form.endDateTime || ''}`), "iii LLL d, hh:mmaa")}  </label>}
                                 </div>
 
                             </div>
                             {/* Type of booking */}
-                            {formState.form.bookingType === "Event" &&
-                                <div className='flex  flex-col'>
-                                    <label className='label_text'><span className='!font-medium'>Booking Type: </span> {formState.form.bookingType}</label>
+                            <div className='flex  flex-col'>
+                                <label className='label_text'><span className='!font-semibold'>Booking Type: </span> {formState.form.bookingType}</label>
 
-                                </div>
-                            }
+                            </div>
                             {/* Numbers of events */}
                             {formState.form.bookingType === "Event" &&
                                 <div className='flex  flex-col'>
-                                    <label className='label_text'><span className='!font-medium'>Number of Events: </span> {formState.form.numberOfEvents}</label>
+                                    <label className='label_text'><span className='!font-semibold'>Number of Events: </span> {formState.form.numberOfEvents}</label>
 
                                 </div>
                             }
 
                             {/* Numbers of Guests */}
                             <div className='flex  flex-col'>
-                                <label className='label_text'><span className='!font-medium'>Number of Guests: </span> {formState.form.numberOfGuests}</label>
+                                <label className='label_text'><span className='!font-semibold'>Number of Guests: </span> {formState.form.numberOfGuests}</label>
                             </div>
                             {/* Notes  */}
                             {formState.form.notes && <div className='flex-col gap-2 flex'>
-                                <label className='label_text !font-medium'>Notes:</label>
+                                <label className='label_text !font-semibold'>Notes:</label>
                                 <label className='label_text pl-4'> {formState.form.notes}</label>
                             </div>}
                             {/* Properties  */}
                             {formState.form.properties && <div className='flex-col gap-2 flex'>
-                                <label className='label_text !font-medium'>Properties: </label>
+                                <label className='label_text !font-semibold'>Properties: </label>
                                 <div className='flex pl-4'>
                                     <label className='label_text'>{formState.form.properties.join(', ')}</label>
                                 </div>
                             </div>}
                             {/* Status  */}
                             <div className='flex-col gap-3'>
-                                <label className='label_text !font-medium'>Status: </label>
+                                <label className='label_text !font-semibold'>Status: </label>
                                 <label className='label_text'>
 
                                     {formState.form.status}
@@ -341,7 +342,7 @@ export default function BookingDetailsComponent({ bookingId }: BookingDetailsPro
 
                             {/* Referral  */}
                             <div className='flex-col gap-3'>
-                                <label className='label_text !font-medium'>Referral: </label>
+                                <label className='label_text !font-semibold'>Referral: </label>
                                 <label className='label_text'>
 
                                     {formState.form.refferral == 'Other' ? formState.form.otherRefferal : formState.form.refferral}
@@ -391,7 +392,7 @@ export default function BookingDetailsComponent({ bookingId }: BookingDetailsPro
                                         <div className='cost-list flex flex-col gap-2'>
                                             {formState.form.costs && formState.form.costs.map((cost, index) => (
                                                 <div className='flex items-center pl-4 justify-between' key={`cost-${index}`}>
-                                                    <label className='label_text !font-medium'>{cost.name}: </label>
+                                                    <label className='label_text !font-semibold'>{cost.name}: </label>
                                                     <label className='label_text'>
 
                                                         ₹{cost.amount.toLocaleString('en-IN')}
@@ -424,8 +425,9 @@ export default function BookingDetailsComponent({ bookingId }: BookingDetailsPro
                                         <div className='cost-list flex flex-col gap-2 pl-4'>
                                             {formState.form.payments.map((payment, index) => (
                                                 <div className='flex items-center gap-2 justify-between' key={index}>
-                                                    <label className='label_text !font-medium w-1/2 text-right'>{format(new Date(`${payment.dateTime || ''}`), "iii LLL d, hh:mmaa")}: </label>
-                                                    <label className='label_text !font-medium justify-between flex w-1/2'><span>₹{payment.amount.toLocaleString('en-IN')}</span>   <span>{payment.paymentMethod}</span></label>
+                                                    <label className='label_text !font-semibold w-1/2 text-right'>{format(new Date(`${payment.dateTime || ''}`), "LLL d, hh:mmaa")}: </label>
+                                                    <label className='label_text !font-semibold justify-between flex w-1/4'> {payment.paymentMethod} </label>
+                                                    <label className='label_text !font-semibold justify-between flex w-1/4'>  ₹{payment.amount.toLocaleString('en-IN')} </label>
                                                 </div>
                                             ))}
 
