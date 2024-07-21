@@ -372,7 +372,7 @@ export default function BookingDetailsComponent({ bookingId }: BookingDetailsPro
                                             </p>
                                             {formState.form.events.map((event, index) => {
                                                 return (
-                                                    event.markForDeletion == false && <div key={index} className='flex items-center justify-between rounded-xl bg-typo_light-100 p-4 cursor-pointer ' onClick={() => {
+                                                    !event.markForDeletion && <div key={index} className='flex items-center justify-between rounded-xl bg-typo_light-100 p-4 cursor-pointer ' onClick={() => {
                                                         setSelectedEvent(event)
                                                         handlePageChange(Page.EventPage)
                                                     }}>
@@ -396,13 +396,13 @@ export default function BookingDetailsComponent({ bookingId }: BookingDetailsPro
                                     )}
                                     {/* Stay options */}
                                     {formState.form.bookingType == "Stay" && (<div className='flex flex-col gap-2'>
-                                        <p className='text-base font-medium leading-normal'>
+                                        <p className='text-base !font-semibold leading-normal'>
                                             Costs
                                         </p>
                                         <div className='cost-list flex flex-col gap-2'>
                                             {formState.form.costs && formState.form.costs.map((cost, index) => (
                                                 <div className='flex items-center pl-4 justify-between' key={`cost-${index}`}>
-                                                    <label className='label_text !font-semibold'>{cost.name}: </label>
+                                                    <label className='label_text !font-medium'>{cost.name}: </label>
                                                     <label className='label_text'>
 
                                                         ₹{cost.amount.toLocaleString('en-IN')}
@@ -457,15 +457,15 @@ export default function BookingDetailsComponent({ bookingId }: BookingDetailsPro
                                             Security deposit
                                         </p>
                                         <div className='flex flex-col gap-2 '>
-                                            <label className='title w-full text-right !font-bold flex items-center justify-start'><strong className=' w-2/3'>Original amount:</strong> <span className='flex-1'>₹{formState.form?.securityDeposit?.originalSecurityAmount.toLocaleString('en-IN')}</span> </label>
-                                            <label className='title w-full text-right !font-bold flex items-center justify-start'><strong className=' w-2/3'>Payment method:</strong> <span className='flex-1'>{formState.form?.securityDeposit?.paymentMethod} </span></label>
+                                            <label className='label_text !font-semibold w-full text-right  flex items-center justify-start'><strong className=' w-2/3'>Original amount:</strong> <span className='flex-1'>₹{formState.form?.securityDeposit?.originalSecurityAmount.toLocaleString('en-IN')}</span> </label>
+                                            <label className='label_text !font-semibold w-full text-right  flex items-center justify-start'><strong className=' w-2/3'>Payment method:</strong> <span className='flex-1'>{formState.form?.securityDeposit?.paymentMethod} </span></label>
                                         </div>
 
                                         {
                                             !!formState.form?.securityDeposit?.amountReturned &&
                                             <div className='flex flex-col gap-2 '>
-                                                <label className='title w-full text-right !font-bold flex items-center justify-start'><strong className=' w-2/3'>Returned amount:</strong> <span className='flex-1'>₹{formState.form?.securityDeposit?.amountReturned.toLocaleString('en-IN')}</span> </label>
-                                                <label className='title w-full text-right !font-bold flex items-center justify-start'><strong className=' w-2/3'>Returned date:</strong> <span className='flex-1'>{format(new Date(`${formState.form?.securityDeposit?.dateReturned || ''}`), "iii LLL d, hh:mmaa")} </span></label>
+                                                <label className='label_text !font-semibold w-full text-right  flex items-center justify-start'><strong className=' w-2/3'>Returned amount:</strong> <span className='flex-1'>₹{formState.form?.securityDeposit?.amountReturned.toLocaleString('en-IN')}</span> </label>
+                                                <label className='label_text !font-semibold w-full text-right  flex items-center justify-start'><strong className=' w-2/3'>Returned date:</strong> <span className='flex-1'>{format(new Date(`${formState.form?.securityDeposit?.dateReturned || ''}`), "iii LLL d, hh:mmaa")} </span></label>
                                             </div>
 
                                         }

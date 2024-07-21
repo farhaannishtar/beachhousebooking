@@ -146,8 +146,11 @@ export async function addToCalendar(newBooking: BookingDB): Promise<BookingDB> {
     for(let i = 0; i < newBooking.events.length; i++) {
       let event = newBooking.events[i];
       //newBooking.events[i].calendarIds = {};
-      let summary = `${newBooking.client.name}(${newBooking.numberOfGuests} pax) by ${newBooking.createdBy.name}`;
+      let summary = `${newBooking.client.name}(${newBooking.numberOfGuests} pax)  ${event.eventName}`;
       let description = `
+      Last Modified By: ${newBooking.updatedBy.name}
+      Last Modified Date: ${newBooking.updatedDateTime}
+      Event Amount: ${event.finalCost}
       Total Amount: ${newBooking.tax?newBooking.afterTaxTotal:newBooking.totalCost} 
       Payment Method: ${newBooking.paymentMethod}
       Paid Amount: ${newBooking.payments.reduce((acc, payment) => acc + payment.amount, 0)}
@@ -204,8 +207,10 @@ export async function addToCalendar(newBooking: BookingDB): Promise<BookingDB> {
       
       let stay = newBooking;
       //newBooking.events[i].calendarIds = {};
-      let summary = `${newBooking.client.name}(${newBooking.numberOfGuests} pax) by ${newBooking.createdBy.name}`;
+      let summary = `${newBooking.client.name}(${newBooking.numberOfGuests} pax) `;
       let description = `
+      Last Modified By: ${newBooking.updatedBy.name}
+      Last Modified Date: ${newBooking.updatedDateTime}
       Total Amount: ${newBooking.tax?newBooking.afterTaxTotal:newBooking.totalCost} 
       Payment Method: ${newBooking.paymentMethod}
       Paid Amount: ${newBooking.payments.reduce((acc, payment) => acc + payment.amount, 0)}

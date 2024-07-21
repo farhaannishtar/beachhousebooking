@@ -701,7 +701,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                       </p>
                       {formState.form.events.map((event, index) => {
                         return (
-                          event.markForDeletion == false && <div key={`event-${index}`} className='flex items-center justify-between rounded-xl bg-typo_light-100 px-4 cursor-pointer' onClick={() => {
+                          !event.markForDeletion && <div key={`event-${index}`} className='flex items-center justify-between rounded-xl bg-typo_light-100 px-4 cursor-pointer' onClick={() => {
                             setSelectedEvent(event)
                             handlePageChange(Page.EventPage)
                           }}>

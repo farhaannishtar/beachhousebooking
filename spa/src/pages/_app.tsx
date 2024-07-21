@@ -47,7 +47,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           router.push('/protected/logs');
         }
       } else {
-        if (currentPath !== '/login') {
+        if ((currentPath !== '/login') && (currentPath !== '/client/[id]')) {
           router.push('/login');
         }
       }

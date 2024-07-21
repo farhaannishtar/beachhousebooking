@@ -54,7 +54,7 @@ const EditEventComponent: React.FC<EditEventFormProps> = ({ cancelAddEvent, onEd
 
             {/* Dates  */}
             <div className='flex flex-col  w-full gap-2'>
-                <label className='label_text !font-medium'>Dates</label>
+                <label className='label_text !font-semibold'>Dates</label>
                 <div className='flex  items-center pl-4'>
                     {event.startDateTime && <label className='label_text '> {format(new Date(`${event.startDateTime || ''}`), "iii LLL d, hh:mmaa")}  </label>}
                     <span className='label_text'>-</span>
@@ -65,11 +65,11 @@ const EditEventComponent: React.FC<EditEventFormProps> = ({ cancelAddEvent, onEd
             <div className='flex  flex-wrap'>
 
 
-                <label className='label_text'><span className='!font-medium'>Number of Guests: </span> {event.numberOfGuests}</label>
+                <label className='label_text'><span className='!font-semibold'>Number of Guests: </span> {event.numberOfGuests}</label>
             </div>
             {/* Notes  */}
             {event.notes && <div className='flex-col flex gap-2'>
-                <label className='label_text !font-medium'>Notes: </label>
+                <label className='label_text !font-semibold'>Notes: </label>
                 <label className='label_text pl-4'>
 
                     {event.notes}
@@ -77,7 +77,7 @@ const EditEventComponent: React.FC<EditEventFormProps> = ({ cancelAddEvent, onEd
             </div>}
             {/* Properties  */}
             <div className='flex-col flex gap-2 '>
-                <label className='label_text !font-medium'>Properties: </label>
+                <label className='label_text !font-semibold'>Properties: </label>
                 <div className='flex flex-col gap-2 pl-4'>
 
                     {event.properties && event.properties.map((p, i) => <label className='label_text' key={`prop-${i}`}>{p}</label>)}
@@ -86,7 +86,7 @@ const EditEventComponent: React.FC<EditEventFormProps> = ({ cancelAddEvent, onEd
 
             {/* Additional services  */}
             <div className='flex-col flex gap-2'>
-                <label className='label_text !font-medium'>Additional services: </label>
+                <label className='label_text !font-semibold'>Additional services: </label>
                 <div className='flex flex-col gap-2 pl-4'>
                     {event.djService && <label className='label_text'>DJ</label>}
                     {event.kitchenService && <label className='label_text'>Kitchen</label>}
@@ -97,7 +97,7 @@ const EditEventComponent: React.FC<EditEventFormProps> = ({ cancelAddEvent, onEd
 
             {/* Costs part */}
             <div className='flex flex-col  gap-2'>
-                <label className='label_text  !font-medium '>
+                <label className='label_text  !font-semibold '>
                     Costs
                 </label>
                 <div className='cost-list flex flex-col gap-2'>
