@@ -144,7 +144,30 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
     formState.form.startDateTime,
     formState.form.endDateTime,
   ]);
-
+  //check if booking type changed
+  useEffect(() => {
+    if (formState.form.bookingType == 'Event') {
+      setFormState((prevState) => ({
+        ...prevState,
+        form: {
+          ...prevState.form,
+          totalCost: 0,
+          costs: [],
+          outstanding: 0 - formState.form.paid
+        },
+      }));
+    } else {
+      setFormState((prevState) => ({
+        ...prevState,
+        form: {
+          ...prevState.form,
+          totalCost: 0,
+          events: [],
+          outstanding: 0 - formState.form.paid
+        },
+      }));
+    }
+  }, [formState.form.bookingType])
   useEffect(() => {
     let numberOfNewlines = (formState.form.notes.match(/\n/g) || []).length + 1;
     const newHeight = Math.ceil(numberOfNewlines * 26); //formState.form.notes.length / 41) * 28 +
