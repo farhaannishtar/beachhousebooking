@@ -36,6 +36,8 @@ export default function ListBooking() {
   });
 
   const [loading, setLoading] = useState<boolean>(false)
+  const [loadingForward, setLoadingForward] = useState<boolean>(false)
+  const [loadingBackward, setLoadingBackward] = useState<boolean>(false)
   async function fetchData() {
     setLoading(true)
     console.log("Fetching Data")
@@ -44,10 +46,16 @@ export default function ListBooking() {
 
 
 
+
     if (state.searchText) {
       bookingsData = bookingsData
         .or(`client_name.ilike.%${state.searchText}%,client_phone_number.ilike.%${state.searchText}%`)
+      //empty oldBookingsData
+      oldBookingsData = oldBookingsData.eq('status', 'no-data')
+
     } else if (filterState.checkIn || filterState.properties || filterState.starred || filterState.paymentPending) {
+      //empty oldBookingsData
+      oldBookingsData = oldBookingsData.eq('status', 'no-data')
       if (filterState.checkIn) {
         console.log("Filtering by checkIn: ", filterState.checkIn)
         bookingsData = bookingsData
@@ -103,6 +111,8 @@ export default function ListBooking() {
           document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
         }
         setLoading(false);
+        setLoadingBackward(false);
+        setLoadingForward(false);
         setFilterModalOpened(false)
       })
   };
@@ -193,9 +203,11 @@ export default function ListBooking() {
 
       <LoadingButton
         className=" border-[1px] border-selectedButton text-selectedButton my-4 w-full py-2 px-4 rounded-xl"
+        loading={loadingBackward}
         onClick={
           () => {
             numOfBookingsBackward = numOfBookingsBackward + 7;
+            setLoadingBackward(true)
             fetchData()
           }
         } >Load More</LoadingButton>
@@ -245,9 +257,11 @@ export default function ListBooking() {
       ))}
       <LoadingButton
         className=" border-[1px] border-selectedButton text-selectedButton my-4 w-full py-2 px-4 rounded-xl"
+        loading={loadingForward}
         onClick={
           () => {
             numOfBookingsForward = numOfBookingsForward + 7;
+            setLoadingForward(true)
             fetchData()
           }
         } >Load More</LoadingButton>
