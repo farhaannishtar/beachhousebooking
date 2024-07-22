@@ -32,10 +32,10 @@ export async function createBooking(booking: BookingDB, name: string): Promise<n
   return resp[0].id;
 }
 
-export function updateBooking(booking: BookingDB[], id: number) {
+export async function updateBooking(booking: BookingDB[], id: number) {
   const lastBooking = booking[booking.length - 1];
  
-  query(`
+ await query(`
     UPDATE bookings 
       SET 
         json = $2,
@@ -275,7 +275,7 @@ async function modifyExistingBooking(newBooking: BookingDB) {
   newBooking.createdDateTime = oldBooking.createdDateTime;
   
   bookings.push(newBooking);
-  updateBooking(bookings, newBooking.bookingId!);
+ await updateBooking(bookings, newBooking.bookingId!);
 }
 
 export async function deleteBooking(bookingId: number) {
