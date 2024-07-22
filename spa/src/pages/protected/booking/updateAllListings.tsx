@@ -10,7 +10,7 @@ const BookingListPage = () => {
     //Update all bookings
     const startUpdating = async () => {
         setLoading(true)
-        let { data } = await supabase.from("bookings").select().eq('status', 'confirmed');
+        let { data } = await supabase.from("bookings").select().neq('status', 'confirmed');
         if (!data) {
             return;
         }
@@ -20,9 +20,7 @@ const BookingListPage = () => {
             const lastIndex = booking.json.length - 1
             let lastBooking = booking.json[lastIndex]
             lastBooking = { bookingId: booking.id, ...lastBooking };
-            console.log('====================================');
-            console.log('all booking lastBooking', lastBooking, booking);
-            console.log('====================================');
+
             setCurrentId(booking.id)
             const id = await createBooking({ bookingId: booking.id, ...lastBooking });
 

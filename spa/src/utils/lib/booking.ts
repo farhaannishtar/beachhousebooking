@@ -2,6 +2,7 @@ import { User } from "./auth";
 import { BookingDB, BookingForm, getProperties, convertPropertiesForDb, Property, getEnvKey } from "./bookingType";
 import { deleteEvent, insertEvent, patchEvent } from "./calendar";
 import { query } from "./helper";
+import format from 'date-fns/format';
 
 export async function createBooking(booking: BookingDB, name: string): Promise<number> {
   let resp = await query(`
@@ -33,7 +34,7 @@ export async function createBooking(booking: BookingDB, name: string): Promise<n
 
 export function updateBooking(booking: BookingDB[], id: number) {
   const lastBooking = booking[booking.length - 1];
-  
+ 
   query(`
     UPDATE bookings 
       SET 
@@ -51,7 +52,8 @@ export function updateBooking(booking: BookingDB[], id: number) {
         paid = $13,
         outstanding = $14,
         tax = $15,
-        after_tax_total = $16
+        after_tax_total = $16,
+        client_view_id = $17
       WHERE id = $1`, 
   [id, 
     booking, 
@@ -68,7 +70,8 @@ export function updateBooking(booking: BookingDB[], id: number) {
     lastBooking.paid ?? 0,
     lastBooking.outstanding ?? 0,
     lastBooking.tax ?? 0,
-    lastBooking.afterTaxTotal ?? 0
+    lastBooking.afterTaxTotal ?? 0,
+    lastBooking.clientViewId
   ])
 }
 
@@ -210,7 +213,7 @@ export async function addToCalendar(newBooking: BookingDB): Promise<BookingDB> {
       let summary = `${newBooking.client.name}(${newBooking.numberOfGuests} pax) `;
       let description = `
       Last Modified By: ${newBooking.updatedBy.name}
-      Last Modified Date: ${newBooking.updatedDateTime}
+      Last Modified Date: ${format(new Date(`${newBooking.updatedDateTime || ''}`), "iii LLL d, hh:mmaa")}
       Total Amount: ${newBooking.tax?newBooking.afterTaxTotal:newBooking.totalCost} 
       Payment Method: ${newBooking.paymentMethod}
       Paid Amount: ${newBooking.payments.reduce((acc, payment) => acc + payment.amount, 0)}
