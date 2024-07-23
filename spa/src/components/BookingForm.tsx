@@ -993,8 +993,11 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
           )
         }
         {/* Created date Input */}
-        {bookingId && <div className='w-full py-4 flex justify-end'>
-          <DateTimePickerInput label={'Created date time'} onChange={handleDateChange} name="createdDateTime" value={formState.form.createdDateTime} />
+        {bookingId && <div className='w-full py-4 flex justify-between gap-4'>
+          <p className='text-base font-bold leading-normal my-4'>
+            Created at :
+          </p>
+          <DateTimePickerInput bottomEnd label={'Created date time'} onChange={handleDateChange} name="createdDateTime" value={formState.form.createdDateTime} />
         </div>}
         {/* End Version History */}
         {

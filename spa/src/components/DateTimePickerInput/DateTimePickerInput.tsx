@@ -13,9 +13,10 @@ interface DateTimePickerInputProps {
   className?: string;
   cleanable?: boolean;
   showTime?: boolean;
+  bottomEnd?: boolean
 }
 
-export default function DateTimePickerInput({ label, onChange, name, value, className, cleanable, showTime }: DateTimePickerInputProps) {
+export default function DateTimePickerInput({ label, onChange, name, value, className, cleanable, showTime, bottomEnd }: DateTimePickerInputProps) {
   const [date, setDate] = useState<Date | null>(null);
   if (value && date === null) {
     setDate(new Date(value))
@@ -49,7 +50,8 @@ export default function DateTimePickerInput({ label, onChange, name, value, clas
           onChange!(name!, value ? value.toISOString() : null)
         }}
         cleanable={cleanable ? true : false}
-        placement={label === "End Date" ? "bottomEnd" : "bottomStart"}
+        placement={(label === "End Date" || bottomEnd) ? "bottomEnd" : "bottomStart"}
+        preventOverflow
         className={`${styles.customDatePicker} ${styles.customDatePickerInput} ${styles.customDatePickerPlaceholderText}  h-14 `}
       />
     </Stack>
