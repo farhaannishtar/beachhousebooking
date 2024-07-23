@@ -140,8 +140,8 @@ export default function StatsView() {
               <label className="title">{conversionRateForMonth ? conversionRateForMonth.toFixed(1) + '%' : 0}</label>
             </div>
             <div className="flex-1 rounded-xl h-28 bg-typo_light-100 flex flex-col justify-end py-2 gap-5 px-6">
-              <label className="label_text !p-0 !font-medium"> Total Income  reservations</label>
-              <label className="title">{'₹' + (indianFormatter.format(formState?.rawReservationsResponse?.monthly?.confirmedSum))}</label>
+              <label className="label_text !p-0 !font-medium"> Checkins</label>
+              <label className="title">{'₹' + (indianFormatter.format(formState?.rawCheckinsResponse?.monthly?.count))}</label>
             </div>
           </div>
 
@@ -167,8 +167,8 @@ export default function StatsView() {
               <label className="title">{conversionRateDaily ? conversionRateDaily.toFixed(1) + '%' : 0}</label>
             </div>
             <div className="flex-1 rounded-xl h-28 bg-typo_light-100 flex flex-col justify-end py-2 gap-5 px-6">
-              <label className="label_text !p-0 !font-medium"> Total Income  reservations</label>
-              <label className="title">{'₹' + (indianFormatter.format(formState?.rawReservationsResponse?.daily[dayOfMonth]?.confirmedSum))}</label>
+              <label className="label_text !p-0 !font-medium"> Checkins</label>
+              <label className="title">{indianFormatter.format(formState?.rawCheckinsResponse?.daily[dayOfMonth]?.count)}</label>
             </div>
           </div>
         </div>
