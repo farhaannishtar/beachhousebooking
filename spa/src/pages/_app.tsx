@@ -3,7 +3,6 @@ import '@/styles/globals.css';
 import '@/styles/globalIcon.css';
 import { Plus_Jakarta_Sans } from 'next/font/google'
 
-export const fetchCache = 'force-no-store';
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
   : "http://localhost:3000";
@@ -47,7 +46,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           router.push('/protected/logs');
         }
       } else {
-        if ((currentPath !== '/login') && (currentPath !== '/client/[id]')) {
+        if ((currentPath !== '/login') && (currentPath !== '/client')) {
           router.push('/login');
         }
       }
@@ -57,7 +56,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   }, [currentPath, router]);
 
 
-  const useNoLayout = currentPath === '/login' || currentPath === '/protected/booking/create' || currentPath === '/protected/booking/[id]' || currentPath === '/client/[id]'
+  const useNoLayout = currentPath === '/login' || currentPath === '/protected/booking/create' || currentPath === '/protected/booking/[id]' || currentPath === '/client'
   const Layout = !useNoLayout ? ProtectedLayout : DefaultLayout;
   return <main className={`${plusJakartaSans.className} min-h-screen flex flex-col items-center w-full container !select-none`}> <Layout><Component {...pageProps} /></Layout> </main>
 }

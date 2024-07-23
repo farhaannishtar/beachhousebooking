@@ -96,7 +96,7 @@ export async function mutateBookingState(booking: BookingForm, user: User): Prom
       name: capitalizeString(booking.client.name)
     },
     encodingVersion: 1,
-    createdDateTime: (booking as BookingDB).createdDateTime ?? new Date().toISOString(),
+    createdDateTime: (booking as BookingDB).createdDateTime || new Date().toISOString(),
     createdBy: {
       id: user.id,
       name: user.displayName || "Anonymous",

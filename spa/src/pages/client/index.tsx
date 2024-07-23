@@ -1,14 +1,15 @@
 
-import { useRouter } from 'next/router';
+import { useSearchParams } from 'next/navigation';
 
 import UserBookingDetailsComponent from "@/components/UserBookingDetails";
 
 const ViewBookingPage = () => {
-    const router = useRouter();
-    const { id } = router.query;
+    const searchParams = useSearchParams()
+    const clientId = searchParams.get('id')
+
     return (
         <div className='h-full flex items-start justify-center mt-4 w-full'>
-            <UserBookingDetailsComponent bookingId={parseInt(id as string)} />
+            <UserBookingDetailsComponent bookingId={parseInt(clientId as string)} />
         </div>
     );
 }

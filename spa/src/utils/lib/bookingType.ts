@@ -59,7 +59,7 @@ export function defaultForm(): BookingForm {
       dateReturned: undefined,
       amountReturned:0
     },
-    createdDateTime: ""
+    createdDateTime: undefined
   }
 }
 
@@ -98,7 +98,7 @@ export interface BookingForm {
    amountReturned: number
   }
   clientViewId?: string | undefined
-  createdDateTime: string
+  createdDateTime: string | undefined
 }
 
 export function numOfDays(bookingForm: BookingForm): number {

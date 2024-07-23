@@ -157,7 +157,7 @@ export default function BookingDetailsComponent({ bookingId }: BookingDetailsPro
     const [copied, setCopied] = useState<boolean>(false)
     const copyClientLink = () => {
         setCopied(true)
-        navigator.clipboard.writeText(`${window.location.host}/client/${formState.form.clientViewId}`);
+        navigator.clipboard.writeText(`${window.location.host}/client?id=${formState.form.clientViewId}`);
         setTimeout(() => {
             setCopied(false)
 
