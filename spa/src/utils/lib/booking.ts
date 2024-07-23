@@ -295,7 +295,9 @@ export async function deleteBooking(bookingId: number) {
   //Booking type stay
   else{
     for (let property of booking.properties) {
-      await deleteEvent(getEnvKey(property), booking.calendarIds![property]);
+      if(booking.calendarIds && booking.calendarIds[property]) {
+        await deleteEvent(getEnvKey(property), booking.calendarIds![property]);
+      }
     }
   }
 

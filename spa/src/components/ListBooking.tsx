@@ -86,7 +86,7 @@ export default function ListBooking() {
         // .then(({ data: bookingsData }) => {
 
         let bookings: BookingDB[] = []
-        for (const booking of results[0].data!) {
+        for (const booking of results[0].data ?? []) {
           const lastIndex = booking.json.length - 1;
           const lastBooking = booking.json[lastIndex];
           bookings.unshift({
@@ -94,7 +94,7 @@ export default function ListBooking() {
             bookingId: booking.id,
           });
         }
-        for (const booking of results[1].data!) {
+        for (const booking of results[1].data ?? []) {
           const lastIndex = booking.json.length - 1
           const lastBooking = booking.json[lastIndex]
           bookings.push({
