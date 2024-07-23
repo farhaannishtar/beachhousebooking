@@ -3,7 +3,7 @@ import '@/styles/globals.css';
 import '@/styles/globalIcon.css';
 import { Plus_Jakarta_Sans } from 'next/font/google'
 
-
+export const fetchCache = 'force-no-store';
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
   : "http://localhost:3000";
