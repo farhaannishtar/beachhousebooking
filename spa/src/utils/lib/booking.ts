@@ -54,6 +54,7 @@ export async function updateBooking(booking: BookingDB[], id: number) {
         tax = $15,
         after_tax_total = $16,
         client_view_id = $17
+        created_at = $18
       WHERE id = $1`, 
   [id, 
     booking, 
@@ -71,7 +72,8 @@ export async function updateBooking(booking: BookingDB[], id: number) {
     lastBooking.outstanding ?? 0,
     lastBooking.tax ?? 0,
     lastBooking.afterTaxTotal ?? 0,
-    lastBooking.clientViewId
+    lastBooking.clientViewId,
+    lastBooking.createdDateTime
   ])
 }
 
@@ -94,7 +96,7 @@ export async function mutateBookingState(booking: BookingForm, user: User): Prom
       name: capitalizeString(booking.client.name)
     },
     encodingVersion: 1,
-    createdDateTime: new Date().toISOString(),
+    createdDateTime: (booking as BookingDB).createdDateTime ?? new Date().toISOString(),
     createdBy: {
       id: user.id,
       name: user.displayName || "Anonymous",
