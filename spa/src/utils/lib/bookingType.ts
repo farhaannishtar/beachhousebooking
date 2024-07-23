@@ -161,6 +161,11 @@ export function organizedByCreatedDate(bookings: BookingDB[]): { [key: string]: 
   return organizedBookings
 }
 
+export function createDateFromIndianDate(date: string): Date {
+  let dateParts = date.split('-')
+  return new Date(parseInt(dateParts[0]), parseInt(dateParts[1]) - 1, parseInt(dateParts[2]))
+}
+
 export function printInIndianTime(utcDateTimeString: string | undefined, onlyTime: boolean = false) {
   if (!utcDateTimeString) return "";
   const utcDate = new Date(utcDateTimeString!);

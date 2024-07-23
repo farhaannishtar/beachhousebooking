@@ -56,6 +56,7 @@ export default function BookingDetailsComponent({ bookingId }: BookingDetailsPro
                     if (!bookingsData) return;
                     const currentIndex = bookingsData[0].json.length - 1;
                     const newData = bookingsData[0].json[currentIndex];
+
                     setFormState((prevState) => ({
                         ...prevState,
                         form: newData,
@@ -64,6 +65,9 @@ export default function BookingDetailsComponent({ bookingId }: BookingDetailsPro
                         currentIndex: currentIndex,
                     }));
                     setIsSwitchOn(newData.bookingType === "Stay" ? false : true);
+                    console.log('====================================');
+                    console.log('useEffect booking ', bookingsData);
+                    console.log('====================================');
                 });
         }
     }, [bookingId]);

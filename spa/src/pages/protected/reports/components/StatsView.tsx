@@ -144,13 +144,7 @@ export default function StatsView() {
               <label className="title">{'₹' + (indianFormatter.format(formState?.rawReservationsResponse?.monthly?.confirmedSum))}</label>
             </div>
           </div>
-          <div className="flex gap-5">
-            <div className="flex-1 rounded-xl h-28 bg-typo_light-100 flex flex-col justify-end py-2 gap-5 px-6">
-              <label className="label_text !p-0 !font-medium">Total Tax</label>
-              <label className="title">{'₹' + (indianFormatter.format(formState?.rawReservationsResponse?.monthly?.taxTotal))}</label>
-            </div>
 
-          </div>
         </div>
       </div>
 
@@ -200,12 +194,21 @@ export default function StatsView() {
             <label className="label_text !pt-0 !font-semibold">{'₹' + (indianFormatter.format(formState?.rawReservationsResponse?.monthly?.confirmedSum))}</label>
           </div>
           <div className="flex justify-between items-center">
+            <label className="label_text">Total Tax Reservations Value</label>
+            <label className="label_text !font-semibold">{'₹' + (indianFormatter.format(formState?.rawReservationsResponse?.monthly?.taxTotal))}</label>
+          </div>
+          <div className="flex justify-between items-center">
             <label className="label_text">Average Reservation Value</label>
             <label className="label_text !font-semibold">{'₹' + (indianFormatter.format(formState?.rawReservationsResponse?.monthly?.confirmedAvg))}</label>
           </div>
+
           <div className="flex justify-between items-center">
             <label className="label_text">Total Checkin Value</label>
             <label className="label_text !font-semibold">{'₹' + (indianFormatter.format(formState?.rawCheckinsResponse?.monthly?.sum))}</label>
+          </div>
+          <div className="flex justify-between items-center">
+            <label className="label_text">Total Tax Checkin Value</label>
+            <label className="label_text !font-semibold">{'₹' + (indianFormatter.format(formState?.rawCheckinsResponse?.monthly?.taxTotal))}</label>
           </div>
           <div className="flex justify-between items-center">
             <label className="label_text">Average Checkin Value</label>

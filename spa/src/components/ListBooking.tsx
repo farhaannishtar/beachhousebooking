@@ -1,6 +1,6 @@
 "use client";
 
-import { BookingDB, Property, convertDateToIndianDate, convertPropertiesForDb, numOfDays, organizedByStartDate } from '@/utils/lib/bookingType';
+import { BookingDB, Property, convertDateToIndianDate, convertPropertiesForDb, createDateFromIndianDate, numOfDays, organizedByStartDate } from '@/utils/lib/bookingType';
 import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { useRouter } from 'next/router'
 import { supabase } from '@/utils/supabase/client';
@@ -16,6 +16,7 @@ interface ListBookingsState {
   searchText: string | null;
   date: Date | null;
   dbBookings: BookingDB[];
+  organizedByStartDate: { [key: string]: BookingDB[] }
 }
 let numOfBookingsForward = 7;
 let numOfBookingsBackward = 0;
@@ -26,6 +27,7 @@ export default function ListBooking() {
     searchText: null,
     date: null,
     dbBookings: [],
+    organizedByStartDate: {}
   });
 
   const [filterState, setFilterState] = useState<Filter>({
@@ -36,6 +38,8 @@ export default function ListBooking() {
   });
 
   const [loading, setLoading] = useState<boolean>(false)
+  const [loadingForward, setLoadingForward] = useState<boolean>(false)
+  const [loadingBackward, setLoadingBackward] = useState<boolean>(false)
   async function fetchData() {
     setLoading(true)
     console.log("Fetching Data")
@@ -44,10 +48,16 @@ export default function ListBooking() {
 
 
 
+
     if (state.searchText) {
       bookingsData = bookingsData
         .or(`client_name.ilike.%${state.searchText}%,client_phone_number.ilike.%${state.searchText}%`)
+      //empty oldBookingsData
+      oldBookingsData = oldBookingsData.eq('status', 'no-data')
+
     } else if (filterState.checkIn || filterState.properties || filterState.starred || filterState.paymentPending) {
+      //empty oldBookingsData
+      oldBookingsData = oldBookingsData.eq('status', 'no-data')
       if (filterState.checkIn) {
         console.log("Filtering by checkIn: ", filterState.checkIn)
         bookingsData = bookingsData
@@ -76,26 +86,27 @@ export default function ListBooking() {
         // .then(({ data: bookingsData }) => {
 
         let bookings: BookingDB[] = []
-        results[0].data?.forEach((booking) => {
-          const lastIndex = booking.json.length - 1
-          const lastBooking = booking.json[lastIndex]
+        for (const booking of results[0].data ?? []) {
+          const lastIndex = booking.json.length - 1;
+          const lastBooking = booking.json[lastIndex];
           bookings.unshift({
             ...lastBooking,
             bookingId: booking.id,
-          })
-        })
-        results[1].data?.forEach((booking) => {
+          });
+        }
+        for (const booking of results[1].data ?? []) {
           const lastIndex = booking.json.length - 1
           const lastBooking = booking.json[lastIndex]
           bookings.push({
             ...lastBooking,
             bookingId: booking.id,
           })
-        })
+        }
 
         setState((prevState) => ({
           ...prevState,
           dbBookings: bookings,
+          organizedByStartDate: organizedByStartDate(bookings)
         }));
         //Scroll smoothely to page section
         if (router.asPath.includes('#')) {
@@ -103,6 +114,8 @@ export default function ListBooking() {
           document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
         }
         setLoading(false);
+        setLoadingBackward(false);
+        setLoadingForward(false);
         setFilterModalOpened(false)
       })
   };
@@ -110,6 +123,7 @@ export default function ListBooking() {
 
   useEffect(() => {
     numOfBookingsForward = 7
+    numOfBookingsBackward = 0
     setState((prevState) => ({
       ...prevState,
       searchText: null,
@@ -138,10 +152,10 @@ export default function ListBooking() {
   };
 
   const dates = (): string[] => {
-    return Object.keys(organizedByStartDate(state.dbBookings)).sort((a, b) => {
+    return Object.keys(state.organizedByStartDate).sort((a, b) => {
       if (a == "Invalid Date") return 1
       if (b == "Invalid Date") return -1
-      return new Date(a).getTime() - new Date(b).getTime()
+      return createDateFromIndianDate(a).getTime() - createDateFromIndianDate(b).getTime()
     })
   }
 
@@ -193,9 +207,11 @@ export default function ListBooking() {
 
       <LoadingButton
         className=" border-[1px] border-selectedButton text-selectedButton my-4 w-full py-2 px-4 rounded-xl"
+        loading={loadingBackward}
         onClick={
           () => {
             numOfBookingsBackward = numOfBookingsBackward + 7;
+            setLoadingBackward(true)
             fetchData()
           }
         } >Load More</LoadingButton>
@@ -204,7 +220,7 @@ export default function ListBooking() {
           <p className="pl-1 mt-6 text-neutral-900 text-lg font-semibold leading-6">
             {convertDate(date)}
           </p>
-          {organizedByStartDate(state.dbBookings)[date].map((booking, index) => (
+          {state.organizedByStartDate[date].map((booking, index) => (
             <div
               className="flex mt-3 w-full justify-between"
               key={booking.bookingId}
@@ -245,9 +261,11 @@ export default function ListBooking() {
       ))}
       <LoadingButton
         className=" border-[1px] border-selectedButton text-selectedButton my-4 w-full py-2 px-4 rounded-xl"
+        loading={loadingForward}
         onClick={
           () => {
             numOfBookingsForward = numOfBookingsForward + 7;
+            setLoadingForward(true)
             fetchData()
           }
         } >Load More</LoadingButton>
