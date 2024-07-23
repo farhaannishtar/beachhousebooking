@@ -53,7 +53,7 @@ export async function updateBooking(booking: BookingDB[], id: number) {
         outstanding = $14,
         tax = $15,
         after_tax_total = $16,
-        client_view_id = $17
+        client_view_id = $17,
         created_at = $18
       WHERE id = $1`, 
   [id, 
