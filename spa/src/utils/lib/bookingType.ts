@@ -58,7 +58,8 @@ export function defaultForm(): BookingForm {
       paymentMethod: "Cash",
       dateReturned: undefined,
       amountReturned:0
-    }
+    },
+    createdDateTime: ""
   }
 }
 
@@ -97,7 +98,7 @@ export interface BookingForm {
    amountReturned: number
   }
   clientViewId?: string | undefined
-
+  createdDateTime: string
 }
 
 export function numOfDays(bookingForm: BookingForm): number {

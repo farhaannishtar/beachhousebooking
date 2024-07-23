@@ -165,7 +165,7 @@ export default function ListLogs() {
     <div className="w-full  ">
       {/* Top Nav */}
       <div className='flex items-center h-[72px]' >
-        <h1 className='text-lg font-bold leading-6 w-full text-center '>Logs</h1>
+        <h1 className='text-lg font-bold leading-6 w-full text-center '>Logs 1</h1>
 
         <span className=" material-symbols-outlined cursor-pointer hover:text-selectedButton" onClick={() => router.push('/protected/booking/create')}>add_circle</span>
       </div>

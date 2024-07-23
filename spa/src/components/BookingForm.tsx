@@ -992,6 +992,10 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
             </div>
           )
         }
+        {/* Created date Input */}
+        {bookingId && <div className='w-full py-4 flex justify-end'>
+          <DateTimePickerInput label={'Created date time'} onChange={handleDateChange} name="createdDateTime" value={formState.form.createdDateTime} />
+        </div>}
         {/* End Version History */}
         {
           formState.pageToShow === Page.BookingPage && (<div className='flex items-center justify-center w-full mt-6'>
