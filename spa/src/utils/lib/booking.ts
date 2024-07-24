@@ -149,9 +149,10 @@ export async function addToCalendar(newBooking: BookingDB): Promise<BookingDB> {
    //Booking type event
    if(newBooking.bookingType=='Event'){
     for(let i = 0; i < newBooking.events.length; i++) {
+      console.log("event ",newBooking.events[i].eventName)
       let event = newBooking.events[i];
       //newBooking.events[i].calendarIds = {};
-      let summary = `${newBooking.client.name}(${newBooking.numberOfGuests} pax)  ${event.eventName}`;
+      let summary = `${newBooking.client.name}(${event.numberOfGuests} pax)  ${event.eventName}`;
       let description = `
       Last Modified By: ${newBooking.updatedBy.name}
       Last Modified Date: ${newBooking.updatedDateTime}
@@ -163,10 +164,12 @@ export async function addToCalendar(newBooking: BookingDB): Promise<BookingDB> {
      
       
       for (let property of event.properties) { 
+        console.log("property ",property)
         if(event.calendarIds && event.calendarIds[property]) {
           if (event.markForDeletion) {
             await deleteEvent(getEnvKey(property), event.calendarIds[property]);
           } else {
+            console.log("patch ",property)
             patchEvent(getEnvKey(property), event.calendarIds[property], {
               summary: summary,
               location: property,
@@ -180,18 +183,34 @@ export async function addToCalendar(newBooking: BookingDB): Promise<BookingDB> {
             });
           }
         } else {
-          let id = await insertEvent(getEnvKey(property), {
-            summary: summary,
-            location: property,
-            description: description,
-            start: {
-              dateTime: event.startDateTime
-            },
-            end: {
-              dateTime: event.endDateTime
-            }
-          });
-          newBooking.events[i].calendarIds={...newBooking.events[i].calendarIds,[property]:id};
+          try {
+            let id = await insertEvent(getEnvKey(property), {
+              summary: summary,
+              location: property,
+              description: description,
+              start: {
+                dateTime: event.startDateTime
+              },
+              end: {
+                dateTime: event.endDateTime
+              }
+            });
+            newBooking.events[i].calendarIds={...newBooking.events[i].calendarIds,[property]:id};
+          } catch (error) {
+            console.log("error ",error)
+            console.log("property ",property)
+            console.log("data ", {
+              summary: summary,
+              location: property,
+              description: description,
+              start: {
+                dateTime: event.startDateTime
+              },
+              end: {
+                dateTime: event.endDateTime
+              }
+            })
+          }
         }
       }
       // find properties inside event.calendarIds that are not inside event.properties and delete them
@@ -223,7 +242,6 @@ export async function addToCalendar(newBooking: BookingDB): Promise<BookingDB> {
      
       
       for (let property of stay.properties) {
-        
         if(stay.calendarIds && stay.calendarIds[property]) {
           patchEvent(getEnvKey(property), stay.calendarIds[property], {
             summary: summary,
