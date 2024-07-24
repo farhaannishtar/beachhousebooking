@@ -44,9 +44,6 @@ export default function BookingDetailsComponent({ bookingId }: BookingDetailsPro
     const [isFormSubmitted, setIsFormSubmitted] = useState<boolean>(false);
     const pathname = usePathname()
     useEffect(() => {
-        console.log('====================================');
-        console.log('useEffect booking id', bookingId);
-        console.log('====================================');
         if (bookingId) {
             supabase
                 .from("bookings")
@@ -157,7 +154,9 @@ export default function BookingDetailsComponent({ bookingId }: BookingDetailsPro
     const [copied, setCopied] = useState<boolean>(false)
     const copyClientLink = () => {
         setCopied(true)
-        navigator.clipboard.writeText(`${window.location.host}/client?id=${formState.form.clientViewId}`);
+        let host = window.location.host;
+        host = !host.includes('http') ? `http://${host}` : host
+        navigator.clipboard.writeText(`${host}/client?id=${formState.form.clientViewId}`);
         setTimeout(() => {
             setCopied(false)
 

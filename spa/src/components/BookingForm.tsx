@@ -611,7 +611,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                 }
               </div>
               <div className='w-full'>
-                <EventStaySwitch handleToggle={handleSwitchChange} isOn={EventStaySwitchValue} />
+                <EventStaySwitch handleToggle={handleSwitchChange} isOn={EventStaySwitchValue} disabled={!!bookingId} />
               </div>
               <div className='flex gap-x-2 w-full'>
                 <div className="w-1/2">

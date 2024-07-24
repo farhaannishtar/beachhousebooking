@@ -4,10 +4,12 @@ interface EventStaySwitchProps {
   isOn: boolean;
   handleToggle: (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
   onColor?: string;
+  disabled?: boolean;
 }
 
 export const EventStaySwitch: React.FC<EventStaySwitchProps> = ({
   isOn,
+  disabled,
   handleToggle,
   onColor = "selectedButton", // Ensure this is a valid CSS color value
 }) => (
@@ -17,7 +19,7 @@ export const EventStaySwitch: React.FC<EventStaySwitchProps> = ({
   >
     <input
       checked={isOn}
-      onChange={handleToggle}
+      onChange={!disabled ? handleToggle : undefined}
       className="absolute opacity-0 w-0 h-0"
       type="checkbox"
     />
@@ -25,20 +27,18 @@ export const EventStaySwitch: React.FC<EventStaySwitchProps> = ({
       style={{
         left: isOn ? "0" : "50%", // Dynamically set the left property based on isOn
       }}
-      className="absolute z-10 top-[1.5px] w-1/2 h-full bg-selectedButton rounded-[20px] transition-all duration-200 shadow-md" // Assume bg-blue-500 is the slider color
+      className={`${disabled ? '' : 'shadow-md '} absolute z-10 top-[1.5px] w-1/2 h-full bg-selectedButton  rounded-[20px] transition-all duration-200 `} // Assume bg-blue-500 is the slider color
     />
     <div className="relative z-10 flex h-full">
       <span
-        className={`flex items-center justify-center w-1/2 h-full z-50 ${
-          isOn ? "text-white" : "text-black"
-        }`}
+        className={`flex items-center justify-center w-1/2 h-full z-50 ${isOn ? "text-white" : "text-black"
+          }`}
       >
         Event
       </span>
       <span
-        className={`flex items-center justify-center w-1/2 h-full ${
-          isOn ? "text-black" : "text-white"
-        }`}
+        className={`flex items-center justify-center w-1/2 h-full ${isOn ? "text-black" : "text-white"
+          }`}
       >
         Stay
       </span>

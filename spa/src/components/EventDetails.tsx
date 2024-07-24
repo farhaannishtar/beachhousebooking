@@ -44,7 +44,6 @@ const EditEventComponent: React.FC<EditEventFormProps> = ({ cancelAddEvent, onEd
             <div className='flex items-center h-[72px]' >
                 <span className=" material-symbols-outlined cursor-pointer hover:text-selectedButton" onClick={cancelAddEvent} >arrow_back</span>
                 <h1 className='text-lg font-bold leading-6 w-full text-center '>{selectedEvent?.eventId == undefined ? "Create Event" : selectedEvent.eventName}</h1>
-                <label onClick={onEditEvent} className='material-symbols-outlined text-2xl !no-underline !text-typo_dark-300 cursor-pointer'>edit</label>
 
             </div>
             {/* Name  */}
