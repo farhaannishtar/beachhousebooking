@@ -86,6 +86,10 @@ function capitalizeString(str: string): string {
   return str.replace(/\b\w/g, l => l.toUpperCase());
 }
 
+export async function checkForDoubleBooking(booking: BookingDB): Promise<boolean> {
+  return false;
+}
+
 export async function mutateBookingState(booking: BookingForm, user: User): Promise<number> {
   let newBooking: BookingDB = {
     ...booking,
@@ -130,6 +134,11 @@ export async function mutateBookingState(booking: BookingForm, user: User): Prom
   if(newBooking.clientViewId === undefined) {
     newBooking.clientViewId = Math.floor(Math.random() * 1000000).toString();
   }
+
+  if (await checkForDoubleBooking(newBooking)) {
+    throw new Error("Double booking detected for this booking for the property Bluehouse for dates 2021-09-01 to 2021-09-02");
+  }
+
   if(newBooking.bookingId) {
     console.log("mutateBookingState modify booking")
     await addToCalendar(newBooking);
