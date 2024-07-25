@@ -1,5 +1,6 @@
 import { google, calendar_v3 } from 'googleapis';
 import { JWT } from 'google-auth-library';
+import { Property, getCalendarKey } from './bookingType';
 
 
 
@@ -25,12 +26,12 @@ export async function insertEvent(calendarId: string, event: calendar_v3.Schema$
   return resp.data.id!
 }
 
-export async function listEvents(calendarId: string, maxResults: number = 10, minTime: string | undefined = undefined): Promise<calendar_v3.Schema$Event[]> {
+export async function listEvents(property: Property, minTime: string, maxTime: string): Promise<calendar_v3.Schema$Event[]> {
   let calendar = getCalendar();
   const res = await calendar.events.list({
-    calendarId: calendarId,
+    calendarId: getCalendarKey(property),
     timeMin: minTime,
-    maxResults: maxResults,
+    timeMax: maxTime,
     singleEvents: true,
     orderBy: 'startTime',
   });

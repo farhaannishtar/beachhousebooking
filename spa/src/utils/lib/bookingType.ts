@@ -9,6 +9,25 @@ export enum Property {
   Castle = "Castle"
 }
 
+export function convertStringToProperty(property: string): Property {
+  switch (property.toLocaleLowerCase()) {
+    case "Bluehouse".toLocaleLowerCase():
+      return Property.Bluehouse
+    case "Glasshouse".toLocaleLowerCase():
+      return Property.Glasshouse
+    case "MeadowLane".toLocaleLowerCase():
+      return Property.MeadowLane
+    case "LeChalet".toLocaleLowerCase():
+      return Property.LeChalet
+    case "VillaArmati".toLocaleLowerCase():
+      return Property.VillaArmati
+    case "Castle".toLocaleLowerCase():
+      return Property.Castle
+    default:
+      throw new Error("Invalid property")
+  }
+}
+
 export const calendarKeys: { [key: string]: string } = {
   [Property.Bluehouse]: "BLUEHOUSE_CALENDAR_ID",
   [Property.Glasshouse]: "GLASSHOUSE_CALENDAR_ID",
@@ -18,7 +37,7 @@ export const calendarKeys: { [key: string]: string } = {
   [Property.Castle]: "CASTLE_CALENDAR_ID"
 }
 
-export function getEnvKey(property: Property): string {
+export function getCalendarKey(property: Property): string {
   return process.env[calendarKeys[property]]!
 }
 
