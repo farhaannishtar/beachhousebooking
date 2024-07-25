@@ -48,9 +48,9 @@ export function generateHourAvailabilityMapGivenStartDate(
         const dayStr = currentDay.toString().padStart(2, '0');
         const hourStr = currentHour.toString() //.padStart(2, '0');
         console.log(`[${monthStr}][${dayStr}][${hourStr}]`, availabilityMap[monthStr][dayStr][hourStr] ?? "undefined");
-        if (!availabilityMap[monthStr] ||
-            !availabilityMap[monthStr][dayStr] ||
-            !availabilityMap[monthStr][dayStr][hourStr] ||
+        if (availabilityMap[monthStr] != undefined ||
+            availabilityMap[monthStr][dayStr] != undefined||
+            availabilityMap[monthStr][dayStr][hourStr] != undefined ||
             availabilityMap[monthStr][dayStr][hourStr] === false) {
             // We've found the next unavailable hour, so return the previous hour
             return hourAvailabilityMap;
