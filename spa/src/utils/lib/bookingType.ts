@@ -46,18 +46,18 @@ export function defaultForm(): BookingForm {
     costs: [],
     totalCost: 0,
     payments: [],
-    calendarIds:{},
+    calendarIds: {},
     refferral: undefined,
     starred: false,
     outstanding: 0,
     paid: 0,
-    tax:0,
-    afterTaxTotal:0,
+    tax: 0,
+    afterTaxTotal: 0,
     securityDeposit: {
       originalSecurityAmount: 0,
       paymentMethod: "Cash",
       dateReturned: undefined,
-      amountReturned:0
+      amountReturned: 0
     },
     createdDateTime: undefined
   }
@@ -92,10 +92,10 @@ export interface BookingForm {
   afterTaxTotal: number
   tax: number | undefined
   securityDeposit: {
-   originalSecurityAmount: number
-   paymentMethod: "Cash" | "Card" | "GPay"
-   dateReturned: string|undefined
-   amountReturned: number
+    originalSecurityAmount: number
+    paymentMethod: "Cash" | "Card" | "GPay"
+    dateReturned: string | undefined
+    amountReturned: number
   }
   clientViewId?: string | undefined
   createdDateTime: string | undefined
@@ -165,6 +165,42 @@ export function organizedByCreatedDate(bookings: BookingDB[]): { [key: string]: 
 export function createDateFromIndianDate(date: string): Date {
   let dateParts = date.split('-')
   return new Date(parseInt(dateParts[0]), parseInt(dateParts[1]) - 1, parseInt(dateParts[2]))
+}
+
+
+export function convertIndianTimeToUTC(indianDateTimeString: string | undefined, onlyTime: boolean = false): string {
+  if (!indianDateTimeString) return "";
+
+  let indianDate: Date;
+
+  if (indianDateTimeString.includes('T')) {
+    // ISO format
+    indianDate = new Date(indianDateTimeString);
+  } else {
+    // Custom format: 'MM/DD/YYYY, HH:MM:SS AM/PM'
+    const [datePart, timePart] = indianDateTimeString.split(',');
+    const [month, day, year] = datePart.trim().split('/').map(Number);
+    let [time, period] = timePart.trim().split(' ');
+    let [hours, minutes, seconds] = time.split(':').map(Number);
+
+    // Convert 12-hour time to 24-hour time
+    if (period === 'PM' && hours !== 12) {
+      hours += 12;
+    } else if (period === 'AM' && hours === 12) {
+      hours = 0;
+    }
+
+    // Create a Date object in Indian Time (UTC+5:30)
+    indianDate = new Date(year, month - 1, day, hours, minutes, seconds);
+    indianDate.setMinutes(indianDate.getMinutes() - 330); // Adjust for IST offset (+5:30)
+
+  }
+
+
+  console.log('====================================');
+  console.log({ indianDateTimeString, indianDate });
+  console.log('====================================');
+  return indianDate.toISOString();
 }
 
 export function printInIndianTime(utcDateTimeString: string | undefined, onlyTime: boolean = false) {
@@ -240,20 +276,20 @@ export interface Payment {
 }
 
 export interface Event {
-    eventId?: number | undefined
-    eventName: string
-    calendarIds?: { [key: string]: string } | undefined
-    notes: string
-    startDateTime: string
-    endDateTime: string
-    numberOfGuests: number
-    properties: Property[]
-    valetService: boolean
-    djService: boolean
-    kitchenService: boolean
-    overNightStay: boolean
-    overNightGuests: number
-    markForDeletion: boolean
-    costs:  Cost[]
-    finalCost: number
+  eventId?: number | undefined
+  eventName: string
+  calendarIds?: { [key: string]: string } | undefined
+  notes: string
+  startDateTime: string
+  endDateTime: string
+  numberOfGuests: number
+  properties: Property[]
+  valetService: boolean
+  djService: boolean
+  kitchenService: boolean
+  overNightStay: boolean
+  overNightGuests: number
+  markForDeletion: boolean
+  costs: Cost[]
+  finalCost: number
 }

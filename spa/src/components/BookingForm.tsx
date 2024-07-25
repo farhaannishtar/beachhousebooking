@@ -615,7 +615,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
               </div>
               <div className='flex gap-x-2 w-full'>
                 <div className="w-1/2">
-                  <DateTimePickerInput label={'Start Date'} onChange={handleDateChange} name="startDateTime" value={formState.form.startDateTime} />
+                  <DateTimePickerInput label={'Start Date'} onChange={handleDateChange} name="startDateTime" value={formState.form.startDateTime} maxDate={formState.form.endDateTime ? new Date(formState.form.endDateTime) : undefined} />
                   {formErrors.startDateTime === "Start date and time is required" &&
                     <div role="alert" className="text-red-500 p-1 mt-1">
                       <span>Start Date is invalid</span>
@@ -623,7 +623,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                   }
                 </div>
                 <div className="w-1/2">
-                  <DateTimePickerInput label={'End Date'} onChange={handleDateChange} name="endDateTime" value={formState.form.endDateTime} />
+                  <DateTimePickerInput label={'End Date'} onChange={handleDateChange} name="endDateTime" value={formState.form.endDateTime} minDate={formState.form.startDateTime ? new Date(formState.form.startDateTime) : undefined} />
                   {formErrors.startDateTime === "Start date and time must be before the end date and time" &&
                     <div role="alert" className="text-red-500 p-1 mt-1">
                       <span>End Date is invalid</span>

@@ -141,7 +141,7 @@ export default function StatsView() {
             </div>
             <div className="flex-1 rounded-xl h-28 bg-typo_light-100 flex flex-col justify-end py-2 gap-5 px-6">
               <label className="label_text !p-0 !font-medium"> Checkins</label>
-              <label className="title">{'₹' + (indianFormatter.format(formState?.rawCheckinsResponse?.monthly?.count))}</label>
+              <label className="title">{indianFormatter.format(formState?.rawCheckinsResponse?.monthly?.count)}</label>
             </div>
           </div>
 

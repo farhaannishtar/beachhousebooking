@@ -374,6 +374,8 @@ export default function BookingDetailsComponent({ bookingId }: BookingDetailsPro
                                                 Events
                                             </p>
                                             {formState.form.events.map((event, index) => {
+                                                let startTime = !event.startDateTime ? format(new Date(), "iii LLL d, hh:mmaa") : format(new Date(event.startDateTime), "iii LLL d, hh:mmaa")
+
                                                 return (
                                                     !event.markForDeletion && <div key={index} className='flex items-center justify-between rounded-xl bg-typo_light-100 p-4 cursor-pointer ' onClick={() => {
                                                         setSelectedEvent(event)
@@ -381,7 +383,7 @@ export default function BookingDetailsComponent({ bookingId }: BookingDetailsPro
                                                     }}>
                                                         <div className='flex flex-col gap-2'>
                                                             <label className='label_text p-0'>{` ${event.eventName}  (${event.numberOfGuests}) (₹${event.finalCost.toLocaleString('en-IN')} )`}</label>
-                                                            <label className='label_text p-0'>{`${format(new Date(`${event.startDateTime || ''}`), "iii LLL d, hh:mmaa")} `}</label>
+                                                            <label className='label_text p-0'>{`${startTime} `}</label>
                                                             <label className='label_text p-0'>{`${event.properties.toString()}`}</label>
 
                                                         </div>
@@ -487,11 +489,7 @@ export default function BookingDetailsComponent({ bookingId }: BookingDetailsPro
                         <EventDetailsComponent onEditEvent={() => handlePageChange(Page.EventEdit)} cancelAddEvent={() => handlePageChange(Page.BookingPage)} status={formState.form.status} selectedEvent={selectedEvent} />
                     )
                 }
-                {
-                    formState.pageToShow === Page.EventEdit && (
-                        <CreateEventComponent deleteEvent={handleDeleteEvent} onAddEvent={handleAddEvent} cancelAddEvent={() => handlePageChange(Page.BookingPage)} status={formState.form.status} selectedEvent={selectedEvent} />
-                    )
-                }
+
                 {/* Version History  */}
                 {
                     bookingId && formState.pageToShow === Page.BookingPage && (

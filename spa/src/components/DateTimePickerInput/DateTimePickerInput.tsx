@@ -3,6 +3,7 @@ import { DatePicker, Stack, } from 'rsuite';
 import format from 'date-fns/format';
 import styles from './DateTimePickerInput.module.css';
 import { useState } from 'react';
+import moment from 'moment-timezone';
 
 
 interface DateTimePickerInputProps {
@@ -13,10 +14,12 @@ interface DateTimePickerInputProps {
   className?: string;
   cleanable?: boolean;
   showTime?: boolean;
-  bottomEnd?: boolean
+  bottomEnd?: boolean;
+  minDate?: number | Date;
+  maxDate?: number | Date;
 }
 
-export default function DateTimePickerInput({ label, onChange, name, value, className, cleanable, showTime, bottomEnd }: DateTimePickerInputProps) {
+export default function DateTimePickerInput({ label, onChange, name, value, className, cleanable, showTime, bottomEnd, minDate, maxDate }: DateTimePickerInputProps) {
   const [date, setDate] = useState<Date | null>(null);
   if (value && date === null) {
     setDate(new Date(value))
@@ -27,6 +30,17 @@ export default function DateTimePickerInput({ label, onChange, name, value, clas
     <Stack spacing={10} direction="column" className={`${className}`}>
       <DatePicker
         format={`dd/MM/yy${timeFormat}`}
+        shouldDisableDate={(date) => {
+          if (minDate) {
+            const minDateMoment = moment(minDate);
+            return minDateMoment.isAfter(date)
+          }
+          if (maxDate) {
+            const maxDateMoment = moment(maxDate);
+            return maxDateMoment.isBefore(date)
+          }
+          return false
+        }}
         renderValue={value => {
           const currentYear = new Date().getFullYear();
           const year = value.getFullYear();
@@ -50,7 +64,7 @@ export default function DateTimePickerInput({ label, onChange, name, value, clas
           onChange!(name!, value ? value.toISOString() : null)
         }}
         cleanable={cleanable ? true : false}
-        placement={(label === "End Date" || bottomEnd) ? "bottomEnd" : "bottomStart"}
+        placement={(label === "End Date" || !!bottomEnd) ? "bottomEnd" : "bottomStart"}
         preventOverflow
         className={`${styles.customDatePicker} ${styles.customDatePickerInput} ${styles.customDatePickerPlaceholderText}  h-14 `}
       />

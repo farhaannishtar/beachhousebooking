@@ -7,6 +7,7 @@ import DateTimePickerInput from './DateTimePickerInput/DateTimePickerInput';
 import Properties from './Properties';
 import ToggleButton from './ui/ToggleButton';
 import * as yup from 'yup';
+import moment from 'moment-timezone';
 
 const properties = Object.values(Property)
 
@@ -19,7 +20,7 @@ interface CreateEventFormProps {
 }
 interface formDataToValidate {
   name: string | undefined;
-
+  startDateTime: string | undefined;
 }
 
 const CreateEventComponent: React.FC<CreateEventFormProps> = ({ deleteEvent, onAddEvent, cancelAddEvent, status, selectedEvent }) => {
@@ -120,12 +121,32 @@ const CreateEventComponent: React.FC<CreateEventFormProps> = ({ deleteEvent, onA
       .string()
       .required("Name is required")
       .min(2, "Name must be at least 2 characters"),
+    startDateTime: yup
+      .string()
+      .required("Start date and time is required")
+      .matches(
+        /^\d{4}-[01]\d-[0-3]\d[T][0-2]\d:[0-5]\d:[0-5]\d.\d+Z$/,
+        "Start date and time must be in ISO format"
+      )
+
+      .test(
+        "is-before-end-date",
+        "Start date and time must be before the end date and time",
+        (value) => {
+          if (typeof event.endDateTime === "undefined") {
+            return true;
+          }
+          const endDate = moment(event.endDateTime);
+          const startDate = moment(value);
+          return startDate.isBefore(endDate);
+        }
+      )
 
   });
   const validateForm = async () => {
     const formDataToValidate = {
       name: event.eventName,
-
+      startDateTime: event.startDateTime
     };
 
     try {
@@ -134,7 +155,7 @@ const CreateEventComponent: React.FC<CreateEventFormProps> = ({ deleteEvent, onA
       });
       setFormErrors({
         name: undefined,
-
+        startDateTime: undefined,
       });
       return true;
     } catch (err: Error | any) {
@@ -191,14 +212,22 @@ const CreateEventComponent: React.FC<CreateEventFormProps> = ({ deleteEvent, onA
           <DateTimePickerInput label={'Start Date'}
             name="startDateTime"
             value={event.startDateTime}
-            onChange={handleDateChange} />
-
+            onChange={handleDateChange}
+            maxDate={event.endDateTime ? new Date(event.endDateTime) : undefined}
+          />
+          {formErrors.startDateTime &&
+            <div role="alert" className="text-red-500 p-1 mt-1">
+              <span>Start Date is invalid</span>
+            </div>
+          }
         </div>
         <div className="w-1/2">
           <DateTimePickerInput label={'End Date'}
             name="endDateTime"
             value={event.endDateTime}
-            onChange={handleDateChange} />
+            onChange={handleDateChange}
+            minDate={event.startDateTime ? new Date(event.startDateTime) : undefined}
+          />
 
         </div>
       </div>
