@@ -540,7 +540,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
           // Assuming `id` is the success condition
           router.push(`/protected/booking/${id}`);
         }
-      } catch (error) {
+      } catch (error: any) {
         console.log('====================================');
         console.log({ error });
         console.log('====================================');
@@ -693,7 +693,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
               </div>}
               <div className='flex gap-3 flex-wrap'>
                 {formState.form.bookingType === "Event" &&
-                  <BaseInput className="flex-1" preIcon='tag' name="numberOfEvents" placeholder="Events" readOnly={eventNotInquery}  value={formState.form.numberOfEvents ?? 0}
+                  <BaseInput className="flex-1" preIcon='tag' name="numberOfEvents" placeholder="Events" readOnly={eventNotInquery} value={formState.form.numberOfEvents ?? 0}
                     onChange={handleChange} />
 
                 }
