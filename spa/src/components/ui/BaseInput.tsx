@@ -6,9 +6,10 @@ interface BaseInputProps {
     placeholder?: string;
     type?: string;
     className?: string;
-    name: string
+    name: string,
+    readOnly?:boolean
 }
-const BaseInput: React.FC<BaseInputProps> = ({ className = '', type = 'text', value, onChange, preIcon, postIcon, placeholder = '', name }) => {
+const BaseInput: React.FC<BaseInputProps> = ({ className = '', type = 'text', value, onChange, preIcon, postIcon, placeholder = '', name ,readOnly}) => {
   return (
     <div className={`${className} bg-typo_light-100 flex justify-between items-center h-14 rounded-xl`}>
 
@@ -17,7 +18,7 @@ const BaseInput: React.FC<BaseInputProps> = ({ className = '', type = 'text', va
           <span className="material-symbols-outlined">{preIcon}</span>
         </div> : ''
       }
-      <input className={`${preIcon ? '' : 'rounded-s-xl pl-4'} ${postIcon ? '' : 'rounded-e-xl pr-4'} h-full flex-1 bg-typo_light-100 size-1 `} value={value} onChange={(event) => {
+      <input readOnly={readOnly} className={`${preIcon ? '' : 'rounded-s-xl pl-4'} ${postIcon ? '' : 'rounded-e-xl pr-4'} h-full flex-1 bg-typo_light-100 size-1 `} value={value} onChange={(event) => {
         if (onChange) {
           onChange(event);
         }

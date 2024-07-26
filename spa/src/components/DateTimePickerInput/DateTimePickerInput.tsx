@@ -11,15 +11,18 @@ interface DateTimePickerInputProps {
   onChange?: (name: string, value: string | null) => void;
   name?: string;
   value?: string | null;
+  defaultValue?: Date | null;
   className?: string;
   cleanable?: boolean;
   showTime?: boolean;
   bottomEnd?: boolean;
+  readOnly?: boolean;
   minDate?: number | Date;
   maxDate?: number | Date;
+
 }
 
-export default function DateTimePickerInput({ label, onChange, name, value, className, cleanable, showTime, bottomEnd, minDate, maxDate }: DateTimePickerInputProps) {
+export default function DateTimePickerInput({ label, onChange, name, value, className, cleanable, showTime, bottomEnd, minDate, maxDate, readOnly, defaultValue }: DateTimePickerInputProps) {
   const [date, setDate] = useState<Date | null>(null);
   if (value && date === null) {
     setDate(new Date(value))
@@ -67,6 +70,8 @@ export default function DateTimePickerInput({ label, onChange, name, value, clas
         placement={(label === "End Date" || !!bottomEnd) ? "bottomEnd" : "bottomStart"}
         preventOverflow
         className={`${styles.customDatePicker} ${styles.customDatePickerInput} ${styles.customDatePickerPlaceholderText}  h-14 `}
+        readOnly={readOnly}
+        defaultValue={defaultValue}
       />
     </Stack>
   );
