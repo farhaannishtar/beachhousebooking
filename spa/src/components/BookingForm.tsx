@@ -15,6 +15,7 @@ import LoadingButton from './ui/LoadingButton';
 import { supabase } from '@/utils/supabase/client';
 import { createBooking, deleteBooking } from '@/utils/serverCommunicator';
 import ToggleButton from './ui/ToggleButton';
+import BaseModalComponent from './ui/BaseModal';
 
 enum Page {
   BookingPage,
@@ -45,7 +46,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
   const returnTo = searchParams.get('returnTo')
   const [formErrors, setFormErrors] = useState({} as formDataToValidate);
   const [isFormSubmitted, setIsFormSubmitted] = useState<boolean>(false);
-
+  const [errorModal, setErrorModal] = useState<string>('')
   useEffect(() => {
     if (bookingId) {
       supabase
@@ -530,10 +531,18 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
       console.log("creating")
       let form = formState.form;
       form.bookingId = bookingId;
-      const id = await createBooking(formState.form);
-      if (id != null && id != "null") {
-        // Assuming `id` is the success condition
-        router.push(`/protected/booking/${id}`);
+      try {
+        const id = await createBooking(formState.form);
+
+        if (id != null && id != "null") {
+          // Assuming `id` is the success condition
+          router.push(`/protected/booking/${id}`);
+        }
+      } catch (error) {
+        console.log('====================================');
+        console.log({ error });
+        console.log('====================================');
+        setErrorModal(error.msg)
       }
     }
     setLoading(false)
@@ -550,6 +559,8 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
 
   return (
     <div>
+      {/* Error errorModal */}
+      <BaseModalComponent openModal={!!errorModal} message={errorModal} onClose={() => setErrorModal('')} />
       <form onSubmit={handleSubmit}>
         {formState.pageToShow === Page.BookingPage && (
           <div>

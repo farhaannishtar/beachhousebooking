@@ -13,7 +13,7 @@ interface BaseSelectProps {
     value: string
   }> | []
 }
-const BaseSelect: React.FC<BaseSelectProps> = ({ className = '', type = 'text', value, onChange, placeholder = '', name, data }) => {
+const BaseSelect: eact.FCR<BaseSelectProps> = ({ className = '', type = 'text', value, onChange, placeholder = '', name, data }) => {
   const [popupOpened, setPopUpOpened] = useState<Boolean>(false)
   return (
     <div className={`${className} bg-typo_light-100 flex justify-between items-center h-14 rounded-lg relative`}>

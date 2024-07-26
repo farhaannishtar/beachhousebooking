@@ -17,13 +17,17 @@ export const createBooking = async (bookingForm: BookingForm) => {
       },
       body: body
     });
-    const data = await response.json(); 
+    const data = await response.json();
     bookingId = data.bookingId;
     console.log('Response from POST function:', data);
+    if (data.error) {
+      return Promise.reject({ msg: data.message, error: true })
+    }
     return bookingId;
 
   } catch (error) {
     console.error('Error calling POST function:', error);
+
   }
   return bookingId;
 }
@@ -40,7 +44,7 @@ export const deleteBooking = async (bookingId: number) => {
       headers: {
         'Authorization': `Bearer ${token}`
       },
-      body: JSON.stringify({bookingId})
+      body: JSON.stringify({ bookingId })
     });
     console.log('Deleted id: ', bookingId);
 
