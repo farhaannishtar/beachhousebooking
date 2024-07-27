@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, ChangeEvent, useEffect } from 'react';
+import React, { useState, ChangeEvent, useEffect, useRef } from 'react';
 import { Event, Property } from '@/utils/lib/bookingType';
 import BaseInput from './ui/BaseInput';
 import DateTimePickerInput from './DateTimePickerInput/DateTimePickerInput';
@@ -8,6 +8,7 @@ import Properties from './Properties';
 import ToggleButton from './ui/ToggleButton';
 import * as yup from 'yup';
 import moment from 'moment-timezone';
+import { generateHourAvailabilityMapGivenStartDate, checkIfDateIsEligible } from '@/utils/calendarHelpers';
 
 const properties = Object.values(Property)
 
@@ -136,6 +137,7 @@ const CreateEventComponent: React.FC<CreateEventFormProps> = ({ deleteEvent, onA
           if (typeof event.endDateTime === "undefined") {
             return true;
           }
+          return checkIfDateIsEligible(new Date(event.endDateTime), endDateRef.current?.availabilityMap)
           const endDate = moment(event.endDateTime);
           const startDate = moment(value);
           return startDate.isBefore(endDate);
@@ -177,6 +179,24 @@ const CreateEventComponent: React.FC<CreateEventFormProps> = ({ deleteEvent, onA
       cancelAddEvent()
     }
   };
+  //Start and end date fetchAvailabilities
+  const startDateRef = useRef<any>(null);
+  const endDateRef = useRef<any>(null);
+  useEffect(() => {
+    startDateRef.current?.fetchAvailabilities();
+    endDateRef.current?.fetchAvailabilities();
+
+  }, [event.properties])
+  useEffect(() => {
+
+    let availabilityMap = startDateRef.current?.availabilityMap;
+    let startDate = new Date(event.startDateTime || '')
+    if (availabilityMap && Object.entries(availabilityMap).length) {
+      const result = generateHourAvailabilityMapGivenStartDate(availabilityMap, startDate.getFullYear(), startDate.getMonth() + 1, startDate.getDate(), startDate.getHours());
+      endDateRef.current?.setavailabilityMap(result)
+
+    }
+  }, [event.startDateTime])
   return (
     <div className='flex flex-col gap-4'>
       <div className='flex items-center h-[72px]' >
@@ -214,10 +234,11 @@ const CreateEventComponent: React.FC<CreateEventFormProps> = ({ deleteEvent, onA
             value={event.startDateTime}
             onChange={handleDateChange}
             maxDate={event.endDateTime ? new Date(event.endDateTime) : undefined}
+            ref={startDateRef} properties={event.properties.toString()} checkAvailability="start"
           />
           {formErrors.startDateTime &&
             <div role="alert" className="text-red-500 p-1 mt-1">
-              <span>Start Date is invalid</span>
+              <span>Dates are invalid</span>
             </div>
           }
         </div>
@@ -227,6 +248,7 @@ const CreateEventComponent: React.FC<CreateEventFormProps> = ({ deleteEvent, onA
             value={event.endDateTime}
             onChange={handleDateChange}
             minDate={event.startDateTime ? new Date(event.startDateTime) : undefined}
+            ref={endDateRef} properties={event.properties.toString()} checkAvailability="end"
           />
 
         </div>

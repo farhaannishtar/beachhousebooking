@@ -27,6 +27,9 @@ export async function insertEvent(calendarId: string, event: calendar_v3.Schema$
 }
 
 export async function listEvents(property: Property, minTime: string, maxTime: string): Promise<calendar_v3.Schema$Event[]> {
+  console.log('====================================');
+  console.log({property,minTime,maxTime});
+  console.log('====================================');
   let calendar = getCalendar();
   const res = await calendar.events.list({
     calendarId: getCalendarKey(property),

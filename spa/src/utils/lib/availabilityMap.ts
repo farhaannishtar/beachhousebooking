@@ -17,6 +17,9 @@ const numOfDaysInMonth: {
 export async function getTimeSlots(month: Month, propertiesInternal: Property[], year: string): Promise<TimeSlot[]> {
   let monthNumber = monthConvert[month];
   let monthString = monthNumber < 10 ? `0${monthNumber}` : monthNumber;
+  console.log('====================================');
+  console.log({month,year,monthNumber});
+  console.log('====================================');
   let timeSlots: TimeSlot[] = [];
   for (let property of propertiesInternal) {
     let events = await listEvents(property, `${year}-${monthString}-01T00:00:00Z`, `${year}-${monthString}-${numOfDaysInMonth[month]}T23:59:59Z`);

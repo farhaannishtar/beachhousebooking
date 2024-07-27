@@ -48,3 +48,10 @@ export async function query(text: string, params?: any[]): Promise<any> {
     await client.end();
   }
 }
+
+export function removeSpacesAndCapitalize(str:string) {
+  return decodeURIComponent(str)
+      .split(' ') // Split the string into an array of words
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1)) // Capitalize the first letter of each word
+      .join(''); // Join the words back into a single string without spaces
+}
