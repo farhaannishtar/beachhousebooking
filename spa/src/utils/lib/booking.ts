@@ -1,6 +1,6 @@
 import { User } from "./auth";
 import { BookingDB, BookingForm, getProperties, convertPropertiesForDb, Property, getCalendarKey, convertIndianTimeToUTC } from "./bookingType";
-import { deleteEvent, insertEvent, patchEvent } from "./calendar";
+import { deleteEvent, insertEvent, listEvents, patchEvent } from "./calendar";
 import { query } from "./helper";
 import format from 'date-fns/format';
 
@@ -86,8 +86,26 @@ function capitalizeString(str: string): string {
   return str.replace(/\b\w/g, l => l.toUpperCase());
 }
 
-export async function checkForDoubleBooking(booking: BookingDB): Promise<boolean> {
-  return false;
+// return boolean and error if double booking is detected
+export async function checkForDoubleBooking(booking: BookingDB): Promise<{ doubleBooking: boolean, error?: string }> {
+  if (booking.bookingType == 'Stay') {
+    for (let property of booking.properties) {
+      let events = await listEvents(property, booking.startDateTime, booking.endDateTime);
+      if (events.length > 0) {
+        return { doubleBooking: true, error: `Double booking detected for this booking for the property ${property} for dates ${booking.startDateTime} to ${booking.endDateTime}` };
+      }
+    }
+  } else {
+    for (let event of booking.events) {
+      for (let property of event.properties) {
+        let events = await listEvents(property, event.startDateTime, event.endDateTime);
+        if (events.length > 0) {
+          return { doubleBooking: true, error: `Double booking detected for this booking for event ${event.eventName}, property ${property} for dates ${event.startDateTime} to ${event.endDateTime}` };
+        }
+      }
+    }
+  }
+  return { doubleBooking: false };
 }
 
 export async function mutateBookingState(booking: BookingForm, user: User): Promise<number> {
@@ -138,8 +156,9 @@ export async function mutateBookingState(booking: BookingForm, user: User): Prom
     newBooking.clientViewId = Math.floor(Math.random() * 1000000).toString();
   }
 
-  if (await checkForDoubleBooking(newBooking)) {
-    throw new Error("Double booking detected for this booking for the property Bluehouse for dates 2021-09-01 to 2021-09-02");
+  let { doubleBooking, error } = await checkForDoubleBooking(newBooking);
+  if (doubleBooking) {
+    throw new Error(error);
   }
 
   if(newBooking.bookingId) {
