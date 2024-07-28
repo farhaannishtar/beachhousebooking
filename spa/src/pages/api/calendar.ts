@@ -1,5 +1,5 @@
-import { BookingForm, Property, convertStringToProperty } from '@/utils/lib/bookingType';
-import { deleteBooking, mutateBookingState } from '@/utils/lib/booking';
+import { BookingDB, BookingForm, Property, convertStringToProperty } from '@/utils/lib/bookingType';
+import { deleteBooking, fetchBooking, mutateBookingState } from '@/utils/lib/booking';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { fetchUser, saveUser, verifyAndGetPayload } from '@/utils/lib/auth';
 import { listEvents } from '@/utils/lib/calendar';
@@ -18,10 +18,28 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 }
 
 const handleGet = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { properties, month, year, bookingCalendarIdsToOmit } = req.query;
+  const { properties, month, year, bookingId } = req.query;
   let propertiesInternal = (properties as string).split(',').map((property) => convertStringToProperty(removeSpacesAndCapitalize(property)));
   let internalMonth = (month as string).toLocaleLowerCase() as Month
-  let timeSlots: TimeSlot[] = await getTimeSlots(internalMonth, propertiesInternal, year as string, ((bookingCalendarIdsToOmit ?? "[]") as string).split(','));
+  let calendarIds: string[] = [];
+  if(bookingId) {
+    let booking = await fetchBooking(parseInt(bookingId as string));
+    let lastBooking: BookingDB = booking[booking.length - 1];
+    
+    if(lastBooking.bookingType == "Stay") {
+      let values = Object.values(lastBooking.calendarIds ?? []); 
+      calendarIds.push(...values);
+    } else {
+        for (let event of lastBooking.events ?? []) {
+          let values = Object.values(event.calendarIds ?? []); 
+          calendarIds.push(...values);
+        }
+    }
+    // console.log("bookingId", bookingId, " ", lastBooking.bookingType,", booking:", calendarIds);
+  }
+  
+  
+  let timeSlots: TimeSlot[] = await getTimeSlots(internalMonth, propertiesInternal, year as string, calendarIds);
   res.status(200).json(generateHourAvailabilityMap(timeSlots, monthConvert[internalMonth], parseInt(year as string)));
 };
 
