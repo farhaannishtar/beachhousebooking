@@ -18,10 +18,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 }
 
 const handleGet = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { properties, month, year } = req.query;
+  const { properties, month, year, bookingCalendarIdsToOmit } = req.query;
   let propertiesInternal = (properties as string).split(',').map((property) => convertStringToProperty(removeSpacesAndCapitalize(property)));
   let internalMonth = (month as string).toLocaleLowerCase() as Month
-  let timeSlots: TimeSlot[] = await getTimeSlots(internalMonth, propertiesInternal, year as string);
+  let timeSlots: TimeSlot[] = await getTimeSlots(internalMonth, propertiesInternal, year as string, ((bookingCalendarIdsToOmit ?? "[]") as string).split(','));
   res.status(200).json(generateHourAvailabilityMap(timeSlots, monthConvert[internalMonth], parseInt(year as string)));
 };
 

@@ -14,7 +14,7 @@ const numOfDaysInMonth: {
   [key in Month]: number;
 } = { "june": 30, "july": 31, "august": 31, "september": 30, "october": 31, "november": 30, "december": 31, "january": 31, "february": 28, "march": 31, "april": 30, "may": 31 };
 
-export async function getTimeSlots(month: Month, propertiesInternal: Property[], year: string): Promise<TimeSlot[]> {
+export async function getTimeSlots(month: Month, propertiesInternal: Property[], year: string, bookingCalendarIdsToOmit: String[] = []): Promise<TimeSlot[]> {
   let monthNumber = monthConvert[month];
   let monthString = monthNumber < 10 ? `0${monthNumber}` : monthNumber;
   console.log('====================================');
@@ -23,8 +23,9 @@ export async function getTimeSlots(month: Month, propertiesInternal: Property[],
   let timeSlots: TimeSlot[] = [];
   for (let property of propertiesInternal) {
     let events = await listEvents(property, `${year}-${monthString}-01T00:00:00Z`, `${year}-${monthString}-${numOfDaysInMonth[month]}T23:59:59Z`);
+    events = events.filter((event) => !bookingCalendarIdsToOmit.includes(event.id as string));
     timeSlots.push(...events.map((event) => {
-      // console.log("user: ",  event.summary, 
+    //   console.log(event)
       //   "start: ", event.start?.dateTime, "end: ", event.end?.dateTime);
       return {
         start: event.start?.dateTime as string,
