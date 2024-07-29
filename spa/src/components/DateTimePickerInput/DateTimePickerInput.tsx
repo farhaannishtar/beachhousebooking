@@ -22,11 +22,12 @@ interface DateTimePickerInputProps {
   maxDate?: number | Date;
   properties?: string;
   checkAvailability?: string;
-  onConfirmed?: () => void
+  onConfirmed?: () => void;
+  bookingId?: number
 }
 
 const DateTimePickerInput = forwardRef<any, DateTimePickerInputProps>(
-  ({ properties, checkAvailability, label, onChange, name, value, className, cleanable, showTime, bottomEnd, minDate, maxDate, readOnly, defaultValue, onConfirmed }, ref) => {
+  ({ properties, checkAvailability, label, onChange, name, value, className, cleanable, showTime, bottomEnd, minDate, maxDate, readOnly, defaultValue, onConfirmed, bookingId }, ref) => {
     useImperativeHandle(ref, () => ({
       fetchAvailabilities,
       setavailabilityMap,
@@ -38,10 +39,10 @@ const DateTimePickerInput = forwardRef<any, DateTimePickerInputProps>(
     const [availabilityMap, setavailabilityMap] = useState<Record<string, Record<string, Record<string, boolean>>>>({});
     const fetchAvailabilities = () => {
 
-      if (checkAvailability == 'start' && properties) {
+      if (checkAvailability && properties) {
         setLoading(true)
         const fetchDateAvailability = async () => {
-          const data = await getDateAvailability(properties, monthDate?.getMonth() + 1, monthDate?.getFullYear());
+          const data = await getDateAvailability(properties, monthDate?.getMonth() + 1, monthDate?.getFullYear(), bookingId);
           setavailabilityMap(data)
           setLoading(false)
         }

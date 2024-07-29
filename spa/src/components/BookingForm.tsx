@@ -13,7 +13,7 @@ import Properties from './Properties';
 import BaseInput from './ui/BaseInput';
 import LoadingButton from './ui/LoadingButton';
 import { supabase } from '@/utils/supabase/client';
-import { createBooking, deleteBooking, getDateAvailability } from '@/utils/serverCommunicator';
+import { createBooking, deleteBooking } from '@/utils/serverCommunicator';
 import ToggleButton from './ui/ToggleButton';
 import BaseModalComponent from './ui/BaseModal';
 import { generateHourAvailabilityMapGivenStartDate, checkIfDateIsEligible } from '@/utils/calendarHelpers';
@@ -125,7 +125,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
     } catch (err: Error | any) {
       console.log("err: in validateForm ");
       const validationErrors: any = {};
-      err.inner.forEach((error: any) => {
+      if (err?.inner) err.inner.forEach((error: any) => {
         console.log("error message", error.message);
         validationErrors[error.path] = error.message;
       });
@@ -512,16 +512,20 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
         "is-before-end-date",
         "Start date and time must be before the end date and time",
         (value) => {
+          const endDate = moment(formState.form.endDateTime);
+          const startDate = moment(value);
           if (typeof formState.form.endDateTime === "undefined") {
             return true;
           }
           if (formState.form.status !== 'Inquiry') {
-            return checkIfDateIsEligible(new Date(formState.form.endDateTime), endDateRef.current?.availabilityMap)
+            if (formState.form.bookingType == 'Stay') {
+              return startDate.isBefore(endDate) && checkIfDateIsEligible(new Date(formState.form.endDateTime), endDateRef.current?.availabilityMap)
+            }
+
 
           }
 
-          const endDate = moment(formState.form.endDateTime);
-          const startDate = moment(value);
+
           return startDate.isBefore(endDate);
         }
       ),
@@ -561,11 +565,10 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
     router.push('/protected/booking/list')
   }
   //Show start end date inputs
-  const eventNotInquery = formState.form.bookingType == 'Event' && formState.form.status !== "Inquiry" && !!formState.form.events.length;
-  const [showStartEndDate, setShowStartEndDate] = useState<boolean>(true)
+  const eventNotInquery = formState.form.bookingType == 'Event' && formState.form.status !== "Inquiry";
   const fixStartEndInputs = () => {
 
-    if (eventNotInquery) {
+    if (eventNotInquery && !!formState.form.events.length) {
       let firstDate = new Date('01/01/2050');
       let lastDate = new Date('01/01/1980');
       for (let index = 0; index < formState.form.events.length; index++) {
@@ -598,11 +601,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
         },
       }));
     }
-    setShowStartEndDate(false)
-    setTimeout(() => {
-      setShowStartEndDate(true)
 
-    }, 200);
   }
   useEffect(() => {
     fixStartEndInputs()
@@ -611,25 +610,16 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
   //Start and end date fetchAvailabilities
   const startDateRef = useRef<any>(null);
   const endDateRef = useRef<any>(null);
-  const fillEndDate = () => {
-    let availabilityMap = startDateRef.current?.availabilityMap;
-    let startDate = new Date(formState.form.startDateTime || '')
-    if (availabilityMap && Object.entries(availabilityMap).length) {
-      const result = generateHourAvailabilityMapGivenStartDate(availabilityMap, startDate.getFullYear(), startDate.getMonth() + 1, startDate.getDate(), startDate.getHours());
-      endDateRef.current?.setavailabilityMap(result)
 
+  useEffect(() => {
+    if (formState.form.status !== 'Inquiry') {
+      startDateRef.current?.fetchAvailabilities();
+      endDateRef.current?.fetchAvailabilities();
     }
-  }
-  useEffect(() => {
-    startDateRef.current?.fetchAvailabilities();
-    endDateRef.current?.fetchAvailabilities();
   }, [formState.form.properties])
-  useEffect(() => {
-    fillEndDate()
 
-  }, [formState.form.startDateTime])
   return (
-    <div>
+    <div className='w-full'>
       {/* Error errorModal */}
       <BaseModalComponent openModal={!!errorModal} message={errorModal} onClose={() => setErrorModal('')} />
       <form onSubmit={handleSubmit}>
@@ -695,9 +685,11 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
               <div className='w-full'>
                 <EventStaySwitch handleToggle={handleSwitchChange} isOn={EventStaySwitchValue} disabled={!!bookingId} />
               </div>
-              {showStartEndDate && <div className='flex gap-x-2 w-full'>
+              {/* Put properties before start date  */}
+              {(formState.form.status !== 'Inquiry' && formState.form.bookingType == "Stay") && <Properties properties={formState.form.properties ?? []} setFormState={setFormState} />}
+              {!eventNotInquery && <div className='flex gap-x-2 w-full'>
                 <div className="w-1/2">
-                  <DateTimePickerInput ref={startDateRef} properties={formState.form.properties.toString()} checkAvailability="start" readOnly={eventNotInquery} label={'Start Date'} onChange={handleDateChange} name="startDateTime" value={formState.form.startDateTime} maxDate={formState.form.endDateTime ? new Date(formState.form.endDateTime) : undefined} onConfirmed={fillEndDate} />
+                  <DateTimePickerInput ref={startDateRef} properties={formState.form.properties.toString()} checkAvailability="start" label={'Start Date'} onChange={handleDateChange} name="startDateTime" value={formState.form.startDateTime} maxDate={formState.form.endDateTime ? new Date(formState.form.endDateTime) : undefined} />
                   {formErrors.startDateTime === "Start date and time is required" &&
                     <div role="alert" className="text-red-500 p-1 mt-1">
                       <span>Start Date is invalid</span>
@@ -705,7 +697,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                   }
                 </div>
                 <div className="w-1/2">
-                  <DateTimePickerInput ref={endDateRef} properties={formState.form.properties.toString()} checkAvailability="end" readOnly={eventNotInquery} label={'End Date'} onChange={handleDateChange} name="endDateTime" value={formState.form.endDateTime} minDate={formState.form.startDateTime ? new Date(formState.form.startDateTime) : undefined} />
+                  <DateTimePickerInput ref={endDateRef} properties={formState.form.properties.toString()} checkAvailability="end" label={'End Date'} onChange={handleDateChange} name="endDateTime" value={formState.form.endDateTime} minDate={formState.form.startDateTime ? new Date(formState.form.startDateTime) : undefined} />
                   {formErrors.startDateTime === "Start date and time must be before the end date and time" &&
                     <div role="alert" className="text-red-500 p-1 mt-1">
                       <span>End Date is invalid</span>
@@ -714,8 +706,8 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                 </div>
               </div>}
               <div className='flex gap-3 flex-wrap'>
-                {formState.form.bookingType === "Event" &&
-                  <BaseInput className="flex-1" preIcon='tag' name="numberOfEvents" placeholder="Events" readOnly={eventNotInquery} value={formState.form.numberOfEvents ?? 0}
+                {formState.form.bookingType === "Event" && !eventNotInquery &&
+                  <BaseInput className="flex-1" preIcon='tag' name="numberOfEvents" placeholder="Events" value={formState.form.numberOfEvents ?? 0}
                     onChange={handleChange} />
 
                 }
@@ -736,7 +728,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                   />
                 </label>
               </div>
-              <Properties properties={formState.form.properties ?? []} setFormState={setFormState} />
+              {formState.form.status === 'Inquiry' && <Properties properties={formState.form.properties ?? []} setFormState={setFormState} />}
               <div>
                 <label className='flex pl-20 gap-x-4'>
                   <div className='flex items-center'>

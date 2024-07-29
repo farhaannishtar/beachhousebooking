@@ -137,10 +137,10 @@ const CreateEventComponent: React.FC<CreateEventFormProps> = ({ deleteEvent, onA
           if (typeof event.endDateTime === "undefined") {
             return true;
           }
-          return checkIfDateIsEligible(new Date(event.endDateTime), endDateRef.current?.availabilityMap)
+
           const endDate = moment(event.endDateTime);
           const startDate = moment(value);
-          return startDate.isBefore(endDate);
+          return startDate.isBefore(endDate) && checkIfDateIsEligible(new Date(event.endDateTime), endDateRef.current?.availabilityMap) && checkIfDateIsEligible(new Date(event.startDateTime), startDateRef.current?.availabilityMap);
         }
       )
 
@@ -187,16 +187,7 @@ const CreateEventComponent: React.FC<CreateEventFormProps> = ({ deleteEvent, onA
     endDateRef.current?.fetchAvailabilities();
 
   }, [event.properties])
-  useEffect(() => {
 
-    let availabilityMap = startDateRef.current?.availabilityMap;
-    let startDate = new Date(event.startDateTime || '')
-    if (availabilityMap && Object.entries(availabilityMap).length) {
-      const result = generateHourAvailabilityMapGivenStartDate(availabilityMap, startDate.getFullYear(), startDate.getMonth() + 1, startDate.getDate(), startDate.getHours());
-      endDateRef.current?.setavailabilityMap(result)
-
-    }
-  }, [event.startDateTime])
   return (
     <div className='flex flex-col gap-4'>
       <div className='flex items-center h-[72px]' >
@@ -226,6 +217,8 @@ const CreateEventComponent: React.FC<CreateEventFormProps> = ({ deleteEvent, onA
           onChange={handleChange}
           className='w-28' />
       </div>
+      <Properties properties={event.properties ?? []} setEventState={setEvent} />
+
       {/* Start and End  Date */}
       <div className='flex gap-x-2 w-full'>
         <div className="w-1/2">
@@ -267,7 +260,6 @@ const CreateEventComponent: React.FC<CreateEventFormProps> = ({ deleteEvent, onA
         </label>
       </div>
 
-      <Properties properties={event.properties ?? []} setEventState={setEvent} />
       {/* Toggle buttons group */}
       <p className='text-base font-bold leading-normal my-4'>
         Additional services

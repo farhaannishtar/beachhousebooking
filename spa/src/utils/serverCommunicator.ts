@@ -65,7 +65,7 @@ export const deleteBooking = async (bookingId: number) => {
     console.error('Error calling GET function:', error);
   }
 }
-export const getDateAvailability = async (properties: string, month: number,year:number) => {
+export const getDateAvailability = async (properties: string, month: number,year:number,bookingId?:number) => {
   let sesh = await supabase.auth.getSession()
   let token = sesh.data.session?.access_token;
   
@@ -73,7 +73,7 @@ export const getDateAvailability = async (properties: string, month: number,year
 
   try {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'; 
-    const response = await fetch(`${apiUrl}/api/calendar?properties=${properties}&month=${monthConvertFromNumber[month]}&year=${year}`, {
+    const response = await fetch(`${apiUrl}/api/calendar?properties=${properties}&month=${monthConvertFromNumber[month]}&year=${year}${bookingId?'&bookingId='+bookingId:''}`, {
       method: "GET",
       headers: {
         'Authorization': `Bearer ${token}`
