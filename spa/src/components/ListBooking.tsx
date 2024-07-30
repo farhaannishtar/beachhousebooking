@@ -7,6 +7,7 @@ import { supabase } from '@/utils/supabase/client';
 import SearchInput from './ui/SearchInput';
 import BookingFilter, { Filter } from './BookingFilter';
 import LoadingButton from './ui/LoadingButton';
+import { useSearchParams } from 'next/navigation';
 
 // interface BookingProps {
 //   bookingsFromParent: BookingDB[];
@@ -23,6 +24,8 @@ let numOfBookingsBackward = 0;
 export default function ListBooking() {
 
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const query = router.query;
   const [state, setState] = useState<ListBookingsState>({
     searchText: null,
     date: null,
@@ -40,20 +43,23 @@ export default function ListBooking() {
   const [loading, setLoading] = useState<boolean>(false)
   const [loadingForward, setLoadingForward] = useState<boolean>(false)
   const [loadingBackward, setLoadingBackward] = useState<boolean>(false)
+
+
   async function fetchData() {
     setLoading(true)
-    console.log("Fetching Data")
     let bookingsData = supabase.from("bookings").select()
     let oldBookingsData = supabase.from("bookings").select()
 
-
-
+    console.log('====================================');
+    console.log({ filterState });
+    console.log('====================================');
 
     if (state.searchText) {
       bookingsData = bookingsData
         .or(`client_name.ilike.%${state.searchText}%,client_phone_number.ilike.%${state.searchText}%`)
       //empty oldBookingsData
       oldBookingsData = oldBookingsData.eq('status', 'no-data')
+
 
     } else if (filterState.checkIn || filterState.properties || filterState.starred || filterState.paymentPending) {
       //empty oldBookingsData
@@ -62,16 +68,16 @@ export default function ListBooking() {
         console.log("Filtering by checkIn: ", filterState.checkIn)
         bookingsData = bookingsData
           .gte('check_in', convertDateToIndianDate({ date: new Date(filterState.checkIn) }))
-          .lte('check_in', convertDateToIndianDate({ date: new Date(filterState.checkIn), addDays: 1 }))
+          .lte('check_in', convertDateToIndianDate({ date: new Date(filterState.checkIn), addDays: 1 }));
       }
       if (filterState.properties) {
-        bookingsData = bookingsData.contains('properties', convertPropertiesForDb(filterState.properties))
+        bookingsData = bookingsData.contains('properties', convertPropertiesForDb(filterState.properties));
       }
       if (filterState.starred) {
         bookingsData = bookingsData.eq('starred', filterState.starred)
       }
       if (filterState.paymentPending) {
-        bookingsData = bookingsData.gt('outstanding', 0)
+        bookingsData = bookingsData.gt('outstanding', 0);
       }
     } else {
       bookingsData = bookingsData.gte('check_in', new Date(new Date().setDate(new Date().getDate() - 2)).toISOString())
@@ -113,6 +119,7 @@ export default function ListBooking() {
           const id = router.asPath.split('#')[1];
           document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
         }
+
         setLoading(false);
         setLoadingBackward(false);
         setLoadingForward(false);
@@ -121,21 +128,52 @@ export default function ListBooking() {
   };
 
 
+  // useEffect(() => {
+  //   numOfBookingsForward = 7
+  //   numOfBookingsBackward = 0
+
+  //   fetchData()
+  // }, []);
   useEffect(() => {
     numOfBookingsForward = 7
     numOfBookingsBackward = 0
-    setState((prevState) => ({
-      ...prevState,
-      searchText: null,
-      filter: {
-        checkIn: null,
-        properties: null,
-        starred: null,
-        paymentPending: null
-      }
-    }));
+    // const searchText = searchParams.get('searchText');
+    // const checkIn = searchParams.get('checkIn');
+    // const properties = searchParams.get('properties');
+    // const starred = searchParams.get('starred');
+    // const paymentPending = searchParams.get('paymentPending');
+    const { searchText, checkIn, properties, starred, paymentPending } = query;
+    console.log('====================================');
+    console.log({
+      searchText,
+      checkIn,
+      properties,
+      starred,
+      paymentPending
+    });
+    console.log('====================================');
+
+    if (searchText) {
+      setState((prevState) => ({
+        ...prevState,
+        searchText: searchText ? searchText.toString() : null,
+        filter: {
+          checkIn: checkIn || null,
+          properties: properties || null,
+          starred: starred || null,
+          paymentPending: paymentPending || null
+        }
+      }));
+    }
+
+    setFilterState({
+      checkIn: checkIn ? checkIn.toString() : null,
+      properties: null,
+      starred: !!starred,
+      paymentPending: !!paymentPending || null
+    })
     fetchData()
-  }, []);
+  }, [query]);
 
   useEffect(() => {
     console.log('State has changed:', state);
@@ -177,7 +215,37 @@ export default function ListBooking() {
   const toggleFilterDisplay = () => {
     setFilterModalOpened(!filterModalOpened)
   }
+  //Print return to link
+  const redirectToBookingId = (bookingId?: number) => {
+    let pageQuery = {};
+    if (state.searchText) {
+      pageQuery = { ...pageQuery, searchText: state.searchText }
 
+    } else if (filterState.checkIn || filterState.properties || filterState.starred || filterState.paymentPending) {
+      //empty oldBookingsData
+
+      if (filterState.checkIn) {
+        pageQuery = { ...pageQuery, checkIn: filterState.checkIn }
+
+      }
+      if (filterState.properties) {
+        pageQuery = { ...pageQuery, properties: convertPropertiesForDb(filterState.properties).toString() }
+
+      }
+      if (filterState.starred) {
+        pageQuery = { ...pageQuery, starred: filterState.starred }
+
+      }
+      if (filterState.paymentPending) {
+        pageQuery = { ...pageQuery, paymentPending: filterState.paymentPending }
+
+      }
+    } else {
+      pageQuery = {}
+    }
+    router.push({ pathname: `/protected/booking/${bookingId}`, query: { returnTo: '/protected/booking/list', ...pageQuery } }, undefined, { shallow: true });
+    //return `/protected/booking/${bookingId}?returnTo=/protected/booking/list`
+  }
   return (
     <div className="w-full  ">
       {/* Top Nav */}
@@ -225,7 +293,7 @@ export default function ListBooking() {
               className="flex mt-3 w-full justify-between"
               key={booking.bookingId}
               id={`${booking.bookingId}-id`}
-              onClick={() => router.push(`/protected/booking/${booking.bookingId}?returnTo=/protected/booking/list`)}
+              onClick={() => redirectToBookingId(booking.bookingId)}
             >
               {/* Booking details */}
               <div className="pl-3 flex flex-col gap-0">

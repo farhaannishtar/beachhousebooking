@@ -5,12 +5,13 @@ import moment from 'moment-timezone';
 import format from 'date-fns/format';
 import { BookingForm, Event, defaultForm, BookingDB, printInIndianTime } from '@/utils/lib/bookingType';
 import React, { useState, useEffect } from 'react';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { usePathname, useSearchParams } from 'next/navigation'
 import EventDetailsComponent from './EventDetails';
 import CreateEventComponent from './CreateEventForm';
 
 import { supabase } from '@/utils/supabase/client';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 enum Page {
     BookingPage,
@@ -38,6 +39,10 @@ interface BookingDetailsProps {
 
 export default function BookingDetailsComponent({ bookingId }: BookingDetailsProps) {
     const router = useRouter();
+    let query = router.query;
+    delete query.returnTo;
+    delete query.id;
+
     const searchParams = useSearchParams()
     const returnTo = searchParams.get('returnTo')
     const [formErrors, setFormErrors] = useState({} as formDataToValidate);
@@ -62,9 +67,7 @@ export default function BookingDetailsComponent({ bookingId }: BookingDetailsPro
                         currentIndex: currentIndex,
                     }));
                     setIsSwitchOn(newData.bookingType === "Stay" ? false : true);
-                    console.log('====================================');
-                    console.log('useEffect booking ', bookingsData);
-                    console.log('====================================');
+
                 });
         }
     }, [bookingId]);
@@ -277,7 +280,7 @@ export default function BookingDetailsComponent({ bookingId }: BookingDetailsPro
                                         console.log(searchParams);
 
                                         if (returnTo) {
-                                            bookingId ? router.push(`${returnTo}#${bookingId}-id`) : router.push(`${returnTo}`)
+                                            bookingId ? router.push({ pathname: `${returnTo}`, query: query }, undefined, { shallow: true }) : router.push(`${returnTo}`)
                                         } else {
                                             router.push('/protected/booking/list')
                                         }
