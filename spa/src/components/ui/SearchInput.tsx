@@ -1,27 +1,40 @@
 interface SearchInputProps {
-    value: string | undefined,
-    onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-    onFilterClick?: () => void | undefined;
+  value: string | undefined;
+  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onFilterClick?: () => void | undefined;
+  filterIsOn?: boolean;
 }
-const SearchInput: React.FC<SearchInputProps> = ({ value, onChange, onFilterClick }) => {
+const SearchInput: React.FC<SearchInputProps> = ({
+  value,
+  onChange,
+  onFilterClick,
+  filterIsOn,
+}) => {
   return (
     <div className="bg-typo_light-100 flex justify-between items-center h-12 rounded-xl">
       <div className="rounded-s-xl flex items-center px-4 h-full">
         <span className="material-symbols-outlined">search</span>
       </div>
-      <input type="text" className="h-full flex-1 bg-typo_light-100" value={value} onChange={onChange} />
+      <input
+        type="text"
+        className="h-full flex-1 bg-typo_light-100"
+        value={value}
+        onChange={onChange}
+      />
       <div className="rounded-s-xl flex items-center px-4 h-full">
-        <span className="material-symbols-outlined cursor-pointer" 
+        <span
+          className={`material-symbols-outlined cursor-pointer ${filterIsOn ? " !text-selectedButton" : ""}`}
           onClick={() => {
             if (onFilterClick) {
-              onFilterClick()
+              onFilterClick();
             }
-          }}>
-                    tune
+          }}
+        >
+          tune
         </span>
       </div>
     </div>
-  )
-}
+  );
+};
 
 export default SearchInput;
