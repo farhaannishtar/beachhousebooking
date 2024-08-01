@@ -1,3 +1,5 @@
+import { Filter } from "@/components/BookingFilter";
+
 // enum of colors for the calendar
 export enum Property {
   Bluehouse = "Bluehouse",
@@ -36,6 +38,18 @@ export const parseProperties = (propertiesString: string): Property[] => {
       Object.values(Property).find((property) => property === name)
     )
     .filter((property): property is Property => property !== undefined);
+};
+// Utility function to parse createdBy
+export const parseCreatedBy = (
+  createdByString: string
+): Filter["createdBy"] => {
+  const validCreators = ["Nusrat", "Prabhu", "Yasmeen", "Rafica"] as const;
+  return validCreators.find((creator) => creator === createdByString) || null;
+};
+// Utility function to parse status
+export const parseStatus = (statusString: string): Filter["status"] => {
+  const validStatuses = ["Inquiry", "Quotation", "Confirmed"] as const;
+  return validStatuses.find((status) => status === statusString) || null;
 };
 export const calendarKeys: { [key: string]: string } = {
   [Property.Bluehouse]: "BLUEHOUSE_CALENDAR_ID",
