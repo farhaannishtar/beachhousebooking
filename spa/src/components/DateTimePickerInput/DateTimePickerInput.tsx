@@ -64,25 +64,39 @@ const DateTimePickerInput = forwardRef<any, DateTimePickerInputProps>(
     return (
       <Stack spacing={10} direction="column" className={`${className}`}>
         <DatePicker
-          renderCell={date => {
+          renderCell={(date) => {
             const day = date.getDate();
             const month = date.getMonth() + 1;
             let dayString = day < 10 ? `0${day}` : day.toString();
             if (availabilityMap && Object.entries(availabilityMap).length) {
               const availableDay = availabilityMap[month]?.[dayString];
               if (availableDay) {
-                let availablehours = Object.values(availableDay).filter(h => !!h)
+                let availablehours = Object.values(availableDay).filter(
+                  (h) => !!h
+                );
 
                 if (!availablehours.length) {
-                  return <div className='flex flex-col items-center !line-through'><span>{day}</span></div>;
+                  return (
+                    <div className="flex flex-col items-center !line-through">
+                      <span>{day}</span>
+                    </div>
+                  );
                 } else if (availablehours.length < 24) {
-                  return <div className='flex flex-col items-center'><span>{day}</span> <span className='h-[6px] w-[6px] rounded-full bg-orange-400'></span></div>;
+                  return (
+                    <div className="flex flex-col items-center">
+                      <span>{day}</span>{" "}
+                      <span className="h-[6px] w-[6px] rounded-full bg-orange-400"></span>
+                    </div>
+                  );
                 } else {
-                  return <div className='flex flex-col items-center'><span>{day}</span> <span className='h-[6px] w-[6px] rounded-full bg-success'></span></div>;
-
+                  return (
+                    <div className="flex flex-col items-center">
+                      <span>{day}</span>{" "}
+                      <span className="h-[6px] w-[6px] rounded-full bg-success"></span>
+                    </div>
+                  );
                 }
               }
-
             }
             return day;
           }}
@@ -104,15 +118,17 @@ const DateTimePickerInput = forwardRef<any, DateTimePickerInputProps>(
             const dayNumber = date.getDate();
 
             if (availabilityMap && Object.entries(availabilityMap).length) {
-              let dayString = dayNumber < 10 ? `0${dayNumber}` : dayNumber.toString();
+              let dayString =
+                dayNumber < 10 ? `0${dayNumber}` : dayNumber.toString();
               let monthString = `${monthDate?.getMonth() + 1}`;
               let hourString = `${hour}`;
-              let availableHour = availabilityMap[monthString]?.[dayString]?.[hourString];
-              return !availableHour
+              let availableHour =
+                availabilityMap[monthString]?.[dayString]?.[hourString];
+              return !availableHour;
             }
-            return false
+            return false;
           }}
-          renderValue={value => {
+          renderValue={(value) => {
             const currentYear = new Date().getFullYear();
             const year = value.getFullYear();
             if (year === currentYear) {
@@ -125,24 +141,29 @@ const DateTimePickerInput = forwardRef<any, DateTimePickerInputProps>(
           //   setDate(new Date(date));
           //   onChange!(name!, date ? date.toISOString() : null)
           // }}
-          onOpen={() => { setMonth(new Date()); }}
+          onOpen={() => {
+            setMonth(date ? date : new Date());
+          }}
           value={date}
           appearance="subtle"
-
           placeholder={`${label}`}
           caretAs={date === null ? undefined : "div"}
           onChange={(value) => {
-            setDate(value)
-            onChange!(name!, value ? value.toISOString() : null)
+            setDate(value);
+            onChange!(name!, value ? value.toISOString() : null);
           }}
           cleanable={cleanable ? true : false}
-          placement={(label === "End Date" || !!bottomEnd) ? "bottomEnd" : "bottomStart"}
+          placement={
+            label === "End Date" || !!bottomEnd ? "bottomEnd" : "bottomStart"
+          }
           preventOverflow
           className={`${styles.customDatePicker} ${styles.customDatePickerInput} ${styles.customDatePickerPlaceholderText}  h-14 `}
           readOnly={readOnly}
           defaultValue={defaultValue}
           loading={loading}
-          onOk={() => { onConfirmed && onConfirmed() }}
+          onOk={() => {
+            onConfirmed && onConfirmed();
+          }}
         />
       </Stack>
     );

@@ -29,10 +29,7 @@ import { supabase } from "@/utils/supabase/client";
 import { createBooking, deleteBooking } from "@/utils/serverCommunicator";
 import ToggleButton from "./ui/ToggleButton";
 import BaseModalComponent from "./ui/BaseModal";
-import {
-  generateHourAvailabilityMapGivenStartDate,
-  checkIfDateIsEligible,
-} from "@/utils/calendarHelpers";
+
 
 enum Page {
   BookingPage,
@@ -64,6 +61,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
   const [formErrors, setFormErrors] = useState({} as formDataToValidate);
   const [isFormSubmitted, setIsFormSubmitted] = useState<boolean>(false);
   const [errorModal, setErrorModal] = useState<string>("");
+  const [exitModal, setExitModal] = useState<boolean>(false);
   useEffect(() => {
     if (bookingId) {
       supabase
@@ -525,13 +523,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
           }
           if (formState.form.status !== "Inquiry") {
             if (formState.form.bookingType == "Stay") {
-              return (
-                startDate.isBefore(endDate) &&
-                checkIfDateIsEligible(
-                  new Date(formState.form.endDateTime),
-                  endDateRef.current?.availabilityMap
-                )
-              );
+              return startDate.isBefore(endDate);
             }
           }
 
@@ -630,6 +622,9 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
     if (formState.form.status !== "Inquiry") {
       startDateRef.current?.fetchAvailabilities();
       endDateRef.current?.fetchAvailabilities();
+    } else {
+      startDateRef.current?.setavailabilityMap({});
+      endDateRef.current?.setavailabilityMap({});
     }
   }, [formState.form.properties]);
 
@@ -641,15 +636,29 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
         message={errorModal}
         onClose={() => setErrorModal("")}
       />
+      {/* Exit modal */}
+      <BaseModalComponent
+        openModal={!!exitModal}
+        message={
+          "You have unsaved changes. Are you sure you want to leave this page without saving?"
+        }
+        onClose={() => setExitModal(false)}
+        onOk={() => {
+          console.log("on ok");
+
+          router.back();
+          setExitModal(false);
+        }}
+      />
       <form onSubmit={handleSubmit}>
         {formState.pageToShow === Page.BookingPage && (
           <div>
-            <div className="flex items-center pt-2 justify-between">
+            <div className="flex items-center pt-2 justify-between h-[72px] sticky z-50 bg-white top-0">
               <div className="flex items-center ">
                 <button
                   type="button"
                   onClick={() => {
-                    router.back();
+                    setExitModal(true);
                   }}
                 >
                   <svg

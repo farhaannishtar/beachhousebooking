@@ -66,6 +66,7 @@ export default function BookingDetailsComponent({
           if (!bookingsData) return;
           const currentIndex = bookingsData[0].json.length - 1;
           const newData = bookingsData[0].json[currentIndex];
+          console.log({ newData });
 
           setFormState((prevState) => ({
             ...prevState,
@@ -175,44 +176,6 @@ export default function BookingDetailsComponent({
   //********************** Event Params and methods **********************
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
 
-  const handleAddEvent = (event: Event) => {
-    setFormState((prevState) => {
-      let events = [...prevState.form.events];
-      if (event.eventId == null) {
-        event.eventId = Math.floor(Math.random() * 1000000);
-        events.push(event);
-      } else {
-        events = events.map((e) => (e.eventId === event.eventId ? event : e));
-      }
-      let totalCost = events.reduce((acc, event) => acc + event.finalCost, 0);
-      return {
-        ...prevState,
-        form: {
-          ...prevState.form,
-          events: events,
-          totalCost: totalCost,
-          outstanding: totalCost - prevState.form.paid,
-        },
-      };
-    });
-  };
-  const handleDeleteEvent = (event: Event) => {
-    setFormState((prevState) => {
-      let events = [...prevState.form.events];
-      events = events.filter((e) => e.eventId !== event.eventId);
-      let totalCost = events.reduce((acc, event) => acc + event.finalCost, 0);
-      return {
-        ...prevState,
-        form: {
-          ...prevState.form,
-          events: events,
-          totalCost: totalCost,
-          outstanding: totalCost - prevState.form.paid,
-        },
-      };
-    });
-    handlePageChange(Page.BookingPage);
-  };
   //**********************End Events settings **********************
 
   const handlePageChange = (showPage: Page) => {

@@ -42,7 +42,10 @@ export function generateHourAvailabilityMapGivenStartDate(
 }
 
 export function initializeHourAvailabilityMap(month: number, year: number, defaultValue: boolean = true): Record<string, Record<string, Record<string, boolean>>> {
-  const hourAvailabilityMap: Record<string, Record<string, Record<string, boolean>>> = {};
+  const hourAvailabilityMap: Record<
+    string,
+    Record<string, Record<string, boolean>>
+  > = {};
 
   // Ensure month is between 1 and 12
   if (month < 1 || month > 12) {
@@ -55,22 +58,14 @@ export function initializeHourAvailabilityMap(month: number, year: number, defau
   hourAvailabilityMap[monthString] = {};
 
   for (let day = 1; day <= daysInMonth; day++) {
-    const dayString = day.toString().padStart(2, '0');
+    const dayString = day.toString().padStart(2, "0");
     hourAvailabilityMap[monthString][dayString] = {};
 
     for (let hour = 0; hour < 24; hour++) {
-      hourAvailabilityMap[monthString][dayString][hour.toString()] = defaultValue;
+      hourAvailabilityMap[monthString][dayString][hour.toString()] =
+        defaultValue;
     }
   }
 
   return hourAvailabilityMap;
-}
-export function checkIfDateIsEligible(date: Date, availabilityMap: Record<string, Record<string, Record<string, boolean>>>) {
-
-  let month = `${date.getMonth() + 1}`;
-  let day = `${date.getDate() < 10 ? '0' + date.getDate() : date.getDate()}`;
-  let hour = date.getHours();
-  console.log({ month, day, hour }, availabilityMap[month]?.[day]?.[hour]);
-
-  return availabilityMap[month]?.[day]?.[hour]
 }

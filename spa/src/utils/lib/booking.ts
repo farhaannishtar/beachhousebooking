@@ -91,6 +91,12 @@ export async function checkForDoubleBooking(booking: BookingDB): Promise<{ doubl
   if (booking.bookingType == 'Stay') {
     for (let property of booking.properties) {
       let events = await listEvents(property, booking.startDateTime, booking.endDateTime);
+      events = events.filter((e) => {
+        return booking.calendarIds
+          ? booking.calendarIds[property] !== e.id
+          : true;
+      });
+      
       if (events.length > 0) {
         return { doubleBooking: true, error: `Double booking detected for this booking for the property ${property} for dates ${booking.startDateTime} to ${booking.endDateTime}` };
       }
@@ -99,6 +105,12 @@ export async function checkForDoubleBooking(booking: BookingDB): Promise<{ doubl
     for (let event of booking.events) {
       for (let property of event.properties) {
         let events = await listEvents(property, event.startDateTime, event.endDateTime);
+        events = events.filter((e) => {
+          return event.calendarIds
+            ? event.calendarIds[property] !== e.id
+            : true;
+        });
+        
         if (events.length > 0) {
           return { doubleBooking: true, error: `Double booking detected for this booking for event ${event.eventName}, property ${property} for dates ${event.startDateTime} to ${event.endDateTime}` };
         }

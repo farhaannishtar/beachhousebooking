@@ -8,10 +8,7 @@ import Properties from "./Properties";
 import ToggleButton from "./ui/ToggleButton";
 import * as yup from "yup";
 import moment from "moment-timezone";
-import {
-  generateHourAvailabilityMapGivenStartDate,
-  checkIfDateIsEligible,
-} from "@/utils/calendarHelpers";
+import BaseModalComponent from "./ui/BaseModal";
 
 const properties = Object.values(Property);
 
@@ -51,6 +48,8 @@ const CreateEventComponent: React.FC<CreateEventFormProps> = ({
     finalCost: 0,
     markForDeletion: false,
   });
+  const [exitModal, setExitModal] = useState<boolean>(false);
+
   useEffect(() => {
     console.log({ selectedEvent });
 
@@ -155,17 +154,7 @@ const CreateEventComponent: React.FC<CreateEventFormProps> = ({
 
           const endDate = moment(event.endDateTime);
           const startDate = moment(value);
-          return (
-            startDate.isBefore(endDate) &&
-            checkIfDateIsEligible(
-              new Date(event.endDateTime),
-              endDateRef.current?.availabilityMap
-            ) &&
-            checkIfDateIsEligible(
-              new Date(event.startDateTime),
-              startDateRef.current?.availabilityMap
-            )
-          );
+          return startDate.isBefore(endDate);
         }
       ),
   });
@@ -212,10 +201,24 @@ const CreateEventComponent: React.FC<CreateEventFormProps> = ({
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center h-[72px]">
+      {/* Exit modal */}
+      <BaseModalComponent
+        openModal={!!exitModal}
+        message={
+          "You have unsaved changes. Are you sure you want to leave this page without saving?"
+        }
+        onClose={() => setExitModal(false)}
+        onOk={() => {
+          cancelAddEvent();
+          setExitModal(false);
+        }}
+      />
+      <div className="flex items-center h-[72px] sticky z-50 bg-white top-0">
         <span
           className=" material-symbols-outlined cursor-pointer hover:text-selectedButton"
-          onClick={cancelAddEvent}
+          onClick={() => {
+            setExitModal(true);
+          }}
         >
           arrow_back
         </span>
