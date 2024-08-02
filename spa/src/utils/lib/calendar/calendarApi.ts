@@ -1,6 +1,6 @@
 import { google, calendar_v3 } from 'googleapis';
 import { JWT } from 'google-auth-library';
-import { Property, getCalendarKey } from './bookingType';
+import { Property, getCalendarKey } from '../bookingType';
 
 
 

@@ -1,5 +1,5 @@
 import { Property } from "./bookingType";
-import { listEvents } from "./calendar";
+import { listEvents } from "./calendar/calendarApi";
 
 export interface TimeSlot {
     start: string;

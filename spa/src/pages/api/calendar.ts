@@ -1,10 +1,8 @@
 import { BookingDB, BookingForm, Property, convertStringToProperty } from '@/utils/lib/bookingType';
-import { deleteBooking, fetchBooking, mutateBookingState } from '@/utils/lib/booking';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { fetchUser, saveUser, verifyAndGetPayload } from '@/utils/lib/auth';
-import { listEvents } from '@/utils/lib/calendar';
 import { Month, TimeSlot, generateHourAvailabilityMap, getTimeSlots, monthConvert } from '@/utils/lib/availabilityMap';
 import { removeSpacesAndCapitalize } from '@/utils/lib/helper';
+import { fetchBooking } from '@/utils/lib/db';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   switch (req.method) {
