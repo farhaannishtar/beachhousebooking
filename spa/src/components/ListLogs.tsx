@@ -59,8 +59,11 @@ export default function ListLogs() {
 
   //Loading data
   const [loading, setLoading] = useState<boolean>(false);
+  const [loadingForward, setLoadingForward] = useState<boolean>(false);
   async function fetchData(filters: Filter, searchText?: string) {
     setLoading(true);
+    setLoadingForward(true);
+
     const requestId = new Date().getTime();
     latestRequestRef.current = requestId;
     let bookingsData = supabase.from("bookings").select();
@@ -143,6 +146,7 @@ export default function ListLogs() {
       }
     }, 500);
     setLoading(false);
+    setLoadingForward(false);
     setFilterModalOpened(false);
   }
 
@@ -242,14 +246,30 @@ export default function ListLogs() {
       searchText ? searchText.toString() : undefined
     );
   }, [query]);
+
   const handleChangeSearch = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     setState((prevState) => ({
       ...prevState,
-      searchText: value.length > 0 ? value : null,
+      searchText: value.length > 0 ? value : "",
     }));
+    let pageQuery: {
+      searchText?: string;
+    };
+    pageQuery = { ...query, searchText: value };
+    if (!value) {
+      delete pageQuery.searchText;
+    }
+
+    router.push(
+      {
+        query: { ...pageQuery },
+      },
+      undefined,
+      { shallow: true }
+    );
   };
 
   const dates = (): string[] => {
@@ -365,6 +385,7 @@ export default function ListLogs() {
           numOfBookings = numOfBookings + 7;
           fetchData(filterState);
         }}
+        loading={loadingForward}
       >
         Load More
       </LoadingButton>

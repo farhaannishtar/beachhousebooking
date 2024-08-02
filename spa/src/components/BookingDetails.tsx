@@ -223,7 +223,7 @@ export default function BookingDetailsComponent({
       <div className="mb-6">
         {formState.pageToShow === Page.BookingPage && (
           <div>
-            <div className="flex items-center pt-2 justify-between">
+            <div className="flex items-center pt-2 justify-between sticky z-50 bg-white top-0 h-[72px]">
               <div className="flex items-center ">
                 <button
                   type="button"

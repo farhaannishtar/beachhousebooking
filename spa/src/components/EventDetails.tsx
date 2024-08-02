@@ -41,7 +41,7 @@ const EditEventComponent: React.FC<EditEventFormProps> = ({ cancelAddEvent, onEd
 
     return (
         <div className='flex flex-col gap-4'>
-            <div className='flex items-center h-[72px]' >
+            <div className='flex items-center h-[72px] sticky z-50 bg-white top-0 ' >
                 <span className=" material-symbols-outlined cursor-pointer hover:text-selectedButton" onClick={cancelAddEvent} >arrow_back</span>
                 <h1 className='text-lg font-bold leading-6 w-full text-center '>{selectedEvent?.eventId == undefined ? "Create Event" : selectedEvent.eventName}</h1>
 
