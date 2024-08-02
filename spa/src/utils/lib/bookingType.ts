@@ -118,7 +118,7 @@ export interface BookingForm {
   endDateTime: string | undefined;
   notes: string;
   properties: Property[];
-  status: "Inquiry" | "Quotation" | "Confirmed";
+  status: "Inquiry" | "Quotation" | "Preconfirmed" | "Confirmed";
   followUpDate?: string | undefined;
   events: Event[];
   costs: Cost[];
