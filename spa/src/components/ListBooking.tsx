@@ -427,8 +427,8 @@ export default function ListBooking() {
             </span></div>
         }
         {
-          filterState.properties && filterState.properties.map(p => {
-            return <div className="flex gap-4 items-center rounded-xl border-[1px] border-typo_dark-300 px-4 py-1"><label className="label_text "> {p}</label>
+          filterState.properties && filterState.properties.map((p,index) => {
+            return <div key={index} className="flex gap-4 items-center rounded-xl border-[1px] border-typo_dark-300 px-4 py-1"><label className="label_text "> {p}</label>
               <span
                 className=" material-symbols-outlined cursor-pointer "
                 onClick={() => {
