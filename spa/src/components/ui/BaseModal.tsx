@@ -4,15 +4,23 @@ import { useState, useEffect } from 'react';
 
 interface BaseModalProps {
   openModal?: boolean;
+  loading?: boolean;
   message?: string;
+  okText?: string;
+  noText?: string;
   onClose: () => void;
   onOk?: () => void;
+  onNo?: () => void;
 }
 const BaseModalComponent: React.FC<BaseModalProps> = ({
   message,
+  loading,
   openModal,
   onClose,
   onOk,
+  onNo,
+  okText,
+  noText
 }) => {
   useEffect(() => {
     setOpen(!!openModal);
@@ -38,10 +46,13 @@ const BaseModalComponent: React.FC<BaseModalProps> = ({
           {message}
         </Modal.Body>
         <Modal.Footer>
-          <Button onClick={onOk ? onOk : handleClose} appearance="primary">
-            Ok
+          <Button onClick={onOk ? onOk : handleClose} appearance="primary" loading={loading} >
+            {okText ? okText : 'Ok'}
           </Button>
-          <Button onClick={handleClose} appearance="subtle">
+          {onNo && <Button onClick={onNo} appearance="default" loading={loading}>
+            {noText ? noText : 'No'}
+          </Button>}
+          <Button onClick={handleClose} appearance="subtle" loading={loading}>
             Cancel
           </Button>
         </Modal.Footer>

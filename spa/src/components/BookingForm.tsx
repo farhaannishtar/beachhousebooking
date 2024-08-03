@@ -62,6 +62,9 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
   const [isFormSubmitted, setIsFormSubmitted] = useState<boolean>(false);
   const [errorModal, setErrorModal] = useState<string>("");
   const [exitModal, setExitModal] = useState<boolean>(false);
+  const [edited, setEdited] = useState<boolean>(false);
+  const submitBtnRef = useRef<any>(null)
+  const formRef = useRef<any>(null)
   useEffect(() => {
     if (bookingId) {
       supabase
@@ -202,6 +205,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
       },
     }));
     setIsSwitchOn(!EventStaySwitchValue);
+    setEdited(true)
   };
   //********************** Global Params and methods **********************
   const [loading, setLoading] = useState<boolean>(false);
@@ -228,6 +232,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
         },
       };
     });
+    setEdited(true)
   };
   const handleDeleteEvent = (event: Event) => {
     setFormState((prevState) => {
@@ -252,6 +257,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
       };
     });
     handlePageChange(Page.BookingPage);
+    setEdited(true);
   };
   //**********************End Events settings **********************
 
@@ -275,6 +281,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
         totalCost: updatedCosts.reduce((acc, cost) => acc + cost.amount, 0),
       },
     }));
+    setEdited(true)
   };
 
   const addCost = (name?: string) => {
@@ -288,6 +295,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
       },
     }));
     setOpenedDropDown(false);
+    setEdited(true)
   };
 
   const removeEventCost = (costIndex: number) => {
@@ -300,6 +308,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
         totalCost: updatedCosts.reduce((acc, cost) => acc + cost.amount, 0),
       },
     }));
+    setEdited(true)
   };
   //**********************End Stay settings **********************
 
@@ -319,7 +328,9 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
         outstanding: afterTaxTotal - formState.form.paid,
       },
     }));
+
   }, [formState.form.totalCost]);
+  //Add tax switcher
   const [addTax, setAddTax] = useState<boolean>(false);
   const addTaxChanged = (e: ChangeEvent<HTMLInputElement>) => {
     const { checked } = e.target;
@@ -337,6 +348,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
       },
     }));
     setAddTax(checked);
+    setEdited(true)
   };
 
   //**********************End tax settings **********************
@@ -352,6 +364,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
         payments: [...newPayments],
       },
     }));
+    setEdited(true)
   };
   const removePayment = (index: Number) => {
     const updatedPayments = formState.form.payments.filter(
@@ -370,6 +383,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
         outstanding: prevState.form.afterTaxTotal - updatedPaid,
       },
     }));
+    setEdited(true)
   };
   const handlePaymentChange = (name: string, value: string, index: number) => {
     const updatedPayments = [...formState.form.payments];
@@ -391,6 +405,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
         outstanding: prevState.form.afterTaxTotal - updatedPaid,
       },
     }));
+    setEdited(true)
   };
 
   //********************** End Payment settings **********************
@@ -410,6 +425,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
         },
       },
     }));
+    setEdited(true)
   };
   //********************** End Security deposit settings **********************
   const [showSecurityDeposit, setShowSecurityDeposit] =
@@ -432,6 +448,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
       setShowSecurityDeposit(false);
       setShowReturnDeposit(false);
     } else setShowSecurityDeposit(true);
+    setEdited(true)
   };
   const onReturnDepositClicked = () => {
     if (showReturnDeposit) {
@@ -448,6 +465,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
       }));
       setShowReturnDeposit(false);
     } else setShowReturnDeposit(true);
+    setEdited(true)
   };
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -460,6 +478,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
         [name]: value,
       },
     }));
+    setEdited(true)
   };
 
   const handlePageChange = (showPage: Page) => {
@@ -483,6 +502,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
         },
       },
     }));
+    setEdited(true)
   };
 
   const handleDateChange = (name: string, value: string | null) => {
@@ -493,6 +513,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
         [name]: value,
       },
     }));
+    setEdited(true)
   };
   const phoneRegExp = /^\+?(?:[0-9]\s?){6,14}[0-9]$/;
   const validationSchema = yup.object().shape({
@@ -553,7 +574,9 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
         setErrorModal(error?.msg);
       }
     }
+    setExitModal(false);
     setLoading(false);
+
   };
 
   const deleteCurrentBooking = async () => {
@@ -643,14 +666,20 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
           "You have unsaved changes. Are you sure you want to leave this page without saving?"
         }
         onClose={() => setExitModal(false)}
+        okText="Save"
+        noText="Don't save"
         onOk={() => {
-          console.log("on ok");
+          formRef.current.requestSubmit()
+
+        }}
+        onNo={() => {
 
           router.back();
           setExitModal(false);
         }}
+        loading={loading}
       />
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} ref={formRef}>
         {formState.pageToShow === Page.BookingPage && (
           <div>
             <div className="flex items-center pt-2 justify-between h-[72px] sticky z-50 bg-white top-0">
@@ -658,7 +687,12 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                 <button
                   type="button"
                   onClick={() => {
-                    setExitModal(true);
+                    if (edited)
+                      setExitModal(true);
+                    else {
+                      router.back();
+                      setExitModal(false);
+                    }
                   }}
                 >
                   <svg
@@ -745,15 +779,31 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                   disabled={!!bookingId}
                 />
               </div>
+              {/**Status selector */}
+              <div className="flex flex-col gap-y-4">
+
+                <div className="flex items-center">
+                  <p className="text-base font-bold leading-normal">Status</p>
+                </div>
+                <select
+                  className="select select-bordered w-full bg-inputBoxbg w-full"
+                  name="status"
+                  value={formState.form.status}
+                  onChange={handleChange}
+                >
+                  <option value="Inquiry">Inquiry</option>
+                  <option value="Quotation">Quotation</option>
+                  <option value="Confirmed">Confirmed</option>
+                  <option value="Preconfirmed">Preconfirmed</option>
+                </select>
+
+              </div>
               {/* Put properties before start date  */}
-              {formState.form.status !== "Inquiry" &&
-                formState.form.bookingType == "Stay" && (
-                  <Properties
-                    properties={formState.form.properties ?? []}
-                    setFormState={setFormState}
-                  />
-                )}
-              {!eventNotInquery && (
+              <Properties
+                properties={formState.form.properties ?? []}
+                setFormState={setFormState}
+              />
+              {(!eventNotInquery || formState.form.bookingType == 'Stay') && (
                 <div className="flex gap-x-2 w-full">
                   <div className="w-1/2">
                     <DateTimePickerInput
@@ -772,10 +822,10 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                     />
                     {formErrors.startDateTime ===
                       "Start date and time is required" && (
-                      <div role="alert" className="text-red-500 p-1 mt-1">
-                        <span>Start Date is invalid</span>
-                      </div>
-                    )}
+                        <div role="alert" className="text-red-500 p-1 mt-1">
+                          <span>Start Date is invalid</span>
+                        </div>
+                      )}
                   </div>
                   <div className="w-1/2">
                     <DateTimePickerInput
@@ -794,15 +844,15 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                     />
                     {formErrors.startDateTime ===
                       "Start date and time must be before the end date and time" && (
-                      <div role="alert" className="text-red-500 p-1 mt-1">
-                        <span>End Date is invalid</span>
-                      </div>
-                    )}
+                        <div role="alert" className="text-red-500 p-1 mt-1">
+                          <span>End Date is invalid</span>
+                        </div>
+                      )}
                   </div>
                 </div>
               )}
               <div className="flex gap-3 flex-wrap">
-                {formState.form.bookingType === "Event" && !eventNotInquery && (
+                {(!eventNotInquery || formState.form.bookingType == 'Stay') && (
                   <BaseInput
                     className="flex-1"
                     preIcon="tag"
@@ -834,29 +884,8 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                   />
                 </label>
               </div>
-              {formState.form.status === "Inquiry" && (
-                <Properties
-                  properties={formState.form.properties ?? []}
-                  setFormState={setFormState}
-                />
-              )}
-              <div>
-                <label className="flex pl-20 gap-x-4">
-                  <div className="flex items-center">
-                    <p className="text-base font-bold leading-normal">Status</p>
-                  </div>
-                  <select
-                    className="select select-bordered w-full bg-inputBoxbg"
-                    name="status"
-                    value={formState.form.status}
-                    onChange={handleChange}
-                  >
-                    <option value="Inquiry">Inquiry</option>
-                    <option value="Quotation">Quotation</option>
-                    <option value="Confirmed">Confirmed</option>
-                  </select>
-                </label>
-              </div>
+
+
               <div>
                 <label className="flex pl-16 gap-x-4">
                   <div className="flex items-center">
@@ -1196,7 +1225,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                       <label className="label_text">Amount received:</label>
                     )}
                     {showSecurityDeposit ||
-                    formState.form?.securityDeposit?.originalSecurityAmount ? (
+                      formState.form?.securityDeposit?.originalSecurityAmount ? (
                       <div className="cost-list flex flex-col gap-4">
                         <div className="flex flex-wrap items-center ">
                           <select
@@ -1263,50 +1292,50 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                         )}
                         {(showReturnDeposit ||
                           formState.form?.securityDeposit?.dateReturned) && (
-                          <div className="flex flex-wrap items-center ">
-                            <DateTimePickerInput
-                              label="Date returned"
-                              name="dateReturned"
-                              value={
-                                formState.form?.securityDeposit?.dateReturned
-                              }
-                              showTime={false}
-                              onChange={(name, newDateTime) => {
-                                handleSecurityDepositChange(
-                                  "dateReturned",
-                                  newDateTime!
-                                );
-                              }}
-                              className="w-1/2"
-                            />
-                            <div className="flex items-center pl-2 gap-2 w-1/2">
-                              <BaseInput
-                                type="number"
-                                name="amountReturned"
+                            <div className="flex flex-wrap items-center ">
+                              <DateTimePickerInput
+                                label="Date returned"
+                                name="dateReturned"
                                 value={
-                                  formState.form?.securityDeposit
-                                    ?.amountReturned
+                                  formState.form?.securityDeposit?.dateReturned
                                 }
-                                className="!flex-1"
-                                placeholder="Amount returned"
-                                onChange={(e) => {
+                                showTime={false}
+                                onChange={(name, newDateTime) => {
                                   handleSecurityDepositChange(
-                                    "amountReturned",
-                                    e.target.value
+                                    "dateReturned",
+                                    newDateTime!
                                   );
                                 }}
+                                className="w-1/2"
                               />
-                              <span
-                                className=" material-symbols-outlined cursor-pointer hover:text-red-500"
-                                onClick={() => {
-                                  onReturnDepositClicked();
-                                }}
-                              >
-                                delete
-                              </span>
+                              <div className="flex items-center pl-2 gap-2 w-1/2">
+                                <BaseInput
+                                  type="number"
+                                  name="amountReturned"
+                                  value={
+                                    formState.form?.securityDeposit
+                                      ?.amountReturned
+                                  }
+                                  className="!flex-1"
+                                  placeholder="Amount returned"
+                                  onChange={(e) => {
+                                    handleSecurityDepositChange(
+                                      "amountReturned",
+                                      e.target.value
+                                    );
+                                  }}
+                                />
+                                <span
+                                  className=" material-symbols-outlined cursor-pointer hover:text-red-500"
+                                  onClick={() => {
+                                    onReturnDepositClicked();
+                                  }}
+                                >
+                                  delete
+                                </span>
+                              </div>
                             </div>
-                          </div>
-                        )}
+                          )}
                       </div>
                     ) : (
                       ""
@@ -1399,6 +1428,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
         {formState.pageToShow === Page.BookingPage && (
           <div className="flex items-center justify-center w-full mt-6">
             <LoadingButton
+              ref={submitBtnRef}
               loading={loading}
               type="submit"
               className="btn btn-wide bg-selectedButton text-center text-white text-base font-bold leading-normal flex-1"

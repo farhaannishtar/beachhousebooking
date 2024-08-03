@@ -48,6 +48,7 @@ const CreateEventComponent: React.FC<CreateEventFormProps> = ({
     finalCost: 0,
     markForDeletion: false,
   });
+  const [edited, setEdited] = useState<boolean>(false);
   const [exitModal, setExitModal] = useState<boolean>(false);
 
   useEffect(() => {
@@ -81,6 +82,7 @@ const CreateEventComponent: React.FC<CreateEventFormProps> = ({
         [name]: value,
       }));
     }
+    setEdited(true)
   };
   // Cost params and methods
   const [openedDropDown, setOpenedDropDown] = useState<Boolean>(false);
@@ -100,6 +102,7 @@ const CreateEventComponent: React.FC<CreateEventFormProps> = ({
       costs: updatedCosts,
       finalCost: updatedCosts.reduce((acc, cost) => acc + cost.amount, 0),
     }));
+    setEdited(true)
   };
 
   const addCost = (name?: string) => {
@@ -110,6 +113,7 @@ const CreateEventComponent: React.FC<CreateEventFormProps> = ({
       costs: newCosts,
     }));
     setOpenedDropDown(false);
+    setEdited(true)
   };
 
   const handleDateChange = (name: string, value: string | null) => {
@@ -117,6 +121,7 @@ const CreateEventComponent: React.FC<CreateEventFormProps> = ({
       ...prevEvent,
       [name]: value,
     }));
+    setEdited(true)
   };
 
   const removeEventCost = (costIndex: number) => {
@@ -126,6 +131,7 @@ const CreateEventComponent: React.FC<CreateEventFormProps> = ({
       costs: updatedCosts,
       finalCost: updatedCosts.reduce((acc, cost) => acc + cost.amount, 0),
     }));
+    setEdited(true)
   };
   // Form validation
   const [formErrors, setFormErrors] = useState({} as formDataToValidate);
@@ -189,7 +195,9 @@ const CreateEventComponent: React.FC<CreateEventFormProps> = ({
     if (isValid) {
       onAddEvent(event);
       cancelAddEvent();
+
     }
+    setExitModal(false);
   };
   //Start and end date fetchAvailabilities
   const startDateRef = useRef<any>(null);
@@ -208,16 +216,28 @@ const CreateEventComponent: React.FC<CreateEventFormProps> = ({
           "You have unsaved changes. Are you sure you want to leave this page without saving?"
         }
         onClose={() => setExitModal(false)}
+        okText="Save"
+        noText="Don't save"
         onOk={() => {
+          handleSubmit()
+        }}
+        onNo={() => {
           cancelAddEvent();
           setExitModal(false);
         }}
+
       />
+
       <div className="flex items-center h-[72px] sticky z-50 bg-white top-0">
         <span
           className=" material-symbols-outlined cursor-pointer hover:text-selectedButton"
           onClick={() => {
-            setExitModal(true);
+            if (edited)
+              setExitModal(true);
+            else {
+              cancelAddEvent();
+              setExitModal(false);
+            }
           }}
         >
           arrow_back
