@@ -17,6 +17,7 @@ import React, {
   FormEvent,
   useRef,
 } from "react";
+import format from "date-fns/format";
 import { useRouter } from "next/router";
 import { supabase } from "@/utils/supabase/client";
 import SearchInput from "./ui/SearchInput";
@@ -41,7 +42,7 @@ export default function ListBooking() {
   const searchParams = useSearchParams();
   const query = router.query;
   const latestRequestRef = useRef<number>(0);
-
+  const filterBlockRef = useRef<any>(null);
   const [state, setState] = useState<ListBookingsState>({
     searchText: null,
     date: null,
@@ -408,20 +409,95 @@ export default function ListBooking() {
         onFilterClick={toggleFilterDisplay}
         filterIsOn={checkEmptyFilterState()}
       />
-      {/* <div className="relative my-3 mb-4 flex w-full flex-wrap items-stretch bg-inputBoxbg rounded-xl">
-       
-         <div className="relative flex items-center m-0 block w-full rounded-xl border border-solid border-neutral-300 bg-transparent px-3 text-base font-normal leading-[1.6] outline-none transition duration-200 ease-in-out focus-within:border-primary dark:border-neutral-600">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="#617A8A" className="h-5 w-5 absolute z-50 left-3 pointer-events-none">
-            <path fillRule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clipRule="evenodd" />
-          </svg>
-          <input type="search" className="relative flex-auto w-full px-10 py-[0.25rem] placeholder:text-placeHolderText bg-inputBoxbg text-neutral-700 outline-none" placeholder="Search" aria-label="Search"
-            name="searchText"
-            value={state.searchText || undefined}
-            onChange={handleChangeSearch}
-          />
-         
-        </div> 
-      </div> */}
+      {/* Show filters if exists */}
+      <div className="flex gap-3 mt-4 flex-wrap">
+        {
+          filterState.checkIn && <div className="flex gap-4 items-center rounded-xl border-[1px] border-typo_dark-300 px-4 py-1"><label className="label_text "> {format(new Date(filterState.checkIn), "iii LLL d")}</label>
+            <span
+              className=" material-symbols-outlined cursor-pointer "
+              onClick={() => {
+                filterBlockRef.current.handleDateChange('checkIn', null);
+                setTimeout(() => {
+                  filterBlockRef.current.applyFilters()
+                }, 200);
+
+              }}
+            >
+              close
+            </span></div>
+        }
+        {
+          filterState.properties && filterState.properties.map(p => {
+            return <div className="flex gap-4 items-center rounded-xl border-[1px] border-typo_dark-300 px-4 py-1"><label className="label_text "> {p}</label>
+              <span
+                className=" material-symbols-outlined cursor-pointer "
+                onClick={() => {
+                  const clearedProperties = filterState.properties ? filterState.properties.filter(proprety => { return proprety !== p }) : []
+                  setFilterState(prevState => ({
+                    ...prevState,
+                    properties:
+                      clearedProperties.length ? [...clearedProperties] : null
+
+                  }))
+                  setTimeout(() => {
+                    filterBlockRef.current.applyFilters()
+                  }, 200);
+
+                }}
+              >
+                close
+              </span></div>
+          })
+        }
+        {
+          filterState.paymentPending && <div className="flex gap-4 items-center rounded-xl border-[1px] border-typo_dark-300 px-4 py-1"><label className="label_text "> Payment pending</label>
+            <span
+              className=" material-symbols-outlined cursor-pointer "
+              onClick={() => {
+                filterBlockRef.current.handleDateChange('paymentPending', null);
+                setTimeout(() => {
+                  filterBlockRef.current.applyFilters()
+                }, 200);
+
+              }}
+            >
+              close
+            </span></div>
+        }
+        {
+          filterState.starred && <div className="flex gap-4 items-center rounded-xl border-[1px] border-typo_dark-300 px-4 py-1"><label className="label_text "> Starred</label>
+            <span
+              className=" material-symbols-outlined cursor-pointer "
+              onClick={() => {
+                filterBlockRef.current.handleDateChange('starred', null);
+                setTimeout(() => {
+                  filterBlockRef.current.applyFilters()
+                }, 200);
+
+              }}
+            >
+              close
+            </span></div>
+        }
+        {(filterState.checkIn || filterState.properties || filterState.paymentPending || filterState.starred) && <div onClick={() => {
+          setFilterState({
+            checkIn: null,
+            properties: null,
+            starred: null,
+            paymentPending: null,
+          })
+          setTimeout(() => {
+            filterBlockRef.current.applyFilters()
+          }, 200);
+
+        }} className="flex gap-4 items-center rounded-xl border-[1px] border-typo_dark-300 px-4 py-1 cursor-pointer"><label className="label_text "> Clear All</label>
+          <span
+            className=" material-symbols-outlined  "
+
+          >
+            filter_list_off
+          </span></div>}
+      </div>
 
       <LoadingButton
         className=" border-[1px] border-selectedButton text-selectedButton my-4 w-full py-2 px-4 rounded-xl"
@@ -525,6 +601,7 @@ export default function ListBooking() {
         setFilterState={setFilterState}
         loading={loading}
         applyFilters={() => refreshPageQueries()}
+        ref={filterBlockRef}
       />
     </div>
   );

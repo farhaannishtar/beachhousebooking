@@ -1,4 +1,4 @@
-import React from "react";
+import React, { forwardRef, useImperativeHandle } from "react";
 import { Property } from "@/utils/lib/bookingType";
 import DateTimePickerInput from "./DateTimePickerInput/DateTimePickerInput";
 import Properties from "./Properties";
@@ -6,27 +6,31 @@ import LoadingButton from "./ui/LoadingButton";
 
 
 export interface Filter {
-    checkIn?: string | null;
-    properties?: Property[] | null;
-    starred?: boolean | null;
-    paymentPending?: boolean | null;
-    status?: "Inquiry" | "Quotation" | "Confirmed" | null;
-    createdTime?: string | null;
-    createdBy?: "Nusrat" | "Prabhu" | "Yasmeen" | "Rafica" | null
+  checkIn?: string | null;
+  properties?: Property[] | null;
+  starred?: boolean | null;
+  paymentPending?: boolean | null;
+  status?: "Inquiry" | "Quotation" | "Confirmed" | null;
+  createdTime?: string | null;
+  createdBy?: "Nusrat" | "Prabhu" | "Yasmeen" | "Rafica" | null
 }
 
 type BookingFilterProps = {
-    isFiltersOpened: boolean;
-    toggleFilterDisplay: () => void;
-    applyFilters: () => void;
-    filtersFor: "Logs" | "Bookings";
-    filterState: Filter;
-    setFilterState: React.Dispatch<React.SetStateAction<Filter>>;
-    loading: boolean
+  isFiltersOpened: boolean;
+  toggleFilterDisplay: () => void;
+  applyFilters: () => void;
+  filtersFor: "Logs" | "Bookings";
+  filterState: Filter;
+  setFilterState: React.Dispatch<React.SetStateAction<Filter>>;
+  loading: boolean
 };
 
-const BookingFilter: React.FC<BookingFilterProps> = ({ filtersFor, filterState, setFilterState, applyFilters, loading, isFiltersOpened, toggleFilterDisplay }) => {
-
+const BookingFilter = forwardRef<any, BookingFilterProps>(({ filtersFor, filterState, setFilterState, applyFilters, loading, isFiltersOpened, toggleFilterDisplay }, ref) => {
+  useImperativeHandle(ref, () => ({
+    filterChange,
+    handleDateChange,
+    applyFilters
+  }));
   const filterChange = ({ name, value }: { name: string, value: string | null | boolean }) => {
     setFilterState((prevfilterState: Filter) => ({
       ...prevfilterState,
@@ -57,10 +61,10 @@ const BookingFilter: React.FC<BookingFilterProps> = ({ filtersFor, filterState, 
         {/* filters */}
         <label className='subheading'>Filters</label>
         {filtersFor == 'Logs' && (
-          <DateTimePickerInput label="Pick Date" name="createdTime" onChange={handleDateChange} value={filterState.createdTime} className='filterDatePicker' cleanable={true} showTime={false}/>
+          <DateTimePickerInput label="Pick Date" name="createdTime" onChange={handleDateChange} value={filterState.createdTime} className='filterDatePicker' cleanable={true} showTime={false} />
         )}
         {filtersFor == 'Bookings' && (
-          <DateTimePickerInput label="Pick Date" name="checkIn" onChange={handleDateChange} value={filterState.checkIn} className='filterDatePicker' cleanable={true} showTime={false}/>
+          <DateTimePickerInput label="Pick Date" name="checkIn" onChange={handleDateChange} value={filterState.checkIn} className='filterDatePicker' cleanable={true} showTime={false} />
         )}
         {/* Referrals */}
 
@@ -71,11 +75,11 @@ const BookingFilter: React.FC<BookingFilterProps> = ({ filtersFor, filterState, 
             <label className='subheading'>Booking Types</label>
             <div className='flex items-center flex-wrap gap-4' >
               <div onClick={() => filterChange({ name: 'status', value: 'Inquiry' })} className={`badge badge-lg text-center w-32 ${filterState.status == 'Inquiry' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
-              } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Inquiries</div>
+                } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Inquiries</div>
               <div onClick={() => filterChange({ name: 'status', value: 'Quotation' })} className={`badge badge-lg text-center w-32 ${filterState.status == 'Quotation' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
-              } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Quotations</div>
+                } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Quotations</div>
               <div onClick={() => filterChange({ name: 'status', value: 'Confirmed' })} className={`badge badge-lg text-center w-32 ${filterState.status == 'Confirmed' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
-              } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Confirmed</div>
+                } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Confirmed</div>
             </div>
           </div>
         )}
@@ -84,9 +88,9 @@ const BookingFilter: React.FC<BookingFilterProps> = ({ filtersFor, filterState, 
         <label className='subheading'>Other</label>
         <div className='flex items-center flex-wrap gap-4' >
           <div onClick={() => filterChange({ name: 'paymentPending', value: !filterState.paymentPending })} className={`badge badge-lg text-center w-44 ${filterState.paymentPending ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
-          } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Payment Pending</div>
+            } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Payment Pending</div>
           <div onClick={() => filterChange({ name: 'starred', value: !filterState.starred })} className={`badge badge-lg text-center w-32 ${filterState.starred ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
-          } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Starred</div>
+            } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Starred</div>
 
 
         </div>
@@ -96,13 +100,13 @@ const BookingFilter: React.FC<BookingFilterProps> = ({ filtersFor, filterState, 
             <label className='subheading'>Employees</label>
             <div className='flex items-center flex-wrap gap-4' >
               <div onClick={() => filterChange({ name: 'createdBy', value: 'Nusrat' })} className={`badge badge-lg text-center w-32 ${filterState.createdBy == 'Nusrat' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
-              } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Nusrat</div>
+                } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Nusrat</div>
               <div onClick={() => filterChange({ name: 'createdBy', value: 'Prabhu' })} className={`badge badge-lg text-center w-32 ${filterState.createdBy == 'Prabhu' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
-              } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Prabhu</div>
+                } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Prabhu</div>
               <div onClick={() => filterChange({ name: 'createdBy', value: 'Yasmeen' })} className={`badge badge-lg text-center w-32 ${filterState.createdBy == 'Yasmeen' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
-              } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Yasmeen</div>
+                } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Yasmeen</div>
               <div onClick={() => filterChange({ name: 'createdBy', value: 'Rafica' })} className={`badge badge-lg text-center w-32 ${filterState.createdBy == 'Rafica' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
-              } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Rafica</div>
+                } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Rafica</div>
             </div>
           </div>
         )}
@@ -119,6 +123,7 @@ const BookingFilter: React.FC<BookingFilterProps> = ({ filtersFor, filterState, 
     </div>
 
   );
-};
+})
+BookingFilter.displayName = "BookingFilter";
 
 export default BookingFilter;

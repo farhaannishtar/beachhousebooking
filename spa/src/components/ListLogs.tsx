@@ -19,7 +19,7 @@ import React, {
   useRef,
 } from "react";
 import { useRouter } from "next/router";
-
+import format from "date-fns/format";
 import SearchInput from "./ui/SearchInput";
 import LoadingButton from "./ui/LoadingButton";
 import DateTimePickerInput from "./DateTimePickerInput/DateTimePickerInput";
@@ -39,6 +39,7 @@ export default function ListLogs() {
   const router = useRouter();
   const query = router.query;
   const latestRequestRef = useRef<number>(0);
+  const filterBlockRef = useRef<any>(null);
 
   //Scroll smoothely to page section
 
@@ -51,7 +52,7 @@ export default function ListLogs() {
   const [filterState, setFilterState] = useState<Filter>({
     status: null,
     createdTime: null,
-    properties: [],
+    properties: null,
     starred: null,
     paymentPending: null,
     createdBy: null,
@@ -379,6 +380,140 @@ export default function ListLogs() {
         onFilterClick={toggleFilterDisplay}
         filterIsOn={checkEmptyFilterState()}
       />
+      {/* Show filters if exists */}
+      <div className="flex gap-3 mt-4 flex-wrap">
+        {
+          filterState.checkIn && <div className="flex gap-4 items-center rounded-xl border-[1px] border-typo_dark-300 px-4 py-1"><label className="label_text "> {format(new Date(filterState.checkIn), "iii LLL d")}</label>
+            <span
+              className=" material-symbols-outlined cursor-pointer "
+              onClick={() => {
+                filterBlockRef.current.handleDateChange('checkIn', null);
+                setTimeout(() => {
+                  filterBlockRef.current.applyFilters()
+                }, 200);
+
+              }}
+            >
+              close
+            </span></div>
+        }
+        {
+          filterState.createdTime && <div className="flex gap-4 items-center rounded-xl border-[1px] border-typo_dark-300 px-4 py-1"><label className="label_text "> {format(new Date(filterState.createdTime), "iii LLL d")}</label>
+            <span
+              className=" material-symbols-outlined cursor-pointer "
+              onClick={() => {
+                filterBlockRef.current.handleDateChange('createdTime', null);
+                setTimeout(() => {
+                  filterBlockRef.current.applyFilters()
+                }, 200);
+
+              }}
+            >
+              close
+            </span></div>
+        }
+        {
+          filterState.properties && filterState.properties.map(p => {
+            return <div className="flex gap-4 items-center rounded-xl border-[1px] border-typo_dark-300 px-4 py-1"><label className="label_text "> {p}</label>
+              <span
+                className=" material-symbols-outlined cursor-pointer "
+                onClick={() => {
+                  const clearedProperties = filterState.properties ? filterState.properties.filter(proprety => { return proprety !== p }) : []
+                  setFilterState(prevState => ({
+                    ...prevState,
+                    properties:
+                      clearedProperties.length ? [...clearedProperties] : null
+
+                  }))
+                  setTimeout(() => {
+                    filterBlockRef.current.applyFilters()
+                  }, 200);
+
+                }}
+              >
+                close
+              </span></div>
+          })
+        }
+        {
+          filterState.createdBy && <div className="flex gap-4 items-center rounded-xl border-[1px] border-typo_dark-300 px-4 py-1"><label className="label_text "> Created By : {filterState.createdBy}</label>
+            <span
+              className=" material-symbols-outlined cursor-pointer "
+              onClick={() => {
+                filterBlockRef.current.handleDateChange('createdBy', null);
+                setTimeout(() => {
+                  filterBlockRef.current.applyFilters()
+                }, 200);
+
+              }}
+            >
+              close
+            </span></div>
+        }
+        {
+          filterState.status && <div className="flex gap-4 items-center rounded-xl border-[1px] border-typo_dark-300 px-4 py-1"><label className="label_text "> {filterState.status}</label>
+            <span
+              className=" material-symbols-outlined cursor-pointer "
+              onClick={() => {
+                filterBlockRef.current.handleDateChange('status', null);
+                setTimeout(() => {
+                  filterBlockRef.current.applyFilters()
+                }, 200);
+
+              }}
+            >
+              close
+            </span></div>
+        }
+        {
+          filterState.paymentPending && <div className="flex gap-4 items-center rounded-xl border-[1px] border-typo_dark-300 px-4 py-1"><label className="label_text "> Payment pending</label>
+            <span
+              className=" material-symbols-outlined cursor-pointer "
+              onClick={() => {
+                filterBlockRef.current.handleDateChange('paymentPending', null);
+                setTimeout(() => {
+                  filterBlockRef.current.applyFilters()
+                }, 200);
+
+              }}
+            >
+              close
+            </span></div>
+        }
+        {
+          filterState.starred && <div className="flex gap-4 items-center rounded-xl border-[1px] border-typo_dark-300 px-4 py-1"><label className="label_text "> Starred</label>
+            <span
+              className=" material-symbols-outlined cursor-pointer "
+              onClick={() => {
+                filterBlockRef.current.handleDateChange('starred', null);
+                setTimeout(() => {
+                  filterBlockRef.current.applyFilters()
+                }, 200);
+
+              }}
+            >
+              close
+            </span></div>
+        }
+        {(filterState.checkIn || filterState.properties || filterState.paymentPending || filterState.starred || filterState.createdBy || filterState.createdTime || filterState.status) && <div onClick={() => {
+          setFilterState({
+            checkIn: null,
+            properties: null,
+            starred: null,
+            paymentPending: null,
+          })
+          setTimeout(() => {
+            filterBlockRef.current.applyFilters()
+          }, 200);
+
+        }} className="flex gap-4 items-center rounded-xl border-[1px] border-error px-4 py-1 cursor-pointer"><label className="label_text !text-error"> Clear All</label>
+          <span
+            className=" material-symbols-outlined  text-error"
+
+          >
+            filter_list_off
+          </span></div>}
+      </div>
       <LoadingButton
         className=" border-[1px] border-selectedButton text-selectedButton my-4 w-full py-2 px-4 rounded-xl"
         onClick={() => {
@@ -484,6 +619,7 @@ export default function ListLogs() {
         setFilterState={setFilterState}
         loading={loading}
         applyFilters={() => refreshPageQueries()}
+        ref={filterBlockRef}
       />
     </div>
   );
