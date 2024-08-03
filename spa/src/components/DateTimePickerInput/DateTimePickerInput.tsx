@@ -59,8 +59,9 @@ const DateTimePickerInput = forwardRef<any, DateTimePickerInputProps>(
     if (value && date === null) {
       setDate(new Date(value))
     }
+    const [showOnlyTime, setShowOnlyTime] = useState<boolean>(false)
     let timeFormat = (showTime === false) ? "" : " hh:mmaa";
-
+    let dateTimeformat = !showOnlyTime ? `dd/MM/yy${timeFormat}` : timeFormat;
     return (
       <Stack spacing={10} direction="column" className={`${className}`}>
         <DatePicker
@@ -100,20 +101,10 @@ const DateTimePickerInput = forwardRef<any, DateTimePickerInputProps>(
             }
             return day;
           }}
+          onSelect={(date) => { showTime ? setShowOnlyTime(!showOnlyTime) : null }}
           onPrevMonth={(date) => setMonth(date)}
           onNextMonth={(date) => setMonth(date)}
-          format={`dd/MM/yy${timeFormat}`}
-          // shouldDisableDate={(date) => {
-          //   if (minDate) {
-          //     const minDateMoment = moment(minDate);
-          //     return minDateMoment.isAfter(date)
-          //   }
-          //   if (maxDate) {
-          //     const maxDateMoment = moment(maxDate);
-          //     return maxDateMoment.isBefore(date)
-          //   }
-          //   return false
-          // }}
+          format={dateTimeformat}
           shouldDisableHour={(hour, date) => {
             const dayNumber = date.getDate();
 
