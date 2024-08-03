@@ -134,6 +134,7 @@ const DateTimePickerInput = forwardRef<any, DateTimePickerInputProps>(
           // }}
           onOpen={() => {
             setMonth(date ? date : new Date());
+            fetchAvailabilities()
           }}
           value={date}
           appearance="subtle"

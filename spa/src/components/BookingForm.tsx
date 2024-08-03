@@ -588,11 +588,11 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
     router.push("/protected/booking/list");
   };
   //Show start end date inputs
-  const eventNotInquery =
-    formState.form.bookingType == "Event" &&
-    formState.form.status !== "Inquiry";
+  const isEvent =
+    formState.form.bookingType == "Event";
+
   const fixStartEndInputs = () => {
-    if (eventNotInquery && !!formState.form.events.length) {
+    if (isEvent && !!formState.form.events.length) {
       let firstDate = new Date("01/01/2050");
       let lastDate = new Date("01/01/1980");
       for (let index = 0; index < formState.form.events.length; index++) {
@@ -641,15 +641,10 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
   const startDateRef = useRef<any>(null);
   const endDateRef = useRef<any>(null);
 
-  useEffect(() => {
-    if (formState.form.status !== "Inquiry") {
-      startDateRef.current?.fetchAvailabilities();
-      endDateRef.current?.fetchAvailabilities();
-    } else {
-      startDateRef.current?.setavailabilityMap({});
-      endDateRef.current?.setavailabilityMap({});
-    }
-  }, [formState.form.properties]);
+  // useEffect(() => {
+  //   startDateRef.current?.fetchAvailabilities();
+  //   endDateRef.current?.fetchAvailabilities();
+  // }, [formState.form.properties]);
 
   return (
     <div className="w-full">
@@ -803,7 +798,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                 properties={formState.form.properties ?? []}
                 setFormState={setFormState}
               />
-              {(!eventNotInquery || formState.form.bookingType == 'Stay') && (
+              {(!isEvent) && (
                 <div className="flex gap-x-2 w-full">
                   <div className="w-1/2">
                     <DateTimePickerInput
@@ -852,7 +847,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                 </div>
               )}
               <div className="flex gap-3 flex-wrap">
-                {(!eventNotInquery || formState.form.bookingType == 'Stay') && (
+                {(!isEvent) && (
                   <BaseInput
                     className="flex-1"
                     preIcon="tag"
@@ -1160,18 +1155,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                                   );
                                 }}
                               />
-                              {/* <select
-                                className="select select-bordered  h-14 bg-inputBoxbg !flex-1"
-                                name="paymentMethod"
-                                value={payment.paymentMethod}
-                                onChange={(e) => {
-                                  handlePaymentChange('paymentMethod', e.target.value, index)
-                                }}
-                              >
-                                <option value="Cash">Cash</option>
-                                <option value="Card">Card</option>
-                                <option value="GPay">GPay</option>
-                              </select> */}
+
                             </div>
                           </div>
                           <span
