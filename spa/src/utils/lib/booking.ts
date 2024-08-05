@@ -128,7 +128,8 @@ export async function deleteBooking(bookingId: number) {
   if (bookings.length === 0) {
     throw new Error("Booking not found");
   }
-  let booking = bookings[0].json[0] as BookingDB;
+  let lastIndexOfJson = bookings[0].json.length - 1;
+  let booking = bookings[0].json[lastIndexOfJson] as BookingDB;
   if (booking.bookingType == 'Event') {
     for (let event of booking.events) {
       for (let property of event.properties) {
