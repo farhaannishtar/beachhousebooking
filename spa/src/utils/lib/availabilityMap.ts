@@ -132,9 +132,11 @@ export function generateHourAvailabilityMap(timeSlots: TimeSlot[], month: number
             const day = current.getUTCDate().toString().padStart(2, '0');
             const hour = current.getUTCHours().toString();
 
-            if (current.getMonth() == month - 1) {
+           
+              if (current.getMonth() == month - 1 && hourAvailabilityMap[month][day]) {
                 hourAvailabilityMap[month][day][hour] = false;
-            }
+              }
+            
 
 
             current.setHours(current.getHours() + 1);
