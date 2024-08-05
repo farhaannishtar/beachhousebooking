@@ -27,9 +27,6 @@ export async function insertEvent(calendarId: string, event: calendar_v3.Schema$
 }
 
 export async function listEvents(property: Property, minTime: string, maxTime: string): Promise<calendar_v3.Schema$Event[]> {
-  console.log('====================================');
-  console.log({property,minTime,maxTime});
-  console.log('====================================');
   let calendar = getCalendar();
   const res = await calendar.events.list({
     calendarId: getCalendarKey(property),
@@ -42,12 +39,17 @@ export async function listEvents(property: Property, minTime: string, maxTime: s
   return res.data.items ?? [];
 }
 
+export async function getEvent(calendarId: string, eventId: string): Promise<calendar_v3.Schema$Event> {
+  let calendar = getCalendar();
+  const res = await calendar.events.get({
+    calendarId: calendarId,
+    eventId: eventId,
+  });
+  return res.data;
+}
 
 export async function patchEvent(calendarId: string, eventId: string, event: calendar_v3.Schema$Event): Promise<void> {
   let calendar = getCalendar();
-  console.log('====================================');
-  console.log({patchEventEventId:eventId});
-  console.log('====================================');
   await calendar.events.patch({
     calendarId: calendarId,
     eventId: eventId,

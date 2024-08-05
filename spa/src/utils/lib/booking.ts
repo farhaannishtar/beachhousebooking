@@ -46,9 +46,6 @@ export async function checkForDoubleBooking(booking: BookingDB): Promise<{ doubl
 }
 
 export async function mutateBookingState(booking: BookingForm, user: User): Promise<number> {
-  console.log('====================================');
-  console.log({ booking });
-  console.log('====================================');
   let newBooking: BookingDB = {
     ...booking,
     startDateTime: booking.startDateTime!,
