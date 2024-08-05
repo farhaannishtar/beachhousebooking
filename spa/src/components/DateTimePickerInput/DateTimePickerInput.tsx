@@ -101,7 +101,7 @@ const DateTimePickerInput = forwardRef<any, DateTimePickerInputProps>(
             }
             return day;
           }}
-          onSelect={(date) => { showTime ? setShowOnlyTime(!showOnlyTime) : null }}
+          onSelect={(date) => { showTime == false ? null : setShowOnlyTime(!showOnlyTime); console.log({ showTime, showOnlyTime }) }}
           onPrevMonth={(date) => setMonth(date)}
           onNextMonth={(date) => setMonth(date)}
           format={dateTimeformat}

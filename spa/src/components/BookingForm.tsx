@@ -88,6 +88,8 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
             !!newData?.securityDeposit?.originalSecurityAmount
           );
           setShowReturnDeposit(!!newData?.securityDeposit?.amountReturned);
+
+
         });
     }
   }, [bookingId]);
@@ -166,26 +168,28 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
   ]);
   //check if booking type changed
   useEffect(() => {
-    if (formState.form.bookingType == "Event") {
-      setFormState((prevState) => ({
-        ...prevState,
-        form: {
-          ...prevState.form,
-          totalCost: 0,
-          costs: [],
-          outstanding: 0 - formState.form.paid,
-        },
-      }));
-    } else {
-      setFormState((prevState) => ({
-        ...prevState,
-        form: {
-          ...prevState.form,
-          totalCost: 0,
-          events: [],
-          outstanding: 0 - formState.form.paid,
-        },
-      }));
+    if (!bookingId) {
+      if (formState.form.bookingType == "Event") {
+        setFormState((prevState) => ({
+          ...prevState,
+          form: {
+            ...prevState.form,
+            totalCost: 0,
+            costs: [],
+            outstanding: 0 - formState.form.paid,
+          },
+        }));
+      } else {
+        setFormState((prevState) => ({
+          ...prevState,
+          form: {
+            ...prevState.form,
+            totalCost: 0,
+            events: [],
+            outstanding: 0 - formState.form.paid,
+          },
+        }));
+      }
     }
   }, [formState.form.bookingType]);
   useEffect(() => {
@@ -1206,124 +1210,124 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                         >{`Add security deposit`}</button>
                       </div>
                     ) : (
-                      <label className="label_text">Amount received:</label>
-                    )}
+                        <label className="label_text">Amount received:</label>
+                      )}
                     {showSecurityDeposit ||
                       formState.form?.securityDeposit?.originalSecurityAmount ? (
-                      <div className="cost-list flex flex-col gap-4">
-                        <div className="flex flex-wrap items-center ">
-                          <select
-                            className="select select-bordered  h-14 bg-inputBoxbg w-1/2"
-                            name="paymentMethod"
-                            value={
-                              formState.form?.securityDeposit?.paymentMethod
-                            }
-                            onChange={(e) => {
-                              handleSecurityDepositChange(
-                                "paymentMethod",
-                                e.target.value
-                              );
-                            }}
-                          >
-                            <option value="Cash">Cash</option>
-                            <option value="Card">Card</option>
-                            <option value="GPay">GPay</option>
-                          </select>
-
-                          <div className="flex items-center pl-2 gap-2 w-1/2">
-                            <BaseInput
-                              type="number"
-                              name="originAmount"
+                        <div className="cost-list flex flex-col gap-4">
+                          <div className="flex flex-wrap items-center ">
+                            <select
+                              className="select select-bordered  h-14 bg-inputBoxbg w-1/2"
+                              name="paymentMethod"
                               value={
-                                formState.form?.securityDeposit
-                                  ?.originalSecurityAmount
+                                formState.form?.securityDeposit?.paymentMethod
                               }
-                              className=" !flex-1"
-                              placeholder="Amount"
                               onChange={(e) => {
                                 handleSecurityDepositChange(
-                                  "originalSecurityAmount",
+                                  "paymentMethod",
                                   e.target.value
                                 );
                               }}
-                            />
-                            <span
-                              className=" material-symbols-outlined cursor-pointer hover:text-red-500"
-                              onClick={() => {
-                                onSecurityDepositClicked();
-                              }}
                             >
-                              delete
-                            </span>
-                          </div>
-                        </div>
+                              <option value="Cash">Cash</option>
+                              <option value="Card">Card</option>
+                              <option value="GPay">GPay</option>
+                            </select>
 
-                        {/* Return Deposit */}
-                        {!showReturnDeposit ? (
-                          <div className="flex items-center justify-end">
-                            <button
-                              type="button"
-                              className="text-center leading-6 h-12 py-3 px-8 bg-selectedButton text-white font-bold rounded-xl"
-                              onClick={() => {
-                                onReturnDepositClicked();
-                              }}
-                            >{`Returned security deposit`}</button>
-                          </div>
-                        ) : (
-                          <label className="label_text ">
-                            Amount returned:
-                          </label>
-                        )}
-                        {(showReturnDeposit ||
-                          formState.form?.securityDeposit?.dateReturned) && (
-                            <div className="flex flex-wrap items-center ">
-                              <DateTimePickerInput
-                                label="Date returned"
-                                name="dateReturned"
+                            <div className="flex items-center pl-2 gap-2 w-1/2">
+                              <BaseInput
+                                type="number"
+                                name="originAmount"
                                 value={
-                                  formState.form?.securityDeposit?.dateReturned
+                                  formState.form?.securityDeposit
+                                    ?.originalSecurityAmount
                                 }
-                                showTime={false}
-                                onChange={(name, newDateTime) => {
+                                className=" !flex-1"
+                                placeholder="Amount"
+                                onChange={(e) => {
                                   handleSecurityDepositChange(
-                                    "dateReturned",
-                                    newDateTime!
+                                    "originalSecurityAmount",
+                                    e.target.value
                                   );
                                 }}
-                                className="w-1/2"
                               />
-                              <div className="flex items-center pl-2 gap-2 w-1/2">
-                                <BaseInput
-                                  type="number"
-                                  name="amountReturned"
+                              <span
+                                className=" material-symbols-outlined cursor-pointer hover:text-red-500"
+                                onClick={() => {
+                                  onSecurityDepositClicked();
+                                }}
+                              >
+                                delete
+                            </span>
+                            </div>
+                          </div>
+
+                          {/* Return Deposit */}
+                          {!showReturnDeposit ? (
+                            <div className="flex items-center justify-end">
+                              <button
+                                type="button"
+                                className="text-center leading-6 h-12 py-3 px-8 bg-selectedButton text-white font-bold rounded-xl"
+                                onClick={() => {
+                                  onReturnDepositClicked();
+                                }}
+                              >{`Returned security deposit`}</button>
+                            </div>
+                          ) : (
+                              <label className="label_text ">
+                                Amount returned:
+                              </label>
+                            )}
+                          {(showReturnDeposit ||
+                            formState.form?.securityDeposit?.dateReturned) && (
+                              <div className="flex flex-wrap items-center ">
+                                <DateTimePickerInput
+                                  label="Date returned"
+                                  name="dateReturned"
                                   value={
-                                    formState.form?.securityDeposit
-                                      ?.amountReturned
+                                    formState.form?.securityDeposit?.dateReturned
                                   }
-                                  className="!flex-1"
-                                  placeholder="Amount returned"
-                                  onChange={(e) => {
+                                  showTime={false}
+                                  onChange={(name, newDateTime) => {
                                     handleSecurityDepositChange(
-                                      "amountReturned",
-                                      e.target.value
+                                      "dateReturned",
+                                      newDateTime!
                                     );
                                   }}
+                                  className="w-1/2"
                                 />
-                                <span
-                                  className=" material-symbols-outlined cursor-pointer hover:text-red-500"
-                                  onClick={() => {
-                                    onReturnDepositClicked();
-                                  }}
-                                >
-                                  delete
+                                <div className="flex items-center pl-2 gap-2 w-1/2">
+                                  <BaseInput
+                                    type="number"
+                                    name="amountReturned"
+                                    value={
+                                      formState.form?.securityDeposit
+                                        ?.amountReturned
+                                    }
+                                    className="!flex-1"
+                                    placeholder="Amount returned"
+                                    onChange={(e) => {
+                                      handleSecurityDepositChange(
+                                        "amountReturned",
+                                        e.target.value
+                                      );
+                                    }}
+                                  />
+                                  <span
+                                    className=" material-symbols-outlined cursor-pointer hover:text-red-500"
+                                    onClick={() => {
+                                      onReturnDepositClicked();
+                                    }}
+                                  >
+                                    delete
                                 </span>
+                                </div>
                               </div>
-                            </div>
-                          )}
-                      </div>
-                    ) : (
-                      ""
-                    )}
+                            )}
+                        </div>
+                      ) : (
+                        ""
+                      )}
                   </div>
                 </div>
               )}
