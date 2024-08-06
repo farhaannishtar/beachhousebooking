@@ -27,7 +27,6 @@ const handleGet = async (req: NextApiRequest, res: NextApiResponse) => {
 };
 
 const handlePost = async (req: NextApiRequest, res: NextApiResponse) => {
-  console.log('Post request');
   try {
     const payload = await verifyAndGetPayload(req);
     const booking: BookingForm = JSON.parse(req.body);

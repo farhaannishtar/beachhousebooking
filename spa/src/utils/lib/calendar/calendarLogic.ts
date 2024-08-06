@@ -1,16 +1,29 @@
 import { calendar_v3 } from "googleapis";
 import format from 'date-fns/format';
-import { deleteEvent, insertEvent, patchEvent } from "./calendarApi";
-import { BookingDB, getCalendarKey, Property } from "../bookingType";
+import { deleteEvent, getEvent, insertEvent, patchEvent } from "./calendarApi";
+import { BookingDB, Event, getCalendarKey, Property } from "../bookingType";
 
-async function handleCalendarEvent(calendarKey: string, eventId: string | undefined, eventData: calendar_v3.Schema$Event | undefined, isDelete: boolean = false) {
-    if (eventId) {
-      if (isDelete) {
-        await deleteEvent(calendarKey, eventId);
+async function handleCalendarEvent(
+  calendarKey: string, 
+  eventId: string | undefined, 
+  { eventData, isDelete }: { 
+    eventData?: calendar_v3.Schema$Event, 
+    isDelete?: boolean 
+  }
+) {
+  if (eventId) {
+    if (isDelete) {
+      await deleteEvent(calendarKey, eventId);
+    } else {
+      let event = await getEvent(calendarKey, eventId);
+      if (event.status === 'cancelled') {
+        let id = await insertEvent(calendarKey, eventData!);
+        return id
       } else {
         await patchEvent(calendarKey, eventId, eventData!);
       }
-    } else {
+    }
+  } else {
       return await insertEvent(calendarKey, eventData!);
     }
   }
@@ -32,15 +45,29 @@ async function handleCalendarEvent(calendarKey: string, eventId: string | undefi
   export async function addToCalendar(newBooking: BookingDB): Promise<BookingDB> {
     if (newBooking.status != "Confirmed" && newBooking.status != "Preconfirmed") return newBooking;
   
-    const isEvent = newBooking.bookingType === 'Event';
-    const items = isEvent ? newBooking.events : [newBooking];
+
+    let events = newBooking.events;
+    if (newBooking.bookingType === 'Stay') {
+      let event: Event = {
+        ...newBooking,
+        finalCost: newBooking.totalCost,
+        djService: false,
+        eventName: 'Stay',
+        valetService: false,
+        kitchenService: false, 
+        overNightStay: false, 
+        overNightGuests: 0, 
+        markForDeletion: false
+      };
+      events = [event]
+    } 
   
-    for (let i = 0; i < items.length; i++) {
-      const item: any = items[i];
-      const { summary, description } = createEventData(newBooking, isEvent ? item.eventName : '', isEvent ? item.finalCost : 0);
+    for (let i = 0; i < events.length; i++) {
+      const event: any = events[i];
+      const { summary, description } = createEventData(newBooking, event.eventName , event.finalCost);
   
-      const properties = isEvent ? item.properties : newBooking.properties;
-      const calendarIds = isEvent ? item.calendarIds : newBooking.calendarIds;
+      const properties = event.properties;
+      const calendarIds = event.calendarIds;
   
       for (const property of properties) {
         const calendarKey = getCalendarKey(property);
@@ -48,34 +75,40 @@ async function handleCalendarEvent(calendarKey: string, eventId: string | undefi
           summary,
           description,
           location: property,
-          start: { dateTime: item.startDateTime },
-          end: { dateTime: item.endDateTime },
+          start: { dateTime: event.startDateTime },
+          end: { dateTime: event.endDateTime },
           colorId: newBooking.status == 'Preconfirmed' ? '5' : null,
         };
   
         const existingId = calendarIds?.[property];
-        const id = await handleCalendarEvent(calendarKey, existingId, eventData, item.markForDeletion);
         
-        if (id && !existingId) {
-          if (isEvent) {
-            newBooking.events[i].calendarIds = { ...calendarIds, [property]: id };
-          } else {
+        const id = await handleCalendarEvent(calendarKey, existingId, {
+          eventData, 
+          isDelete: event.markForDeletion}
+        );
+        
+        if(id) {
+          if (newBooking.bookingType === 'Stay') {
             newBooking.calendarIds = { ...calendarIds, [property]: id };
+          } else {
+            newBooking.events[i].calendarIds = newBooking.events[i].calendarIds || {};
+            newBooking.events[i].calendarIds![property] = id
           }
-        }
+        } 
       }
   
       // Remove deleted properties from calendarIds
       if (calendarIds) {
         for (const property in calendarIds) {
           if (!properties.includes(property as Property)) {
-            await handleCalendarEvent(getCalendarKey(property as Property), calendarIds[property], undefined, true);
+            await handleCalendarEvent(getCalendarKey(property as Property), calendarIds[property], 
+            { isDelete: true });
             delete calendarIds[property];
           }
         }
       }
   
-      if (isEvent && item.markForDeletion) {
+      if (event.markForDeletion) {
         newBooking.events.splice(i, 1);
         i--;
       }
@@ -83,3 +116,5 @@ async function handleCalendarEvent(calendarKey: string, eventId: string | undefi
   
     return newBooking;
   }
+
+  

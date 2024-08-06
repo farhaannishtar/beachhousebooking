@@ -251,9 +251,9 @@ export function convertIndianTimeToUTC(
     indianDate.setMinutes(indianDate.getMinutes() - 330); // Adjust for IST offset (+5:30)
   }
 
-  console.log("====================================");
-  console.log({ indianDateTimeString, indianDate });
-  console.log("====================================");
+  // console.log("====================================");
+  // console.log({ indianDateTimeString, indianDate });
+  // console.log("====================================");
   return indianDate.toISOString();
 }
 
