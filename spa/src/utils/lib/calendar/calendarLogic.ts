@@ -28,12 +28,14 @@ async function handleCalendarEvent(
     }
   }
   
-  function createEventData(booking: BookingDB, eventName: string = '', eventAmount: number = 0) {
-    const summary = `${booking.client.name}(${booking.numberOfGuests} pax)${eventName ? ' ' + eventName : ''}`;
+  function createEventData(booking: BookingDB, event: Event) {
+    const numberOfGuests = booking.bookingType === 'Stay' ? booking.numberOfGuests : event.numberOfGuests;
+    const eventName = event.eventName === 'Stay' ? '' : event.eventName;
+    const summary = `${booking.client.name}(${numberOfGuests} pax)${eventName}`;
     const description = `
       Last Modified By: ${booking.updatedBy.name}
       Last Modified Date: ${format(new Date(`${booking.updatedDateTime || ''}`), "iii LLL d, hh:mmaa")}
-      ${eventAmount ? `Event Amount: ${eventAmount}\n` : ''}
+      ${booking.bookingType === 'Event' ? `Event Amount: ${event.finalCost}\n` : ''}
       Total Amount: ${booking.tax ? booking.afterTaxTotal : booking.totalCost} 
       Payment Method: ${booking.paymentMethod}
       Paid Amount: ${booking.payments.reduce((acc, payment) => acc + payment.amount, 0)}
@@ -64,7 +66,7 @@ async function handleCalendarEvent(
   
     for (let i = 0; i < events.length; i++) {
       const event: any = events[i];
-      const { summary, description } = createEventData(newBooking, event.eventName , event.finalCost);
+      const { summary, description } = createEventData(newBooking, event);
   
       const properties = event.properties;
       const calendarIds = event.calendarIds;
