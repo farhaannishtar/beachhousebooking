@@ -397,7 +397,7 @@ export default function ListBooking() {
 
         <span
           className=" material-symbols-outlined cursor-pointer hover:text-selectedButton"
-          onClick={() => router.push("/protected/booking/create")}
+          onClick={() => router.push("/protected/booking/create?returnTo=/protected/booking/list")}
         >
           add_circle
         </span>
