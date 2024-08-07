@@ -31,7 +31,8 @@ const DateTimePickerInput = forwardRef<any, DateTimePickerInputProps>(
     useImperativeHandle(ref, () => ({
       fetchAvailabilities,
       setavailabilityMap,
-      availabilityMap
+      availabilityMap,
+      setDate
     }));
     const [loading, setLoading] = useState<boolean>(false);
     const [date, setDate] = useState<Date | null>(null);

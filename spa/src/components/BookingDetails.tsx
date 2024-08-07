@@ -233,10 +233,10 @@ export default function BookingDetailsComponent({
                     if (returnTo) {
                       bookingId
                         ? router.push(
-                            { pathname: `${returnTo}`, query: query },
-                            undefined,
-                            { shallow: true }
-                          )
+                          { pathname: `${returnTo}`, query: query },
+                          undefined,
+                          { shallow: true }
+                        )
                         : router.push(`${returnTo}`);
                     } else {
                       router.push("/protected/booking/list");
@@ -264,7 +264,7 @@ export default function BookingDetailsComponent({
                 {bookingId ? formState.form.client.name : "Create Booking"}
               </h1>
               <Link
-                href={`${pathname}/edit`}
+                href={returnTo ? `${pathname}/edit?returnTo=${returnTo}` : `${pathname}/edit`}
                 className="material-symbols-outlined text-2xl !no-underline !text-typo_dark-300"
               >
                 edit
@@ -403,15 +403,15 @@ export default function BookingDetailsComponent({
                         let startTime = !event.startDateTime
                           ? format(new Date(), "iii LLL d, hh:mmaa")
                           : format(
-                              new Date(event.startDateTime),
-                              "iii LLL d, hh:mmaa"
-                            );
+                            new Date(event.startDateTime),
+                            "iii LLL d, hh:mmaa"
+                          );
                         let endTime = !event.endDateTime
                           ? format(new Date(), "iii LLL d, hh:mmaa")
                           : format(
-                              new Date(event.endDateTime),
-                              "iii LLL d, hh:mmaa"
-                            );
+                            new Date(event.endDateTime),
+                            "iii LLL d, hh:mmaa"
+                          );
 
                         return (
                           !event.markForDeletion && (
@@ -561,54 +561,54 @@ export default function BookingDetailsComponent({
                   {/* Security Deposit */}
                   {!!formState.form?.securityDeposit
                     ?.originalSecurityAmount && (
-                    <div className="flex flex-col gap-4">
-                      <p className="text-base font-bold leading-normal ">
-                        Security deposit
-                      </p>
-                      <div className="flex flex-col gap-2 ">
-                        <label className="label_text !font-semibold w-full text-right  flex items-center justify-start">
-                          <strong className=" w-2/3">Original amount:</strong>{" "}
-                          <span className="flex-1">
-                            ₹
-                            {formState.form?.securityDeposit?.originalSecurityAmount.toLocaleString(
-                              "en-IN"
-                            )}
-                          </span>{" "}
-                        </label>
-                        <label className="label_text !font-semibold w-full text-right  flex items-center justify-start">
-                          <strong className=" w-2/3">Payment method:</strong>{" "}
-                          <span className="flex-1">
-                            {formState.form?.securityDeposit?.paymentMethod}{" "}
-                          </span>
-                        </label>
-                      </div>
-
-                      {!!formState.form?.securityDeposit?.amountReturned && (
+                      <div className="flex flex-col gap-4">
+                        <p className="text-base font-bold leading-normal ">
+                          Security deposit
+                        </p>
                         <div className="flex flex-col gap-2 ">
                           <label className="label_text !font-semibold w-full text-right  flex items-center justify-start">
-                            <strong className=" w-2/3">Returned amount:</strong>{" "}
+                            <strong className=" w-2/3">Original amount:</strong>{" "}
                             <span className="flex-1">
                               ₹
-                              {formState.form?.securityDeposit?.amountReturned.toLocaleString(
+                              {formState.form?.securityDeposit?.originalSecurityAmount.toLocaleString(
                                 "en-IN"
                               )}
                             </span>{" "}
                           </label>
                           <label className="label_text !font-semibold w-full text-right  flex items-center justify-start">
-                            <strong className=" w-2/3">Returned date:</strong>{" "}
+                            <strong className=" w-2/3">Payment method:</strong>{" "}
                             <span className="flex-1">
-                              {format(
-                                new Date(
-                                  `${formState.form?.securityDeposit?.dateReturned || ""}`
-                                ),
-                                "iii LLL d, hh:mmaa"
-                              )}{" "}
+                              {formState.form?.securityDeposit?.paymentMethod}{" "}
                             </span>
                           </label>
                         </div>
-                      )}
-                    </div>
-                  )}
+
+                        {!!formState.form?.securityDeposit?.amountReturned && (
+                          <div className="flex flex-col gap-2 ">
+                            <label className="label_text !font-semibold w-full text-right  flex items-center justify-start">
+                              <strong className=" w-2/3">Returned amount:</strong>{" "}
+                              <span className="flex-1">
+                                ₹
+                                {formState.form?.securityDeposit?.amountReturned.toLocaleString(
+                                  "en-IN"
+                                )}
+                              </span>{" "}
+                            </label>
+                            <label className="label_text !font-semibold w-full text-right  flex items-center justify-start">
+                              <strong className=" w-2/3">Returned date:</strong>{" "}
+                              <span className="flex-1">
+                                {format(
+                                  new Date(
+                                    `${formState.form?.securityDeposit?.dateReturned || ""}`
+                                  ),
+                                  "iii LLL d, hh:mmaa"
+                                )}{" "}
+                              </span>
+                            </label>
+                          </div>
+                        )}
+                      </div>
+                    )}
                 </div>
               )}
             </div>

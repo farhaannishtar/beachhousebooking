@@ -572,7 +572,8 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
 
         if (id != null && id != "null") {
           // Assuming `id` is the success condition
-          router.push(`/protected/booking/${id}`);
+          router.push(returnTo ? `/protected/booking/${id}?returnTo=${returnTo}` : `/protected/booking/${id}`);
+
         }
       } catch (error: any) {
         setErrorModal(error?.msg);
@@ -589,7 +590,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
     await deleteBooking(bookingId!);
     setLoading(false);
 
-    router.push("/protected/booking/list");
+    router.push(returnTo ? returnTo : "/protected/booking/list");
   };
   //Show start end date inputs
   const isEvent =
@@ -644,7 +645,22 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
   //Start and end date fetchAvailabilities
   const startDateRef = useRef<any>(null);
   const endDateRef = useRef<any>(null);
+  useEffect(() => {
+    let startDate = formState.form.startDateTime ? new Date(formState.form.startDateTime) : null;
+    let endDate = formState.form.endDateTime ? new Date(formState.form.endDateTime) : null;
+    let endIsAfterStart = moment(endDate).isAfter(startDate);
 
+    if (startDate && !endIsAfterStart) {
+      let StartPlusOne = new Date();
+      StartPlusOne.setDate(startDate.getDate() + 1);
+      handleDateChange('endDateTime', null)
+      setTimeout(() => {
+        handleDateChange('endDateTime', StartPlusOne.toISOString())
+        endDateRef.current.setDate(StartPlusOne)
+      }, 500);
+    }
+
+  }, [formState.form.startDateTime]);
   // useEffect(() => {
   //   startDateRef.current?.fetchAvailabilities();
   //   endDateRef.current?.fetchAvailabilities();
@@ -798,10 +814,10 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
 
               </div>
               {/* Put properties before start date  */}
-              <Properties
+              {(!isEvent || (isEvent && formState.form.status == 'Inquiry')) && <Properties
                 properties={formState.form.properties ?? []}
                 setFormState={setFormState}
-              />
+              />}
               {(!isEvent || (isEvent && formState.form.status == 'Inquiry')) && (
                 <div className="flex gap-x-2 w-full">
                   <div className="w-1/2">
@@ -850,17 +866,17 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                   </div>
                 </div>
               )}
-              <div className="flex gap-3 flex-wrap">
-                {(!isEvent || (isEvent && formState.form.status == 'Inquiry')) && (
-                  <BaseInput
-                    className="flex-1"
-                    preIcon="tag"
-                    name="numberOfEvents"
-                    placeholder="Events"
-                    value={formState.form.numberOfEvents ?? 0}
-                    onChange={handleChange}
-                  />
-                )}
+              {(!isEvent || (isEvent && formState.form.status == 'Inquiry')) && <div className="flex gap-3 flex-wrap">
+
+                <BaseInput
+                  className="flex-1"
+                  preIcon="tag"
+                  name="numberOfEvents"
+                  placeholder="Events"
+                  value={formState.form.numberOfEvents ?? 0}
+                  onChange={handleChange}
+                />
+
                 <BaseInput
                   className="flex-1"
                   type="text"
@@ -870,7 +886,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                   value={formState.form.numberOfGuests}
                   onChange={handleChange}
                 />
-              </div>
+              </div>}
               <div>
                 <label>
                   <textarea
@@ -943,13 +959,17 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                           !event.markForDeletion && (
                             <div
                               key={`event-${index}`}
-                              className="flex items-center justify-between rounded-xl bg-typo_light-100 px-4 cursor-pointer"
+                              className="flex items-center justify-between rounded-xl bg-typo_light-100 p-4 cursor-pointer"
                               onClick={() => {
                                 setSelectedEvent(event);
                                 handlePageChange(Page.EventPage);
                               }}
                             >
-                              <h3 className="label_text p-0">{`${event.eventName}  (${event.numberOfGuests})`}</h3>
+                              <div className="flex flex-col gap-2">
+                                <label className="label_text p-0">{`${event.eventName}  (${event.numberOfGuests})`}</label>
+                                <label className="label_text p-0 break-words">{event.properties.toString()}</label>
+                              </div>
+
                               <span className="material-symbols-outlined ">
                                 chevron_right
                               </span>

@@ -53,6 +53,7 @@ const CreateEventComponent: React.FC<CreateEventFormProps> = ({
 
   useEffect(() => {
     console.log({ selectedEvent });
+    window.scrollTo({top: 0, behavior: 'smooth'});
 
     selectedEvent ? setEvent(selectedEvent) : null;
   }, []);
@@ -202,11 +203,23 @@ const CreateEventComponent: React.FC<CreateEventFormProps> = ({
   //Start and end date fetchAvailabilities
   const startDateRef = useRef<any>(null);
   const endDateRef = useRef<any>(null);
+  
   useEffect(() => {
-    startDateRef.current?.fetchAvailabilities();
-    endDateRef.current?.fetchAvailabilities();
-  }, [event.properties]);
+    let startDate = event.startDateTime ? new Date(event.startDateTime) : null;
+    let endDate = event.endDateTime ? new Date(event.endDateTime) : null;
+    let endIsAfterStart = moment(endDate).isAfter(startDate);
 
+    if (startDate && !endIsAfterStart) {
+      let StartPlusOne = new Date();
+      StartPlusOne.setDate(startDate.getDate() + 1);
+      handleDateChange('endDateTime', null)
+      setTimeout(() => {
+        handleDateChange('endDateTime', StartPlusOne.toISOString())
+        endDateRef.current.setDate(StartPlusOne)
+      }, 500);
+    }
+
+  }, [event.startDateTime]);
   return (
     <div className="flex flex-col gap-4">
       {/* Exit modal */}
