@@ -12,7 +12,7 @@ export interface Filter {
   paymentPending?: boolean | null;
   status?: "Inquiry" | "Quotation" | "Confirmed" | null;
   createdTime?: string | null;
-  createdBy?: "Nusrat" | "Prabhu" | "Yasmeen" | "Rafica" | null
+  createdBy?: "Indhu" | "Thejas" | "Yasmeen" | "Rafica" | null
 }
 
 type BookingFilterProps = {
@@ -99,10 +99,10 @@ const BookingFilter = forwardRef<any, BookingFilterProps>(({ filtersFor, filterS
           <div>
             <label className='subheading'>Employees</label>
             <div className='flex items-center flex-wrap gap-4' >
-              <div onClick={() => filterChange({ name: 'createdBy', value: 'Nusrat' })} className={`badge badge-lg text-center w-32 ${filterState.createdBy == 'Nusrat' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
-                } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Nusrat</div>
-              <div onClick={() => filterChange({ name: 'createdBy', value: 'Prabhu' })} className={`badge badge-lg text-center w-32 ${filterState.createdBy == 'Prabhu' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
-                } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Prabhu</div>
+              <div onClick={() => filterChange({ name: 'createdBy', value: 'Indhu' })} className={`badge badge-lg text-center w-32 ${filterState.createdBy == 'Indhu' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
+                } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Indhu</div>
+              <div onClick={() => filterChange({ name: 'createdBy', value: 'Thejas' })} className={`badge badge-lg text-center w-32 ${filterState.createdBy == 'Thejas' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
+                } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Thejas</div>
               <div onClick={() => filterChange({ name: 'createdBy', value: 'Yasmeen' })} className={`badge badge-lg text-center w-32 ${filterState.createdBy == 'Yasmeen' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
                 } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Yasmeen</div>
               <div onClick={() => filterChange({ name: 'createdBy', value: 'Rafica' })} className={`badge badge-lg text-center w-32 ${filterState.createdBy == 'Rafica' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'

@@ -13,7 +13,7 @@ type Month = "June" | "July" | "August" | "September" | "October" | "November" |
 export interface StatsState {
   filter: {
     month: Month,
-    employee: "Prabhu" | "Yasmeen" | "Rafica" | "Nusrat" | null
+    employee: "Thejas" | "Yasmeen" | "Rafica" | "Indhu" | null
     referral: "Google" | "Instagram" | "Facebook" | "Other" | null
   }
   rawReservationsResponse: any,
@@ -251,10 +251,10 @@ export default function StatsView() {
           {/* Employees */}
           <label className='subheading'>Employees</label>
           <div className='flex items-center flex-wrap gap-5' >
-            <div onClick={() => filterChange({ name: 'employee', value: 'Nusrat' })} className={`badge badge-lg text-center w-32 ${formState.filter.employee == 'Nusrat' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
-              } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Nusrat</div>
-            <div onClick={() => filterChange({ name: 'employee', value: 'Prabhu' })} className={`badge badge-lg text-center w-32 ${formState.filter.employee == 'Prabhu' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
-              } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Prabhu</div>
+            <div onClick={() => filterChange({ name: 'employee', value: 'Indhu' })} className={`badge badge-lg text-center w-32 ${formState.filter.employee == 'Indhu' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
+              } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Indhu</div>
+            <div onClick={() => filterChange({ name: 'employee', value: 'Thejas' })} className={`badge badge-lg text-center w-32 ${formState.filter.employee == 'Thejas' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
+              } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Thejas</div>
             <div onClick={() => filterChange({ name: 'employee', value: 'Yasmeen' })} className={`badge badge-lg text-center w-32 ${formState.filter.employee == 'Yasmeen' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
               } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Yasmeen</div>
             <div onClick={() => filterChange({ name: 'employee', value: 'Rafica' })} className={`badge badge-lg text-center w-32 ${formState.filter.employee == 'Rafica' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'

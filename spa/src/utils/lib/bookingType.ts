@@ -43,7 +43,7 @@ export const parseProperties = (propertiesString: string): Property[] => {
 export const parseCreatedBy = (
   createdByString: string
 ): Filter["createdBy"] => {
-  const validCreators = ["Nusrat", "Prabhu", "Yasmeen", "Rafica"] as const;
+  const validCreators = ["Indhu", "Thejas", "Yasmeen", "Rafica"] as const;
   return validCreators.find((creator) => creator === createdByString) || null;
 };
 // Utility function to parse status
