@@ -45,7 +45,10 @@ async function handleCalendarEvent(
   
   
   export async function addToCalendar(newBooking: BookingDB): Promise<BookingDB> {
-    if (newBooking.status != "Confirmed" && newBooking.status != "Preconfirmed") return newBooking;
+    if (newBooking.status != "Confirmed" && newBooking.status != "Preconfirmed") {
+      await deleteCalendarEvents(newBooking)
+      return newBooking;
+    }
   
 
     let events = newBooking.events;
@@ -91,7 +94,7 @@ async function handleCalendarEvent(
         
         if(id) {
           if (newBooking.bookingType === 'Stay') {
-            newBooking.calendarIds = { ...calendarIds, [property]: id };
+            newBooking.calendarIds = { ...newBooking.calendarIds, [property]: id };
           } else {
             newBooking.events[i].calendarIds = newBooking.events[i].calendarIds || {};
             newBooking.events[i].calendarIds![property] = id
@@ -120,3 +123,25 @@ async function handleCalendarEvent(
   }
 
   
+  export async function deleteCalendarEvents(booking: BookingDB) {
+    if (booking.bookingType == 'Event') {
+      for (let event of booking.events) {
+        for (let property of event.properties) {
+          if (event.calendarIds?.[property]) {
+            await deleteEvent(getCalendarKey(property), event.calendarIds![property]);
+          }
+        }
+        event.calendarIds = {}
+      }
+    }
+    //Booking type stay
+    else {
+      for (let property of booking.properties) {
+        console.log("deleting stay calendar ids", booking.calendarIds)
+        if (booking.calendarIds && booking.calendarIds[property]) {
+          await deleteEvent(getCalendarKey(property), booking.calendarIds![property]);
+        }
+      }
+      booking.calendarIds = {}
+    }
+  }

@@ -2,7 +2,7 @@
 import { User } from "./auth";
 
 import { deleteEvent, listEvents } from "./calendar/calendarApi";
-import { addToCalendar } from "./calendar/calendarLogic";
+import { addToCalendar, deleteCalendarEvents } from "./calendar/calendarLogic";
 import { BookingDB, BookingForm, getCalendarKey, convertIndianTimeToUTC } from "./bookingType";
 import { createBooking, fetchBooking, updateBooking } from "./db";
 import { query } from "./helper";
@@ -130,21 +130,6 @@ export async function deleteBooking(bookingId: number) {
   }
   let lastIndexOfJson = bookings[0].json.length - 1;
   let booking = bookings[0].json[lastIndexOfJson] as BookingDB;
-  if (booking.bookingType == 'Event') {
-    for (let event of booking.events) {
-      for (let property of event.properties) {
-        await deleteEvent(getCalendarKey(property), event.calendarIds![property]);
-      }
-    }
-  }
-  //Booking type stay
-  else {
-    for (let property of booking.properties) {
-      if (booking.calendarIds && booking.calendarIds[property]) {
-        await deleteEvent(getCalendarKey(property), booking.calendarIds![property]);
-      }
-    }
-  }
-
+  await deleteCalendarEvents(booking)
   query('DELETE FROM bookings WHERE id = $1', [bookingId]);
 }
