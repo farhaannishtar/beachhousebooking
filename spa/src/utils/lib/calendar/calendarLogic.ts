@@ -89,7 +89,10 @@ async function handleCalendarEvent(
         
         if(id) {
           if (newBooking.bookingType === 'Stay') {
-            newBooking.calendarIds = { ...calendarIds, [property]: id };
+            newBooking.calendarIds = {
+              ...newBooking.calendarIds,
+              [property]: id,
+            };
           } else {
             newBooking.events[i].calendarIds = newBooking.events[i].calendarIds || {};
             newBooking.events[i].calendarIds![property] = id
