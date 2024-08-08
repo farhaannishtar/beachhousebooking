@@ -127,7 +127,7 @@ export interface BookingForm {
   calendarIds?: { [key: string]: string } | undefined;
   refferral?: string | undefined;
   otherRefferal?: string | undefined;
-  paymentMethod: "Cash" | "Card" | "GPay";
+  paymentMethod: "Cash" | "Card" | "GPay" | "Bank transfert";
   starred: boolean;
   paid: number;
   outstanding: number;
@@ -135,7 +135,7 @@ export interface BookingForm {
   tax: number | undefined;
   securityDeposit: {
     originalSecurityAmount: number;
-    paymentMethod: "Cash" | "Card" | "GPay";
+    paymentMethod: "Cash" | "Card" | "GPay" | "Bank transfert";
     dateReturned: string | undefined;
     amountReturned: number;
   };
@@ -335,7 +335,7 @@ export interface Cost {
 export interface Payment {
   paymentId?: number | undefined;
   dateTime: string;
-  paymentMethod: "Cash" | "Card" | "GPay";
+  paymentMethod: "Cash" | "Card" | "GPay" | "Bank transfert";
   amount: number;
   receivedBy?: Employee | undefined;
 }

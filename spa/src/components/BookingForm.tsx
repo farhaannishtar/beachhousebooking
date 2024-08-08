@@ -684,11 +684,9 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
         okText="Save"
         noText="Don't save"
         onOk={() => {
-          formRef.current.requestSubmit()
-
+          formRef.current.requestSubmit();
         }}
         onNo={() => {
-
           router.back();
           setExitModal(false);
         }}
@@ -702,8 +700,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                 <button
                   type="button"
                   onClick={() => {
-                    if (edited)
-                      setExitModal(true);
+                    if (edited) setExitModal(true);
                     else {
                       router.back();
                       setExitModal(false);
@@ -796,7 +793,6 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
               </div>
               {/**Status selector */}
               <div className="flex flex-col gap-y-4">
-
                 <div className="flex items-center">
                   <p className="text-base font-bold leading-normal">Status</p>
                 </div>
@@ -811,14 +807,17 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                   <option value="Confirmed">Confirmed</option>
                   <option value="Preconfirmed">Preconfirmed</option>
                 </select>
-
               </div>
               {/* Put properties before start date  */}
-              {(!isEvent || (isEvent && formState.form.status == 'Inquiry')) && <Properties
-                properties={formState.form.properties ?? []}
-                setFormState={setFormState}
-              />}
-              {(!isEvent || (isEvent && formState.form.status == 'Inquiry')) && (
+              {(!isEvent ||
+                (isEvent && formState.form.status == "Inquiry")) && (
+                <Properties
+                  properties={formState.form.properties ?? []}
+                  setFormState={setFormState}
+                />
+              )}
+              {(!isEvent ||
+                (isEvent && formState.form.status == "Inquiry")) && (
                 <div className="flex gap-x-2 w-full">
                   <div className="w-1/2">
                     <DateTimePickerInput
@@ -837,10 +836,10 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                     />
                     {formErrors.startDateTime ===
                       "Start date and time is required" && (
-                        <div role="alert" className="text-red-500 p-1 mt-1">
-                          <span>Start Date is invalid</span>
-                        </div>
-                      )}
+                      <div role="alert" className="text-red-500 p-1 mt-1">
+                        <span>Start Date is invalid</span>
+                      </div>
+                    )}
                   </div>
                   <div className="w-1/2">
                     <DateTimePickerInput
@@ -859,34 +858,36 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                     />
                     {formErrors.startDateTime ===
                       "Start date and time must be before the end date and time" && (
-                        <div role="alert" className="text-red-500 p-1 mt-1">
-                          <span>End Date is invalid</span>
-                        </div>
-                      )}
+                      <div role="alert" className="text-red-500 p-1 mt-1">
+                        <span>End Date is invalid</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
-              {(!isEvent || (isEvent && formState.form.status == 'Inquiry')) && <div className="flex gap-3 flex-wrap">
+              {(!isEvent ||
+                (isEvent && formState.form.status == "Inquiry")) && (
+                <div className="flex gap-3 flex-wrap">
+                  <BaseInput
+                    className="flex-1"
+                    preIcon="tag"
+                    name="numberOfEvents"
+                    placeholder="Events"
+                    value={formState.form.numberOfEvents ?? 0}
+                    onChange={handleChange}
+                  />
 
-                <BaseInput
-                  className="flex-1"
-                  preIcon="tag"
-                  name="numberOfEvents"
-                  placeholder="Events"
-                  value={formState.form.numberOfEvents ?? 0}
-                  onChange={handleChange}
-                />
-
-                <BaseInput
-                  className="flex-1"
-                  type="text"
-                  placeholder="Guests"
-                  name="numberOfGuests"
-                  preIcon="group"
-                  value={formState.form.numberOfGuests}
-                  onChange={handleChange}
-                />
-              </div>}
+                  <BaseInput
+                    className="flex-1"
+                    type="text"
+                    placeholder="Guests"
+                    name="numberOfGuests"
+                    preIcon="group"
+                    value={formState.form.numberOfGuests}
+                    onChange={handleChange}
+                  />
+                </div>
+              )}
               <div>
                 <label>
                   <textarea
@@ -899,7 +900,6 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                   />
                 </label>
               </div>
-
 
               <div>
                 <label className="flex pl-16 gap-x-4">
@@ -967,7 +967,9 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                             >
                               <div className="flex flex-col gap-2">
                                 <label className="label_text p-0">{`${event.eventName}  (${event.numberOfGuests})`}</label>
-                                <label className="label_text p-0 break-words">{event.properties.toString()}</label>
+                                <label className="label_text p-0 break-words">
+                                  {event.properties.toString()}
+                                </label>
                               </div>
 
                               <span className="material-symbols-outlined ">
@@ -1179,7 +1181,6 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                                   );
                                 }}
                               />
-
                             </div>
                           </div>
                           <span
@@ -1233,7 +1234,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                       <label className="label_text">Amount received:</label>
                     )}
                     {showSecurityDeposit ||
-                      formState.form?.securityDeposit?.originalSecurityAmount ? (
+                    formState.form?.securityDeposit?.originalSecurityAmount ? (
                       <div className="cost-list flex flex-col gap-4">
                         <div className="flex flex-wrap items-center ">
                           <select
@@ -1252,6 +1253,9 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                             <option value="Cash">Cash</option>
                             <option value="Card">Card</option>
                             <option value="GPay">GPay</option>
+                            <option value="Bank transfert">
+                              Bank transfert
+                            </option>
                           </select>
 
                           <div className="flex items-center pl-2 gap-2 w-1/2">
@@ -1300,50 +1304,50 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                         )}
                         {(showReturnDeposit ||
                           formState.form?.securityDeposit?.dateReturned) && (
-                            <div className="flex flex-wrap items-center ">
-                              <DateTimePickerInput
-                                label="Date returned"
-                                name="dateReturned"
+                          <div className="flex flex-wrap items-center ">
+                            <DateTimePickerInput
+                              label="Date returned"
+                              name="dateReturned"
+                              value={
+                                formState.form?.securityDeposit?.dateReturned
+                              }
+                              showTime={false}
+                              onChange={(name, newDateTime) => {
+                                handleSecurityDepositChange(
+                                  "dateReturned",
+                                  newDateTime!
+                                );
+                              }}
+                              className="w-1/2"
+                            />
+                            <div className="flex items-center pl-2 gap-2 w-1/2">
+                              <BaseInput
+                                type="number"
+                                name="amountReturned"
                                 value={
-                                  formState.form?.securityDeposit?.dateReturned
+                                  formState.form?.securityDeposit
+                                    ?.amountReturned
                                 }
-                                showTime={false}
-                                onChange={(name, newDateTime) => {
+                                className="!flex-1"
+                                placeholder="Amount returned"
+                                onChange={(e) => {
                                   handleSecurityDepositChange(
-                                    "dateReturned",
-                                    newDateTime!
+                                    "amountReturned",
+                                    e.target.value
                                   );
                                 }}
-                                className="w-1/2"
                               />
-                              <div className="flex items-center pl-2 gap-2 w-1/2">
-                                <BaseInput
-                                  type="number"
-                                  name="amountReturned"
-                                  value={
-                                    formState.form?.securityDeposit
-                                      ?.amountReturned
-                                  }
-                                  className="!flex-1"
-                                  placeholder="Amount returned"
-                                  onChange={(e) => {
-                                    handleSecurityDepositChange(
-                                      "amountReturned",
-                                      e.target.value
-                                    );
-                                  }}
-                                />
-                                <span
-                                  className=" material-symbols-outlined cursor-pointer hover:text-red-500"
-                                  onClick={() => {
-                                    onReturnDepositClicked();
-                                  }}
-                                >
-                                  delete
-                                </span>
-                              </div>
+                              <span
+                                className=" material-symbols-outlined cursor-pointer hover:text-red-500"
+                                onClick={() => {
+                                  onReturnDepositClicked();
+                                }}
+                              >
+                                delete
+                              </span>
                             </div>
-                          )}
+                          </div>
+                        )}
                       </div>
                     ) : (
                       ""
