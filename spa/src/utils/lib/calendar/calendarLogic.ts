@@ -140,7 +140,6 @@ async function handleCalendarEvent(
     //Booking type stay
     else {
       for (let property of booking.properties) {
-        console.log("deleting stay calendar ids", booking.calendarIds)
         if (booking.calendarIds && booking.calendarIds[property]) {
           await deleteEvent(getCalendarKey(property), booking.calendarIds![property]);
         }

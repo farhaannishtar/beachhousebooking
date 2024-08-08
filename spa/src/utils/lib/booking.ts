@@ -3,7 +3,7 @@ import { User } from "./auth";
 
 import { deleteEvent, listEvents } from "./calendar/calendarApi";
 import { addToCalendar, deleteCalendarEvents } from "./calendar/calendarLogic";
-import { BookingDB, BookingForm, getCalendarKey, convertIndianTimeToUTC } from "./bookingType";
+import { BookingDB, BookingForm, getCalendarKey, convertIndianTimeToUTC, printInIndianTime } from "./bookingType";
 import { createBooking, fetchBooking, updateBooking } from "./db";
 import { query } from "./helper";
 
@@ -23,7 +23,8 @@ export async function checkForDoubleBooking(booking: BookingDB): Promise<{ doubl
       });
       
       if (events.length > 0) {
-        return { doubleBooking: true, error: `Double booking detected for this booking for the property ${property} for dates ${booking.startDateTime} to ${booking.endDateTime}` };
+        const summaries = events.map(event => event.summary).join(', ');
+        return { doubleBooking: true, error: `Double booking detected(${events.length}) for this ${property} from ${printInIndianTime(booking.startDateTime)} to ${printInIndianTime(booking.endDateTime)}.\n ${summaries} ` };
       }
     }
   } else {
