@@ -321,16 +321,27 @@ export default function BookingDetailsComponent({ bookingId }: BookingDetailsPro
                                             </p>
                                             {formState.form.events.map((event, index) => {
                                                 return (
-                                                    !event.markForDeletion && <div key={index} className='flex items-center justify-between rounded-xl bg-typo_light-100 p-4 cursor-pointer ' >
-                                                        <div className='flex flex-col gap-2'>
-                                                            <label className='label_text p-0'>{` ${event.eventName}  (${event.numberOfGuests}) (₹${event.finalCost.toLocaleString('en-IN')} )`}</label>
-                                                            <label className='label_text p-0'>{`${format(new Date(`${event.startDateTime || ''}`), "iii LLL d, hh:mmaa")} `}</label>
-                                                            <label className='label_text p-0'>{`${event.properties.toString()}`}</label>
-
-                                                        </div>
-                                                        <span className='material-symbols-outlined '>chevron_right</span>
+                                                  !event.markForDeletion && (
+                                                    <div
+                                                      key={index}
+                                                      className="flex items-center justify-between rounded-xl bg-typo_light-100 p-4 cursor-pointer "
+                                                    >
+                                                      <div className="flex flex-col gap-2">
+                                                        <label className="label_text p-0">{` ${event.eventName}  (${event.numberOfGuests}) (₹${event.finalCost.toLocaleString("en-IN")} )`}</label>
+                                                        {event.startDateTime && (
+                                                          <label className="label_text p-0">{`${format(new Date(`${event.startDateTime || ""}`), "iii LLL d, hh:mmaa")} `}</label>
+                                                        )}
+                                                        {event.endDateTime && (
+                                                          <label className="label_text p-0">{`${format(new Date(`${event.endDateTime || ""}`), "iii LLL d, hh:mmaa")} `}</label>
+                                                        )}
+                                                        <label className="label_text p-0">{`${event.properties.toString()}`}</label>
+                                                      </div>
+                                                      <span className="material-symbols-outlined ">
+                                                        chevron_right
+                                                      </span>
                                                     </div>
-                                                )
+                                                  )
+                                                );
                                             })}
 
 
