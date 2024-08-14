@@ -2,6 +2,7 @@ import { BookingForm } from '@/utils/lib/bookingType';
 import { deleteBooking, mutateBookingState } from '@/utils/lib/booking';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { fetchUser, saveUser, verifyAndGetPayload } from '@/utils/lib/auth';
+export const maxDuration = 60;
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   switch (req.method) {
