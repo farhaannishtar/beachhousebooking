@@ -122,26 +122,26 @@ export default function StatsView() {
         <span className="material-symbols-filled text-2xl cursor-pointer" onClick={() => toggleFilterModal()}>filter_alt</span>
       </div>
       <div className="flex flex-col gap-5">
-        <h1 className="title ">Summary for {formState.filter.month}</h1>
+        <h1 className="title-xl text-typo_dark-300 ">Summary for {formState.filter.month}</h1>
         <div className="flex flex-col  gap-5">
           <div className="flex gap-5">
-            <div className="flex-1 rounded-xl h-28 bg-typo_light-100 flex flex-col justify-end py-2 gap-5 px-6">
+            <div className="flex-1 rounded-xl h-28 bg-typo_light-100 flex flex-col justify-center py-2 gap-2 px-6">
               <label className="label_text !p-0 !font-medium">Inquiries</label>
-              <label className="title">{formState?.rawReservationsResponse?.monthly?.inquiriesCount}</label>
+              <label className="title-xl text-typo_dark-300">{formState?.rawReservationsResponse?.monthly?.inquiriesCount}</label>
             </div>
-            <div className="flex-1 rounded-xl h-28 bg-typo_light-100 flex flex-col justify-end py-2 gap-5 px-6">
+            <div className="flex-1 rounded-xl h-28 bg-typo_light-100 flex flex-col justify-center py-2 gap-2 px-6">
               <label className="label_text !p-0 !font-medium">Confirmed</label>
-              <label className="title">{formState?.rawReservationsResponse?.monthly?.confirmedCount}</label>
+              <label className="title-xl text-typo_dark-300">{formState?.rawReservationsResponse?.monthly?.confirmedCount}</label>
             </div>
           </div>
           <div className="flex gap-5">
-            <div className="flex-1 rounded-xl h-28 bg-typo_light-100 flex flex-col justify-end py-2 gap-5 px-6">
+            <div className="flex-1 rounded-xl h-28 bg-typo_light-100 flex flex-col justify-center py-2 gap-2 px-6">
               <label className="label_text !p-0 !font-medium">Conversion Rate</label>
-              <label className="title">{conversionRateForMonth ? conversionRateForMonth.toFixed(1) + '%' : 0}</label>
+              <label className="title-xl text-typo_dark-300">{conversionRateForMonth ? (Math.trunc(conversionRateForMonth) == conversionRateForMonth ? Math.trunc(conversionRateForMonth) : conversionRateForMonth.toFixed(1)) + '%' : 0}</label>
             </div>
-            <div className="flex-1 rounded-xl h-28 bg-typo_light-100 flex flex-col justify-end py-2 gap-5 px-6">
+            <div className="flex-1 rounded-xl h-28 bg-typo_light-100 flex flex-col justify-center py-2 gap-2 px-6">
               <label className="label_text !p-0 !font-medium"> Checkins</label>
-              <label className="title">{indianFormatter.format(formState?.rawCheckinsResponse?.monthly?.count)}</label>
+              <label className="title-xl text-typo_dark-300">{indianFormatter.format(formState?.rawCheckinsResponse?.monthly?.count)}</label>
             </div>
           </div>
 
@@ -149,26 +149,26 @@ export default function StatsView() {
       </div>
 
       <div className="flex flex-col gap-5">
-        <h1 className="title ">Summary for Today</h1>
+        <h1 className="title-xl text-typo_dark-300 ">Summary for Today</h1>
         <div className="flex flex-col  gap-5">
           <div className="flex gap-5">
-            <div className="flex-1 rounded-xl h-28 bg-typo_light-100 flex flex-col justify-end py-2 gap-5 px-6">
+            <div className="flex-1 rounded-xl h-28 bg-typo_light-100 flex flex-col justify-center py-2 gap-2 px-6">
               <label className="label_text !p-0 !font-medium">Inquiries</label>
-              <label className="title">{formState?.rawReservationsResponse?.daily[dayOfMonth]?.inquiriesCount}</label>
+              <label className="title-xl text-typo_dark-300">{formState?.rawReservationsResponse?.daily[dayOfMonth]?.inquiriesCount}</label>
             </div>
-            <div className="flex-1 rounded-xl h-28 bg-typo_light-100 flex flex-col justify-end py-2 gap-5 px-6">
+            <div className="flex-1 rounded-xl h-28 bg-typo_light-100 flex flex-col justify-center py-2 gap-2 px-6">
               <label className="label_text !p-0 !font-medium">Confirmed</label>
-              <label className="title">{formState?.rawReservationsResponse?.daily[dayOfMonth]?.confirmedCount}</label>
+              <label className="title-xl text-typo_dark-300">{formState?.rawReservationsResponse?.daily[dayOfMonth]?.confirmedCount}</label>
             </div>
           </div>
           <div className="flex gap-5">
-            <div className="flex-1 rounded-xl h-28 bg-typo_light-100 flex flex-col justify-end py-2 gap-5 px-6">
+            <div className="flex-1 rounded-xl h-28 bg-typo_light-100 flex flex-col justify-center py-2 gap-2 px-6">
               <label className="label_text !p-0 !font-medium">Conversion Rate</label>
-              <label className="title">{conversionRateDaily ? conversionRateDaily.toFixed(1) + '%' : 0}</label>
+              <label className="title-xl text-typo_dark-300">{conversionRateDaily ? (Math.trunc(conversionRateDaily) == conversionRateDaily ? Math.trunc(conversionRateDaily) : conversionRateDaily.toFixed(1)) + '%'  : 0}</label>
             </div>
-            <div className="flex-1 rounded-xl h-28 bg-typo_light-100 flex flex-col justify-end py-2 gap-5 px-6">
+            <div className="flex-1 rounded-xl h-28 bg-typo_light-100 flex flex-col justify-center py-2 gap-2 px-6">
               <label className="label_text !p-0 !font-medium"> Checkins</label>
-              <label className="title">{indianFormatter.format(formState?.rawCheckinsResponse?.daily[dayOfMonth]?.count)}</label>
+              <label className="title-xl text-typo_dark-300">{indianFormatter.format(formState?.rawCheckinsResponse?.daily[dayOfMonth]?.count)}</label>
             </div>
           </div>
         </div>
@@ -191,28 +191,28 @@ export default function StatsView() {
         <div className="flex flex-col gap-2">
           <div className="flex justify-between items-center">
             <label className="label_text !pt-0">Total Reservations Value</label>
-            <label className="label_text !pt-0 !font-semibold">{'₹' + (indianFormatter.format(formState?.rawReservationsResponse?.monthly?.confirmedSum))}</label>
+            <label className="label_text !pt-0 !font-semibold text-typo_dark-300">{'₹' + (indianFormatter.format(formState?.rawReservationsResponse?.monthly?.confirmedSum))}</label>
           </div>
           <div className="flex justify-between items-center">
             <label className="label_text">Total Tax Reservations Value</label>
-            <label className="label_text !font-semibold">{'₹' + (indianFormatter.format(formState?.rawReservationsResponse?.monthly?.taxTotal))}</label>
+            <label className="label_text !font-semibold text-typo_dark-300">{'₹' + (indianFormatter.format(formState?.rawReservationsResponse?.monthly?.taxTotal))}</label>
           </div>
           <div className="flex justify-between items-center">
             <label className="label_text">Average Reservation Value</label>
-            <label className="label_text !font-semibold">{'₹' + (indianFormatter.format(formState?.rawReservationsResponse?.monthly?.confirmedAvg))}</label>
+            <label className="label_text !font-semibold text-typo_dark-300">{'₹' + (indianFormatter.format(formState?.rawReservationsResponse?.monthly?.confirmedAvg))}</label>
           </div>
 
           <div className="flex justify-between items-center">
             <label className="label_text">Total Checkin Value</label>
-            <label className="label_text !font-semibold">{'₹' + (indianFormatter.format(formState?.rawCheckinsResponse?.monthly?.sum))}</label>
+            <label className="label_text !font-semibold text-typo_dark-300">{'₹' + (indianFormatter.format(formState?.rawCheckinsResponse?.monthly?.sum))}</label>
           </div>
           <div className="flex justify-between items-center">
             <label className="label_text">Total Tax Checkin Value</label>
-            <label className="label_text !font-semibold">{'₹' + (indianFormatter.format(formState?.rawCheckinsResponse?.monthly?.taxTotal))}</label>
+            <label className="label_text !font-semibold text-typo_dark-300">{'₹' + (indianFormatter.format(formState?.rawCheckinsResponse?.monthly?.taxTotal))}</label>
           </div>
           <div className="flex justify-between items-center">
             <label className="label_text">Average Checkin Value</label>
-            <label className="label_text !font-semibold">{'₹' + (indianFormatter.format(formState?.rawCheckinsResponse?.monthly?.average))}</label>
+            <label className="label_text !font-semibold text-typo_dark-300">{'₹' + (indianFormatter.format(formState?.rawCheckinsResponse?.monthly?.average))}</label>
           </div>
 
 
