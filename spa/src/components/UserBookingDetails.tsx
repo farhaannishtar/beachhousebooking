@@ -517,7 +517,7 @@ export default function BookingDetailsComponent({ bookingId }: BookingDetailsPro
                                         <span className="material-symbols-outlined text-xl text-warning">
                                             warning
                                         </span>
-                                        <p >No Refunds. No cancellations. 50% Paid In Advance.</p>
+                                        <p >No Refunds. No Cancellations. 50% Paid In Advance.</p>
                                     </div>
                                 </div>
                             </div>
