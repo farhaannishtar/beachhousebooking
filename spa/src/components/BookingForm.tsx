@@ -811,83 +811,83 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
               {/* Put properties before start date  */}
               {(!isEvent ||
                 (isEvent && formState.form.status == "Inquiry")) && (
-                <Properties
-                  properties={formState.form.properties ?? []}
-                  setFormState={setFormState}
-                />
-              )}
-              {(!isEvent ||
-                (isEvent && formState.form.status == "Inquiry")) && (
-                <div className="flex gap-x-2 w-full">
-                  <div className="w-1/2">
-                    <DateTimePickerInput
-                      ref={startDateRef}
-                      properties={formState.form.properties.toString()}
-                      checkAvailability="start"
-                      label={"Start Date"}
-                      onChange={handleDateChange}
-                      name="startDateTime"
-                      value={formState.form.startDateTime}
-                      maxDate={
-                        formState.form.endDateTime
-                          ? new Date(formState.form.endDateTime)
-                          : undefined
-                      }
-                    />
-                    {formErrors.startDateTime ===
-                      "Start date and time is required" && (
-                      <div role="alert" className="text-red-500 p-1 mt-1">
-                        <span>Start Date is invalid</span>
-                      </div>
-                    )}
-                  </div>
-                  <div className="w-1/2">
-                    <DateTimePickerInput
-                      ref={endDateRef}
-                      properties={formState.form.properties.toString()}
-                      checkAvailability="end"
-                      label={"End Date"}
-                      onChange={handleDateChange}
-                      name="endDateTime"
-                      value={formState.form.endDateTime}
-                      minDate={
-                        formState.form.startDateTime
-                          ? new Date(formState.form.startDateTime)
-                          : undefined
-                      }
-                    />
-                    {formErrors.startDateTime ===
-                      "Start date and time must be before the end date and time" && (
-                      <div role="alert" className="text-red-500 p-1 mt-1">
-                        <span>End Date is invalid</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-              {(!isEvent ||
-                (isEvent && formState.form.status == "Inquiry")) && (
-                <div className="flex gap-3 flex-wrap">
-                  <BaseInput
-                    className="flex-1"
-                    preIcon="tag"
-                    name="numberOfEvents"
-                    placeholder="Events"
-                    value={formState.form.numberOfEvents ?? 0}
-                    onChange={handleChange}
+                  <Properties
+                    properties={formState.form.properties ?? []}
+                    setFormState={setFormState}
                   />
+                )}
+              {(!isEvent ||
+                (isEvent && formState.form.status == "Inquiry")) && (
+                  <div className="flex gap-x-2 w-full">
+                    <div className="w-1/2">
+                      <DateTimePickerInput
+                        ref={startDateRef}
+                        properties={formState.form.properties.toString()}
+                        checkAvailability={formState.form.status !== "Inquiry" ? 'start' : undefined}
+                        label={"Start Date"}
+                        onChange={handleDateChange}
+                        name="startDateTime"
+                        value={formState.form.startDateTime}
+                        maxDate={
+                          formState.form.endDateTime
+                            ? new Date(formState.form.endDateTime)
+                            : undefined
+                        }
+                      />
+                      {formErrors.startDateTime ===
+                        "Start date and time is required" && (
+                          <div role="alert" className="text-red-500 p-1 mt-1">
+                            <span>Start Date is invalid</span>
+                          </div>
+                        )}
+                    </div>
+                    <div className="w-1/2">
+                      <DateTimePickerInput
+                        ref={endDateRef}
+                        properties={formState.form.properties.toString()}
+                        checkAvailability={formState.form.status !== "Inquiry" ? 'end' : undefined}
+                        label={"End Date"}
+                        onChange={handleDateChange}
+                        name="endDateTime"
+                        value={formState.form.endDateTime}
+                        minDate={
+                          formState.form.startDateTime
+                            ? new Date(formState.form.startDateTime)
+                            : undefined
+                        }
+                      />
+                      {formErrors.startDateTime ===
+                        "Start date and time must be before the end date and time" && (
+                          <div role="alert" className="text-red-500 p-1 mt-1">
+                            <span>End Date is invalid</span>
+                          </div>
+                        )}
+                    </div>
+                  </div>
+                )}
+              {(!isEvent ||
+                (isEvent && formState.form.status == "Inquiry")) && (
+                  <div className="flex gap-3 flex-wrap">
+                    <BaseInput
+                      className="flex-1"
+                      preIcon="tag"
+                      name="numberOfEvents"
+                      placeholder="Events"
+                      value={formState.form.numberOfEvents ?? 0}
+                      onChange={handleChange}
+                    />
 
-                  <BaseInput
-                    className="flex-1"
-                    type="text"
-                    placeholder="Guests"
-                    name="numberOfGuests"
-                    preIcon="group"
-                    value={formState.form.numberOfGuests}
-                    onChange={handleChange}
-                  />
-                </div>
-              )}
+                    <BaseInput
+                      className="flex-1"
+                      type="text"
+                      placeholder="Guests"
+                      name="numberOfGuests"
+                      preIcon="group"
+                      value={formState.form.numberOfGuests}
+                      onChange={handleChange}
+                    />
+                  </div>
+                )}
               <div>
                 <label>
                   <textarea
@@ -1234,7 +1234,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                       <label className="label_text">Amount received:</label>
                     )}
                     {showSecurityDeposit ||
-                    formState.form?.securityDeposit?.originalSecurityAmount ? (
+                      formState.form?.securityDeposit?.originalSecurityAmount ? (
                       <div className="cost-list flex flex-col gap-4">
                         <div className="flex flex-wrap items-center ">
                           <select
@@ -1304,50 +1304,50 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                         )}
                         {(showReturnDeposit ||
                           formState.form?.securityDeposit?.dateReturned) && (
-                          <div className="flex flex-wrap items-center ">
-                            <DateTimePickerInput
-                              label="Date returned"
-                              name="dateReturned"
-                              value={
-                                formState.form?.securityDeposit?.dateReturned
-                              }
-                              showTime={false}
-                              onChange={(name, newDateTime) => {
-                                handleSecurityDepositChange(
-                                  "dateReturned",
-                                  newDateTime!
-                                );
-                              }}
-                              className="w-1/2"
-                            />
-                            <div className="flex items-center pl-2 gap-2 w-1/2">
-                              <BaseInput
-                                type="number"
-                                name="amountReturned"
+                            <div className="flex flex-wrap items-center ">
+                              <DateTimePickerInput
+                                label="Date returned"
+                                name="dateReturned"
                                 value={
-                                  formState.form?.securityDeposit
-                                    ?.amountReturned
+                                  formState.form?.securityDeposit?.dateReturned
                                 }
-                                className="!flex-1"
-                                placeholder="Amount returned"
-                                onChange={(e) => {
+                                showTime={false}
+                                onChange={(name, newDateTime) => {
                                   handleSecurityDepositChange(
-                                    "amountReturned",
-                                    e.target.value
+                                    "dateReturned",
+                                    newDateTime!
                                   );
                                 }}
+                                className="w-1/2"
                               />
-                              <span
-                                className=" material-symbols-outlined cursor-pointer hover:text-red-500"
-                                onClick={() => {
-                                  onReturnDepositClicked();
-                                }}
-                              >
-                                delete
-                              </span>
+                              <div className="flex items-center pl-2 gap-2 w-1/2">
+                                <BaseInput
+                                  type="number"
+                                  name="amountReturned"
+                                  value={
+                                    formState.form?.securityDeposit
+                                      ?.amountReturned
+                                  }
+                                  className="!flex-1"
+                                  placeholder="Amount returned"
+                                  onChange={(e) => {
+                                    handleSecurityDepositChange(
+                                      "amountReturned",
+                                      e.target.value
+                                    );
+                                  }}
+                                />
+                                <span
+                                  className=" material-symbols-outlined cursor-pointer hover:text-red-500"
+                                  onClick={() => {
+                                    onReturnDepositClicked();
+                                  }}
+                                >
+                                  delete
+                                </span>
+                              </div>
                             </div>
-                          </div>
-                        )}
+                          )}
                       </div>
                     ) : (
                       ""
