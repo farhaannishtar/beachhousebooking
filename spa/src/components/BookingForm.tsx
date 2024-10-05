@@ -836,7 +836,7 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
                       />
                       {formErrors.startDateTime ===
                         "Start date and time is required" && (
-                          <div role="alert" className="text-red-500 p-1 mt-1">
+                          <div role="alert" className="text-red-500 p-1 mt-1 ">
                             <span>Start Date is invalid</span>
                           </div>
                         )}

@@ -47,6 +47,15 @@ export default function Settings() {
           <hr className="!my-4 !border-[#BEBEBE]" />
         </div>
         <LoadingButton
+          className=" border-[1px] border-typo_light-200  text-typo_light-200  w-full py-2 px-4 rounded-lg mb-4"
+
+          onClick={
+            () => router.push('/protected/reports')
+          } >
+          <span className={` material-symbols-outlined text-typo_light-200 `}>auto_graph</span>
+
+          <span>Reports</span></LoadingButton>
+        <LoadingButton
           className=" border-[1px] border-error text-error w-full py-2 px-4 rounded-lg"
 
           onClick={

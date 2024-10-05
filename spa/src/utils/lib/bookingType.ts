@@ -11,7 +11,8 @@ export enum Property {
 }
 
 export function convertStringToProperty(property: string): Property {
-  switch (property.toLocaleLowerCase()) {
+ 
+  switch (property.replace(/\s/g, '').toLocaleLowerCase()) {
     case "Bluehouse".toLocaleLowerCase():
       return Property.Bluehouse;
     case "Glasshouse".toLocaleLowerCase():
