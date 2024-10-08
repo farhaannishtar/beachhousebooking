@@ -49,12 +49,14 @@ const BaseCalendar: React.FC<BaseCalendarProps> = ({ onMonthChange, bookingsList
         const returnedBookings = bookingsList.map(booking => {
             const bookingDate = new Date(booking.startDateTime);
             const endBookingDate = new Date(booking.endDateTime);
+            const endDateToShow = date.setHours(0, 0, 0, 0) < (new Date(booking.endDateTime)).setHours(0, 0, 0, 0) ? new Date(date.setHours(23, 59, 0, 0)) : endBookingDate
+            const startDateToShow = date.setHours(0, 0, 0, 0) > (new Date(booking.startDateTime)).setHours(0, 0, 0, 0) ? new Date(date.setHours(0, 0, 0, 0)) : bookingDate
             const bookingDay = bookingDate.getDate();
             const bookingEvent = booking?.client?.name;
 
             if (!isNaN(endBookingDate.getTime()) && !isNaN(bookingDate.getTime()) && isDateInRange(date, bookingDate, endBookingDate)) {
                 let positions = rangePositions(date, bookingDate, endBookingDate)
-                return { time: format(bookingDate, 'd-MM-yyyy HH:mm'), timeEnd: format(endBookingDate, 'd-MM-yyyy HH:mm'), title: bookingEvent, bookingType: booking.bookingType, positions }
+                return { startTime: format(startDateToShow, 'd-MM-yyyy HH:mm'), endTime: format(endDateToShow, 'd-MM-yyyy HH:mm'), title: bookingEvent, bookingType: booking.bookingType, positions }
 
 
             }
@@ -83,7 +85,7 @@ const BaseCalendar: React.FC<BaseCalendarProps> = ({ onMonthChange, bookingsList
                             <Popover>
                                 {list.map((item, index) => (
                                     <p key={index}>
-                                        <b>{item?.time}</b> - {item?.title}
+                                        <b>{item?.startTime}</b> - {item?.title}
                                     </p>
                                 ))}
                             </Popover>
@@ -101,15 +103,15 @@ const BaseCalendar: React.FC<BaseCalendarProps> = ({ onMonthChange, bookingsList
                             {event.positions.map(pos => {
                                 switch (pos) {
                                     case 'start':
-                                        return <div className='h-4 bg-selectedButton flex-1 rounded-l-lg flex items-center'><span className='text-white text-[8px] pl-1'>{event.positions.length > 1 ? event.title.substring(0, 3) : event.title.substring(0, 5)}</span></div>
+                                        return <div className='h-4 bg-selectedButton flex-1 rounded-l-lg flex items-center -mr-[6px]'><span className='text-white text-[8px] pl-1'>{event.positions.length > 1 ? event.title.substring(0, 3) : event.title.substring(0, 5)}</span></div>
                                         break;
 
                                     case 'middle':
-                                        return <div className='h-4 bg-selectedButton flex-1 flex items-center '><span className='text-white text-[8px] pl-1'>{event.title.substring(0, 5)}</span></div>
+                                        return <div className='h-4 bg-selectedButton flex-1 flex items-center -mx-[6px]'><span className='text-white text-[8px] pl-1'>{event.title.substring(0, 5)}</span></div>
                                         break;
 
                                     case 'end':
-                                        return <div className='h-4 bg-selectedButton flex-1 rounded-r-lg flex items-center'><span className='text-white text-[8px] pl-1'>{event.positions.length > 1 ? event.title.substring(3, 6) : event.title.substring(0, 5)}</span></div>
+                                        return <div className='h-4 bg-selectedButton flex-1 rounded-r-lg flex items-center -ml-[6px]'><span className='text-white text-[8px] pl-1'>{event.positions.length > 1 ? event.title.substring(3, 6) : event.title.substring(0, 5)}</span></div>
                                         break;
                                 }
                             })}
@@ -136,9 +138,10 @@ const BaseCalendar: React.FC<BaseCalendarProps> = ({ onMonthChange, bookingsList
                             {getTodoList(selectedDate) ? getTodoList(selectedDate).map((d, i) => <div key={i}>
                                 <div className='flex gap-3'>
                                     <div className='w-3 h-3 rounded-full bg-selectedButton mt-2'></div>
-                                    <div className='flex flex-col'>
+                                    <div className='flex flex-col w-full'>
                                         <label className='title'>{d.title}</label>
-                                        <span>{d.time}h - {d.timeEnd}h</span>
+                                        <div className="flex items-center gap-3"><span className="label-text text-selectedButton w-11">From</span> {d.startTime} </div>
+                                        <div className="flex items-center gap-3"><span className="label-text text-selectedButton w-11">To</span> {d.endTime}</div>
                                     </div>
                                 </div>
                                 <hr />
