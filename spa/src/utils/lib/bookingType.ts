@@ -10,7 +10,7 @@ export enum Property {
   Castle = "Castle",
 }
 
-export function convertStringToProperty(property: string): Property {
+export function convertStringToProperty(property: string): Property|'all' {
  
   switch (property.replace(/\s/g, '').toLocaleLowerCase()) {
     case "Bluehouse".toLocaleLowerCase():
@@ -25,6 +25,28 @@ export function convertStringToProperty(property: string): Property {
       return Property.VillaArmati;
     case "Castle".toLocaleLowerCase():
       return Property.Castle;
+    case "all".toLocaleLowerCase():
+      return 'all';
+    default:
+      throw new Error("Invalid property");
+  }
+}
+export function convertStringOnlyToProperty(property: string): Property {
+ 
+  switch (property.replace(/\s/g, '').toLocaleLowerCase()) {
+    case "Bluehouse".toLocaleLowerCase():
+      return Property.Bluehouse;
+    case "Glasshouse".toLocaleLowerCase():
+      return Property.Glasshouse;
+    case "MeadowLane".toLocaleLowerCase():
+      return Property.MeadowLane;
+    case "LeChalet".toLocaleLowerCase():
+      return Property.LeChalet;
+    case "VillaArmati".toLocaleLowerCase():
+      return Property.VillaArmati;
+    case "Castle".toLocaleLowerCase():
+      return Property.Castle;
+    
     default:
       throw new Error("Invalid property");
   }
@@ -358,4 +380,13 @@ export interface Event {
   markForDeletion: boolean;
   costs: Cost[];
   finalCost: number;
+}
+
+export interface CalendarCell {
+  booking:BookingDB;
+  startDateTime: string;
+  endDateTime: string;
+  color:string;
+  order:number
+  
 }

@@ -1,4 +1,4 @@
-import { BookingDB, BookingForm, Property, convertStringToProperty } from '@/utils/lib/bookingType';
+import { BookingDB, BookingForm, Property, convertStringOnlyToProperty, convertStringToProperty } from '@/utils/lib/bookingType';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { Month, TimeSlot, generateHourAvailabilityMap, getTimeSlots, monthConvert } from '@/utils/lib/availabilityMap';
 import { removeSpacesAndCapitalize } from '@/utils/lib/helper';
@@ -17,7 +17,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 const handleGet = async (req: NextApiRequest, res: NextApiResponse) => {
   const { properties, month, year, bookingId } = req.query;
-  let propertiesInternal = (properties as string).split(',').map((property) => convertStringToProperty(removeSpacesAndCapitalize(property)));
+  let propertiesInternal = (properties as string).split(',').map((property) => convertStringOnlyToProperty(removeSpacesAndCapitalize(property)));
   let internalMonth = (month as string).toLocaleLowerCase() as Month
   let calendarIds: string[] = [];
   if(bookingId) {

@@ -18,6 +18,25 @@ const config = {
       },
     },
     extend: {
+      screens: {
+        //Desktop breackpoints
+        "desktop-up": { min: "1367px" },
+        "desktop-down": { max: "1920px" },
+        "desktop-only": { min: "1367px", max: "1920px" },
+        //Laptop breackpoints
+        "laptop-up": { min: "1024px" },
+        "laptop-down": { max: "1366px" },
+        "laptop-only": { min: "1024px", max: "1366px" },
+        //Tablet breackpoints
+        "tablet-up": { min: "768px" },
+        "tablet-down": { max: "1023px" },
+        "tablet-only": { min: "768px", max: "1023px" },
+        //Mobile breackpoints
+        "mobile-up": { min: "480px" },
+        "mobile-down": { max: "768px" },
+        "mobile-only": { max: "768px", min: "480px" },
+        "xs-only": { max: "479px" },
+      },
       colors: {
         placeHolderText: '#617A8A',
         inputBoxbg: '#F0F2F5',

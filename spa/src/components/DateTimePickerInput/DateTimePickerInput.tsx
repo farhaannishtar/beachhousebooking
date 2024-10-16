@@ -1,4 +1,4 @@
-import 'rsuite/dist/rsuite.min.css';
+import 'rsuite/dist/rsuite-no-reset.min.css';
 import { DatePicker, Stack, } from 'rsuite';
 import format from 'date-fns/format';
 import styles from './DateTimePickerInput.module.css';

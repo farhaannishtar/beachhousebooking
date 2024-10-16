@@ -1,3 +1,5 @@
+import { BookingDB, CalendarCell, Event, Property } from "./lib/bookingType";
+
 export function generateHourAvailabilityMapGivenStartDate(
   availabilityMap: Record<string, Record<string, Record<string, boolean>>>,
   year: number,
@@ -68,4 +70,76 @@ export function initializeHourAvailabilityMap(month: number, year: number, defau
   }
 
   return hourAvailabilityMap;
+}
+export function getPropertyColor(property:Property){
+  switch (property.replace(/\s/g, '').toLocaleLowerCase()) {
+    case "Bluehouse".toLocaleLowerCase():
+      return "#009688";
+    case "Glasshouse".toLocaleLowerCase():
+      return  "#e67c73";
+    case "MeadowLane".toLocaleLowerCase():
+      return  "#F4511e";
+    case "LeChalet".toLocaleLowerCase():
+      return  "#4285f4";
+    case "VillaArmati".toLocaleLowerCase():
+      return  "#b39ddb";
+    case "Castle".toLocaleLowerCase():
+      return  "#c0ca33";
+    default:
+      return  "#129CED";;
+  }
+}
+export function getEventsFromBooking(bookings:BookingDB[],filteredByProperty:Property|'all') {
+  
+
+  let calendarCells=[] as CalendarCell[];
+  bookings.map(booking=>{
+    let events = booking.events;
+  if (booking.bookingType === 'Stay') {
+    let event: Event = {
+      ...booking,
+      finalCost: booking.totalCost,
+      djService: false,
+      eventName: 'Stay',
+      valetService: false,
+      kitchenService: false, 
+      overNightStay: false, 
+      overNightGuests: 0, 
+      markForDeletion: false
+    };
+    events = [event]
+  } 
+
+  for (let i = 0; i < events.length; i++) {
+    const event: Event = events[i];
+if(filteredByProperty!='all'){
+  let calendarCell:CalendarCell={
+    booking:{...booking},
+    startDateTime:event.startDateTime,
+    endDateTime:event.endDateTime,
+    color:getPropertyColor(filteredByProperty),
+    order:Math.floor(Math.random() * 100000) + (booking.bookingId||999)
+  
+  }
+  calendarCells.push(calendarCell);
+}else{
+  const properties = event.properties;
+  for (const property of properties) {
+    let calendarCell:CalendarCell={
+      booking:{...booking},
+      startDateTime:event.startDateTime,
+      endDateTime:event.endDateTime,
+      color:getPropertyColor(property),
+      order:(Math.floor(Math.random() * 100000)  + (booking.bookingId||999))
+    }
+   // console.log(calendarCell);
+    
+    calendarCells.push(calendarCell);
+  }
+}
+   
+  }
+  })
+
+  return calendarCells;
 }

@@ -3,15 +3,17 @@ interface SearchInputProps {
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onFilterClick?: () => void | undefined;
   filterIsOn?: boolean;
+  className?: string
 }
 const SearchInput: React.FC<SearchInputProps> = ({
   value,
   onChange,
   onFilterClick,
   filterIsOn,
+  className
 }) => {
   return (
-    <div className="bg-typo_light-100 flex justify-between items-center h-12 rounded-xl">
+    <div className={`bg-typo_light-100 flex justify-between items-center h-12 rounded-xl ${className}`}>
       <div className="rounded-s-xl flex items-center px-4 h-full">
         <span className="material-symbols-outlined">search</span>
       </div>

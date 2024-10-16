@@ -35,9 +35,12 @@ interface ListBookingsState {
   dbBookings: BookingDB[];
   organizedByStartDate: { [key: string]: BookingDB[] };
 }
+interface ListBookingProps {
+  className?: string
+}
 let numOfBookingsForward = 7;
 let numOfBookingsBackward = 0;
-export default function ListBooking() {
+export default function ListBooking({ className }: ListBookingProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const query = router.query;
@@ -388,7 +391,7 @@ export default function ListBooking() {
     );
   };
   return (
-    <div className="w-full  ">
+    <div className={"w-full  " + className}>
       {/* Top Nav */}
       <div className="flex items-center h-[72px]">
         <h1 className="text-lg font-bold leading-6 w-full text-center ">
@@ -427,7 +430,7 @@ export default function ListBooking() {
             </span></div>
         }
         {
-          filterState.properties && filterState.properties.map((p,index) => {
+          filterState.properties && filterState.properties.map((p, index) => {
             return <div key={index} className="flex gap-4 items-center rounded-xl border-[1px] border-typo_dark-300 px-4 py-1"><label className="label_text "> {p}</label>
               <span
                 className=" material-symbols-outlined cursor-pointer "
