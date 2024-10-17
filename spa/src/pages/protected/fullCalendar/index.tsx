@@ -26,8 +26,8 @@ const FullCalendar = () => {
         setLoading(true);
         setMonthDate(date);//to save the date when changing the month to keep fetching data for same month when changing property 
         let month = format(date, 'yyyy-MM');
-        let nextMonth = format(new Date(new Date().setMonth(date.getMonth() + 1)), 'yyyy-MM');
-        let bookingsDataRef = supabase.from("bookings").select().gte('check_in', `${month}-01T00:00:00.000Z`)  // Start of the month
+        let nextMonth = format(new Date(date.getFullYear(), date.getMonth() + 1), 'yyyy-MM');
+        let bookingsDataRef = supabase.from("bookings").select().gte('check_out', `${month}-01T00:00:00.000Z`)  // Start of the month
             .lt('check_in', `${nextMonth}-01T00:00:00.000Z`).eq("status", "confirmed");   // Start of the next month
         if (selectedProperty !== 'all') {
             bookingsDataRef.contains(

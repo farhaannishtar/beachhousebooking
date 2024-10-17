@@ -30,13 +30,14 @@ const BaseCalendar: React.FC<BaseCalendarProps> = ({ onMonthChange, bookingsList
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
     const tableOfOrders = useRef<Record<number, number>>({});
     const [monthDate, setMonthDate] = useState<Date>(new Date());
-    const [maxRowsByGrid, setMaxRowsByGrid] = useState(2);
+    const [maxRowsByGrid, setMaxRowsByGrid] = useState(1);
+    const [showEvents, setShowEvents] = useState(false);
     const listOfAllEvents = useRef<Record<string, DayCellEvent[]>>({});
     useEffect(() => {
 
         tableOfOrders.current = {};
         const calculatedMaxRows = getMaxRows();
-
+        setSelectedDate(null)
         setMaxRowsByGrid(calculatedMaxRows);
     }, [bookingsList])
     const getMaxRows = () => {
@@ -149,7 +150,7 @@ const BaseCalendar: React.FC<BaseCalendarProps> = ({ onMonthChange, bookingsList
                     index++
                 }
 
-                return { bookingId: cell.booking.bookingId, startTime: format(startDateToShow, 'd-MM-yyyy hh:mm aaa'), endTime: format(endDateToShow, 'd-MM-yyyy hh:mm aaa'), title: bookingEvent, bookingType: cell.booking.bookingType, positions, color: cell.color, order: tableOfOrders.current?.[cell.order], bookingOrderNumber: cell.order }
+                return { bookingId: cell.booking.bookingId, startTime: format(bookingDate, 'd-MM-yyyy hh:mm aaa'), endTime: format(endBookingDate, 'd-MM-yyyy hh:mm aaa'), title: bookingEvent, bookingType: cell.booking.bookingType, positions, color: cell.color, order: tableOfOrders.current?.[cell.order], bookingOrderNumber: cell.order }
 
 
             }
@@ -172,43 +173,23 @@ const BaseCalendar: React.FC<BaseCalendarProps> = ({ onMonthChange, bookingsList
         const displayList = list
 
         if (list.length) {
-            const moreCount = list.length - displayList.length;
-            const moreItem = (
-                <li>
-                    <Whisper
-                        placement="top"
-                        trigger="click"
-                        speaker={
-                            <Popover>
-                                {list.map((item, index) => (
-                                    <p key={index}>
-                                        <b>{item?.startTime}</b> - {item?.title}
-                                    </p>
-                                ))}
-                            </Popover>
-                        }
-                    >
-                        <a>{moreCount} more</a>
-                    </Whisper>
-                </li>
-            );
 
             return (
-                <ul className={`calendar-todo-list grid  relative`} style={{ gridTemplateRows: `repeat(${maxRowsByGrid}, 1fr)` }}>
+                <ul className={`calendar-todo-list grid  relative`} style={{ gridTemplateRows: `repeat(${maxRowsByGrid - 1}, 1fr)` }}>
                     {displayList.map((event, index) => (
-                        <li key={event.title + '-' + index} className={`flex items-start my-1 relative w-full `} style={{ gridRow: event.order }} >
+                        <li key={event.title + '-' + index} className={`flex items-start my-1 relative w-full tablet-down:my-[2px] min-w-0  `} style={{ gridRow: event.order }} >
                             {event.positions.map((pos, i) => {
                                 switch (pos) {
                                     case 'start':
-                                        return <div key={event.title + '-' + index + '-pos-' + i} id={event.title + '-' + index + '-pos-' + pos} style={{ backgroundColor: event.color }} className={`h-4 flex-1 rounded-l-lg flex items-center -mr-[6px]`}><span className='text-white text-[8px] pl-1'>{event.positions.length > 1 ? event.title.substring(0, 3) : event.title.substring(0, 5)}</span></div>
+                                        return <div key={event.title + '-' + index + '-pos-' + i} id={event.title + '-' + index + '-pos-' + pos} style={{ backgroundColor: event.color }} className={`h-4 ${maxRowsByGrid > 3 ? 'tablet-down:h-2.5 xs-only:h-1.5' : 'mobile-down:h-3'} min-w-0 flex-1 rounded-l-lg flex items-center -mr-[6px]`}><span className={`text-white text-[8px] pl-1 overflow-hidden whitespace-nowrap text-ellipsis tablet-down:text-[6px] ${maxRowsByGrid > 3 ? 'mobile-down:hidden' : ''}`}>{event.title}</span></div>
                                         break;
 
                                     case 'middle':
-                                        return <div key={event.title + '-' + index + '-pos-' + i} id={event.title + '-' + index + '-pos-' + pos} style={{ backgroundColor: event.color }} className={`h-4 flex-1 flex items-center -mx-[6px]`}><span className='text-white text-[8px] pl-1'>{event.title.substring(0, 5)}</span></div>
+                                        return <div key={event.title + '-' + index + '-pos-' + i} id={event.title + '-' + index + '-pos-' + pos} style={{ backgroundColor: event.color }} className={`h-4 ${maxRowsByGrid > 3 ? 'tablet-down:h-2.5 xs-only:h-1.5' : 'mobile-down:h-3'} min-w-0 flex-1 flex items-center -mx-[6px]`}><span className={`text-white text-[8px] pl-1 overflow-hidden whitespace-nowrap text-ellipsis tablet-down:text-[6px] mobile-down:${maxRowsByGrid > 3 ? 'hidden' : ''}`}></span></div>
                                         break;
 
                                     case 'end':
-                                        return <div key={event.title + '-' + index + '-pos-' + i} id={event.title + '-' + index + '-pos-' + pos} style={{ backgroundColor: event.color }} className={`h-4 flex-1 rounded-r-lg flex items-center -ml-[6px]`}><span className='text-white text-[8px] pl-1'>{event.positions.length > 1 ? event.title.substring(3, 6) : event.title.substring(0, 5)}</span></div>
+                                        return <div key={event.title + '-' + index + '-pos-' + i} id={event.title + '-' + index + '-pos-' + pos} style={{ backgroundColor: event.color }} className={`h-4 ${maxRowsByGrid > 3 ? 'tablet-down:h-2.5 xs-only:h-1.5' : 'mobile-down:h-3'} min-w-0 flex-1 rounded-r-lg flex items-center -ml-[6px]`}><span className={`text-white text-[8px] pl-1 overflow-hidden whitespace-nowrap text-ellipsis tablet-down:text-[6px] mobile-down:${maxRowsByGrid > 3 ? 'hidden' : ''}`}></span></div>
                                         break;
                                 }
                             })}
@@ -219,39 +200,58 @@ const BaseCalendar: React.FC<BaseCalendarProps> = ({ onMonthChange, bookingsList
             );
         }
 
-        return null;
+        return <ul className={`calendar-todo-list grid  relative`} style={{ gridTemplateRows: `repeat(${maxRowsByGrid - 1}, 1fr)` }}>
+            {Array.from({ length: maxRowsByGrid - 1 }).map((e, i) => <li className={`flex items-start my-1 relative w-full tablet-down:my-[2px] min-w-0  `} style={{ gridRow: i + 1 }} >
+                <div className={`h-4 ${maxRowsByGrid > 3 ? 'mobile-down:h-2 xs-only:h-1.5' : 'mobile-down:h-3'} min-w-0 flex-1 rounded-l-lg flex items-center -mr-[6px]`}></div>
+            </li>)}
+
+        </ul>;
     }
     return (
-        <div style={{ width: '100%' }}>
-            <Calendar compact className='bg-blueShade rounded-t-xl' renderCell={renderCell} cellClassName={date => "bg-blueShade/10 [&_.rs-calendar-table-cell-content]:!h-auto laptop-up:[&_.rs-calendar-table-cell-content]:!h-auto laptop-up:[&_.rs-calendar-table-cell-content]:!min-h-20"} onChange={date => setSelectedDate(date)} onMonthChange={(date) => { onMonthChange(date); setMonthDate(date) }} />
+        <div style={{ width: selectedDate && showEvents && listOfAllEvents.current[selectedDate.getTime()]?.length ? 'calc(100% - 24rem)' : '100%' }}>
+            <Calendar compact className='bg-blueShade rounded-t-xl' renderCell={renderCell} cellClassName={date => `bg-blueShade/10  [&_.rs-calendar-table-cell-content]:!h-auto laptop-up:[&_.rs-calendar-table-cell-content]:!min-h-20 `} onChange={date => { setSelectedDate(date); setShowEvents(true) }} onMonthChange={(date) => { onMonthChange(date); setMonthDate(date); setSelectedDate(null); setShowEvents(false) }} />
             {
-                selectedDate && listOfAllEvents.current[selectedDate.getTime()]?.length ? <div className='event-details bg-blueShade rounded-b-xl min-h-60 px-5 pb-5 '>
-                    <div className='flex gap-4'>
-                        <div className='flex flex-col gap-2 date-details w-10'>
+                selectedDate ? <div className={`event-details bg-white py-5 min-h-60 px-5 pb-5 fixed w-96 mobile-down:w-full top-0 h-full z-[999] max-h-full overflow-y-auto side-nav-shadow transition-all ${showEvents && listOfAllEvents.current[selectedDate.getTime()]?.length ? ' right-0' : '-right-full'}`}>
+                    <div className='flex items-center justify-end'>
+                        <button className='flex items-center justify-center w-8 h-8 rounded-full border-[1px] border-typo_dark-300 hover:border-typo_dark-100' onClick={() => setShowEvents(false)}>
+                            <span className=" material-symbols-outlined cursor-pointer hover:text-typo_dark-100 text-typo_dark-300"  >close</span>
+                        </button>
+                    </div>
+                    <div className='flex gap-4 tablet-down:flex-wrap'>
+                        <div className='flex flex-col gap-2 date-details w-10 tablet-down:w-full tablet-down:flex-row'>
                             <strong>{format(selectedDate, 'iii')}</strong>
-                            <div className='w-7 h-7 rounded-full bg-selectedButton text-white flex items-center justify-center'><span>{format(selectedDate, 'd')}</span></div>
+                            <div className='w-7 h-7 rounded-full bg-selectedButton text-white flex items-center justify-center' ><span>{format(selectedDate, 'd')}</span></div>
+                            {/* <div className='tablet-up:hidden flex items-center gap-4'>
+                                <button className='flex items-center justify-center w-8 h-8 rounded-full border-[1px] border-typo_dark-300 hover:border-typo_dark-100' onClick={() => setSelectedDate(new Date(selectedDate.getTime() - 86400000))}>
+                                    <span className=" material-symbols-outlined cursor-pointer hover:text-typo_dark-100 text-typo_dark-300"  >chevron_left</span>
+                                </button><button className='flex items-center justify-center w-8 h-8 rounded-full border-[1px] border-typo_dark-300 hover:border-typo_dark-100' onClick={() => setSelectedDate(new Date(selectedDate.getTime() + 86400000))}>
+                                    <span className=" material-symbols-outlined cursor-pointer hover:text-typo_dark-100 text-typo_dark-300"  >chevron_right</span>
+                                </button>
+                            </div> */}
                         </div>
-                        <div className='bg-white p-4 rounded-xl flex flex-col flex-1 gap-1 event-list '>
-                            {listOfAllEvents.current[selectedDate.getTime()] ? listOfAllEvents.current[selectedDate.getTime()].map((d, i) => <div key={i}>
-                                <div className='flex gap-3 cursor-pointer' onClick={() => {
-                                    let host = window.location.host;
-                                    host = !host.includes("http") ? `http://${host}` : host;
-                                    window.open(`${host}/protected/booking/${d.bookingId}?returnTo=/protected/fullCalendar`, '_blank')
-                                }}>
-                                    <div className='w-3 h-3 rounded-full bg-selectedButton mt-2'></div>
-                                    <div className='flex flex-col w-full'>
-                                        <label className='title'>{d.title}</label>
-                                        <div className="flex items-center gap-3"><span className="label-text text-selectedButton w-11">From</span> {d.startTime} </div>
-                                        <div className="flex items-center gap-3"><span className="label-text text-selectedButton w-11">To</span> {d.endTime}</div>
+                        {
+                            listOfAllEvents.current[selectedDate.getTime()]?.length && <div className='bg-white p-4 rounded-xl flex flex-col flex-1 gap-1 event-list mobile-down:px-0'>
+                                {listOfAllEvents.current[selectedDate.getTime()] ? listOfAllEvents.current[selectedDate.getTime()].map((d, i) => <div key={i}>
+                                    <div className='flex gap-3 cursor-pointer' onClick={() => {
+                                        let host = window.location.host;
+                                        host = !host.includes("http") ? `http://${host}` : host;
+                                        window.open(`${host}/protected/booking/${d.bookingId}?returnTo=/protected/fullCalendar`, '_blank')
+                                    }}>
+                                        <div className='w-3 h-3 rounded-full bg-selectedButton mt-2' style={{ backgroundColor: d.color }}></div>
+                                        <div className='flex flex-col w-full'>
+                                            <label className='title'>{d.title}</label>
+                                            <div className="flex items-center gap-3"><span className="label-text text-selectedButton w-11">From</span> {d.startTime} </div>
+                                            <div className="flex items-center gap-3"><span className="label-text text-selectedButton w-11">To</span> {d.endTime}</div>
+                                        </div>
                                     </div>
-                                </div>
-                                <hr />
-                            </div>) : <div>
-                                <h3>No events</h3>
-                            </div>}
+                                    <hr />
+                                </div>) : <div>
+                                    <h3>No events</h3>
+                                </div>}
 
 
-                        </div>
+                            </div>
+                        }
                     </div>
                 </div> : ''
             }
