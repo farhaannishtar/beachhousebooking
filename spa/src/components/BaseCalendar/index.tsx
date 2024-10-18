@@ -29,6 +29,8 @@ const BaseCalendar: React.FC<BaseCalendarProps> = ({ onMonthChange, bookingsList
     const router = useRouter();
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
     const tableOfOrders = useRef<Record<number, number>>({});
+    const calendarDays = useRef<Record<string, number>>({});
+    const calendarRows = useRef<number[]>([1]);
     const [monthDate, setMonthDate] = useState<Date>(new Date());
     const [maxRowsByGrid, setMaxRowsByGrid] = useState(1);
     const [showEvents, setShowEvents] = useState(false);
@@ -36,17 +38,26 @@ const BaseCalendar: React.FC<BaseCalendarProps> = ({ onMonthChange, bookingsList
     useEffect(() => {
 
         tableOfOrders.current = {};
+        calendarRows.current = [1]
+        calendarDays.current = {}
         const calculatedMaxRows = getMaxRows();
         setSelectedDate(null)
         setMaxRowsByGrid(calculatedMaxRows);
     }, [bookingsList])
     const getMaxRows = () => {
-        let maxRows = 2;
-        const nbrOfDaysInMonth = new Date(monthDate.getFullYear(), monthDate.getMonth(), 0).getDate();
+        let maxRows = 1;
+        let calendarRowMax = 0;
+        const firstDay = new Date(monthDate.getFullYear(), monthDate.getMonth(), 1)
+        while (format(firstDay, 'eee') !== 'Sun') {
+            firstDay.setDate(firstDay.getDate() - 1);
+            console.log(firstDay);
 
-        for (let dayIndex = 1; dayIndex <= nbrOfDaysInMonth; dayIndex++) {
-            let date = new Date(monthDate.getFullYear(), monthDate.getMonth(), dayIndex);
+        }
+
+        for (let dayIndex = 1; dayIndex < 42; dayIndex++) {
+            let date = firstDay;
             let index = 0;
+            calendarDays.current = { ...calendarDays.current, [format(firstDay, 'MMM_dd')]: Math.floor(dayIndex / 7) + 1 }
             bookingsList.map(cell => {
 
                 const bookingDate = new Date(cell.startDateTime);
@@ -54,14 +65,28 @@ const BaseCalendar: React.FC<BaseCalendarProps> = ({ onMonthChange, bookingsList
                 if (!isNaN(endBookingDate.getTime()) && !isNaN(bookingDate.getTime()) && isDateInRange(date, bookingDate, endBookingDate)) {
 
                     index++;
-                    maxRows <= index ? maxRows++ : null;
+                    maxRows < index ? maxRows++ : null;
+                    calendarRowMax < index ? calendarRowMax++ : null;
 
                 }
 
             })
+
+            if (dayIndex < calendarRows.current.length * 7) {
+                calendarRows.current[calendarRows.current.length - 1] = calendarRowMax
+            } else {
+                calendarRows.current = [...calendarRows.current, 1];
+                calendarRowMax = 0
+            }
+            firstDay.setDate(firstDay.getDate() + 1);
         }
+        calendarDays.current = { ...calendarDays.current, [format(firstDay, 'MMM_dd')]: 6 }
+
+        console.log({ calendarRows, calendarDays });
+
         return maxRows
     }
+
     const isDateInRange = (date: Date, rangeStart: Date, rangeEnd: Date) => {
         // Set time to 00:00:00 for date, rangeStart, and rangeEnd
         const normalizeToMidnight = (d: Date) => new Date(d.setHours(0, 0, 0, 0));
@@ -113,7 +138,6 @@ const BaseCalendar: React.FC<BaseCalendarProps> = ({ onMonthChange, bookingsList
         const day = date.getDate();
         let index = 1;
         let thisDayRowsIndexesByOrder = {} as Record<number, number>;
-
         let returnedBookings: DayCellEvent[] = bookingsList.map(cell => {
             const bookingDate = new Date(cell.startDateTime);
             const endBookingDate = new Date(cell.endDateTime);
@@ -167,6 +191,10 @@ const BaseCalendar: React.FC<BaseCalendarProps> = ({ onMonthChange, bookingsList
     };
 
     function renderCell(date: Date) {
+        let dayMaxRow = calendarRows.current[calendarDays.current[format(date, 'MMM_dd')] - 1];
+        dayMaxRow = maxRowsByGrid //dayMaxRow != 0 ? maxRowsByGrid : 1
+        console.log(dayMaxRow, calendarRows.current, calendarDays.current, format(date, 'MMM_dd'));
+
         if (loading) return <ul className={`calendar-todo-list grid  relative`} ><li className='flex items-center justify-center'><div className="loader-spinner "></div></li></ul>
         const list = getTodoList(date);
 
@@ -175,21 +203,21 @@ const BaseCalendar: React.FC<BaseCalendarProps> = ({ onMonthChange, bookingsList
         if (list.length) {
 
             return (
-                <ul className={`calendar-todo-list grid  relative`} style={{ gridTemplateRows: `repeat(${maxRowsByGrid - 1}, 1fr)` }}>
+                <ul className={`calendar-todo-list grid  relative`} style={{ gridTemplateRows: `repeat(${dayMaxRow}, 1fr)` }}>
                     {displayList.map((event, index) => (
-                        <li key={event.title + '-' + index} className={`flex items-start my-1 relative w-full tablet-down:my-[2px] min-w-0  `} style={{ gridRow: event.order }} >
+                        <li key={event.title + '-' + index} className={`flex items-start my-[2px] relative w-full  min-w-0  `} style={{ gridRow: event.order }} >
                             {event.positions.map((pos, i) => {
                                 switch (pos) {
                                     case 'start':
-                                        return <div key={event.title + '-' + index + '-pos-' + i} id={event.title + '-' + index + '-pos-' + pos} style={{ backgroundColor: event.color }} className={`h-4 ${maxRowsByGrid > 3 ? 'tablet-down:h-2.5 xs-only:h-1.5' : 'mobile-down:h-3'} min-w-0 flex-1 rounded-l-lg flex items-center -mr-[6px]`}><span className={`text-white text-[8px] pl-1 overflow-hidden whitespace-nowrap text-ellipsis tablet-down:text-[6px] ${maxRowsByGrid > 3 ? 'mobile-down:hidden' : ''}`}>{event.title}</span></div>
+                                        return <div key={event.title + '-' + index + '-pos-' + i} id={event.title + '-' + index + '-pos-' + pos} style={{ backgroundColor: event.color }} className={`h-4 ${dayMaxRow > 3 ? 'tablet-down:h-2.5 xs-only:h-1.5' : 'mobile-down:h-3'} min-w-0 flex-1 rounded-l-lg flex items-center -mr-[6px]`}><span className={`text-white text-[8px] pl-1 overflow-hidden whitespace-nowrap text-ellipsis tablet-down:text-[6px] ${dayMaxRow > 3 ? 'xs-only:hidden' : ''}`}>{event.title}</span></div>
                                         break;
 
                                     case 'middle':
-                                        return <div key={event.title + '-' + index + '-pos-' + i} id={event.title + '-' + index + '-pos-' + pos} style={{ backgroundColor: event.color }} className={`h-4 ${maxRowsByGrid > 3 ? 'tablet-down:h-2.5 xs-only:h-1.5' : 'mobile-down:h-3'} min-w-0 flex-1 flex items-center -mx-[6px]`}><span className={`text-white text-[8px] pl-1 overflow-hidden whitespace-nowrap text-ellipsis tablet-down:text-[6px] mobile-down:${maxRowsByGrid > 3 ? 'hidden' : ''}`}></span></div>
+                                        return <div key={event.title + '-' + index + '-pos-' + i} id={event.title + '-' + index + '-pos-' + pos} style={{ backgroundColor: event.color }} className={`h-4 ${dayMaxRow > 3 ? 'tablet-down:h-2.5 xs-only:h-1.5' : 'mobile-down:h-3'} min-w-0 flex-1 flex items-center -mx-[6px]`}><span className={`text-white text-[8px] pl-1 overflow-hidden whitespace-nowrap text-ellipsis tablet-down:text-[6px] ${dayMaxRow > 3 ? 'xs-only:hiddenhidden' : ''}`}></span></div>
                                         break;
 
                                     case 'end':
-                                        return <div key={event.title + '-' + index + '-pos-' + i} id={event.title + '-' + index + '-pos-' + pos} style={{ backgroundColor: event.color }} className={`h-4 ${maxRowsByGrid > 3 ? 'tablet-down:h-2.5 xs-only:h-1.5' : 'mobile-down:h-3'} min-w-0 flex-1 rounded-r-lg flex items-center -ml-[6px]`}><span className={`text-white text-[8px] pl-1 overflow-hidden whitespace-nowrap text-ellipsis tablet-down:text-[6px] mobile-down:${maxRowsByGrid > 3 ? 'hidden' : ''}`}></span></div>
+                                        return <div key={event.title + '-' + index + '-pos-' + i} id={event.title + '-' + index + '-pos-' + pos} style={{ backgroundColor: event.color }} className={`h-4 ${dayMaxRow > 3 ? 'tablet-down:h-2.5 xs-only:h-1.5' : 'mobile-down:h-3'} min-w-0 flex-1 rounded-r-lg flex items-center -ml-[6px]`}><span className={`text-white text-[8px] pl-1 overflow-hidden whitespace-nowrap text-ellipsis tablet-down:text-[6px]${dayMaxRow > 3 ? 'xs-only:hiddenhidden' : ''}`}></span></div>
                                         break;
                                 }
                             })}
@@ -200,16 +228,16 @@ const BaseCalendar: React.FC<BaseCalendarProps> = ({ onMonthChange, bookingsList
             );
         }
 
-        return <ul className={`calendar-todo-list grid  relative`} style={{ gridTemplateRows: `repeat(${maxRowsByGrid - 1}, 1fr)` }}>
-            {Array.from({ length: maxRowsByGrid - 1 }).map((e, i) => <li className={`flex items-start my-1 relative w-full tablet-down:my-[2px] min-w-0  `} style={{ gridRow: i + 1 }} >
-                <div className={`h-4 ${maxRowsByGrid > 3 ? 'mobile-down:h-2 xs-only:h-1.5' : 'mobile-down:h-3'} min-w-0 flex-1 rounded-l-lg flex items-center -mr-[6px]`}></div>
+        return <ul className={`calendar-todo-list grid  relative`} style={{ gridTemplateRows: `repeat(${dayMaxRow}, 1fr)` }}>
+            {Array.from({ length: dayMaxRow }).map((e, i) => <li key={`empty-${i}`} className={`flex items-start  relative w-full my-[2px] min-w-0  `} style={{ gridRow: i + 1 }} >
+                <div className={`h-4 ${dayMaxRow > 3 ? 'mobile-down:h-2 xs-only:h-1.5' : 'mobile-down:h-3'} min-w-0 flex-1 rounded-l-lg flex items-center -mr-[6px]`}></div>
             </li>)}
 
         </ul>;
     }
     return (
         <div style={{ width: selectedDate && showEvents && listOfAllEvents.current[selectedDate.getTime()]?.length ? 'calc(100% - 24rem)' : '100%' }}>
-            <Calendar compact className='bg-blueShade rounded-t-xl' renderCell={renderCell} cellClassName={date => `bg-blueShade/10  [&_.rs-calendar-table-cell-content]:!h-auto laptop-up:[&_.rs-calendar-table-cell-content]:!min-h-20 `} onChange={date => { setSelectedDate(date); setShowEvents(true) }} onMonthChange={(date) => { onMonthChange(date); setMonthDate(date); setSelectedDate(null); setShowEvents(false) }} />
+            <Calendar compact className='bg-blueShade rounded-t-xl' renderCell={renderCell} cellClassName={date => `bg-blueShade/10  [&_.rs-calendar-table-cell-content]:!h-auto  `} onChange={date => { setSelectedDate(date); setShowEvents(true) }} onMonthChange={(date) => { onMonthChange(date); setMonthDate(date); setSelectedDate(null); setShowEvents(false) }} />
             {
                 selectedDate ? <div className={`event-details bg-white py-5 min-h-60 px-5 pb-5 fixed w-96 mobile-down:w-full top-0 h-full z-[999] max-h-full overflow-y-auto side-nav-shadow transition-all ${showEvents && listOfAllEvents.current[selectedDate.getTime()]?.length ? ' right-0' : '-right-full'}`}>
                     <div className='flex items-center justify-end'>
@@ -233,9 +261,15 @@ const BaseCalendar: React.FC<BaseCalendarProps> = ({ onMonthChange, bookingsList
                             listOfAllEvents.current[selectedDate.getTime()]?.length && <div className='bg-white p-4 rounded-xl flex flex-col flex-1 gap-1 event-list mobile-down:px-0'>
                                 {listOfAllEvents.current[selectedDate.getTime()] ? listOfAllEvents.current[selectedDate.getTime()].map((d, i) => <div key={i}>
                                     <div className='flex gap-3 cursor-pointer' onClick={() => {
-                                        let host = window.location.host;
-                                        host = !host.includes("http") ? `http://${host}` : host;
-                                        window.open(`${host}/protected/booking/${d.bookingId}?returnTo=/protected/fullCalendar`, '_blank')
+                                        const userAgent = navigator.userAgent.toLowerCase();
+                                        if (/mobile|android|iphone|ipad|ipod|blackberry|opera mini|iemobile|wpdesktop/.test(userAgent) || (/tablet|ipad/.test(userAgent))) {
+                                            router.push(`/protected/booking/${d.bookingId}?returnTo=/protected/fullCalendar`)
+                                        } else {
+                                            let host = window.location.host;
+                                            host = !host.includes("http") ? `http://${host}` : host;
+                                            window.open(`${host}/protected/booking/${d.bookingId}?returnTo=/protected/fullCalendar`, '_blank')
+                                        }
+
                                     }}>
                                         <div className='w-3 h-3 rounded-full bg-selectedButton mt-2' style={{ backgroundColor: d.color }}></div>
                                         <div className='flex flex-col w-full'>
