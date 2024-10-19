@@ -1,17 +1,17 @@
 interface BaseInputProps {
-    preIcon?: string,
-    postIcon?: string,
-    value: string | number;
-    onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
-    placeholder?: string;
-    type?: string;
-    className?: string;
-    name: string,
-    readOnly?:boolean
+  preIcon?: string,
+  postIcon?: string,
+  value: string | number;
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  placeholder?: string;
+  type?: string;
+  className?: string;
+  name: string,
+  readOnly?: boolean
 }
-const BaseInput: React.FC<BaseInputProps> = ({ className = '', type = 'text', value, onChange, preIcon, postIcon, placeholder = '', name ,readOnly}) => {
+const BaseInput: React.FC<BaseInputProps> = ({ className = '', type = 'text', value, onChange, preIcon, postIcon, placeholder = '', name, readOnly }) => {
   return (
-    <div className={`${className} bg-typo_light-100 flex justify-between items-center h-14 rounded-xl`}>
+    <div className={`${className} bg-typo_light-100 flex justify-between items-center h-14 rounded-xl laptop-up:rounded-lg  laptop-up:h-[52px]`}>
 
       {
         preIcon ? <div className="rounded-s-xl flex items-center px-4 h-full">

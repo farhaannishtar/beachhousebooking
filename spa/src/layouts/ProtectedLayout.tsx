@@ -36,7 +36,7 @@ export default function ProtectedLayout({
       {/* Router view */}
       <section className="router-view flex-1 scroll-auto">
         {/* header for laptop up */}
-        <div className="h-24 px-4 flex items-center border-b-[0.4px] border-[#D0D0D066] justify-between tablet-down:hidden">
+        <div className="h-24 px-10 flex items-center border-b-[0.4px] border-[#D0D0D066] justify-between tablet-down:hidden">
 
           {/* Top Nav */}
           <SearchInput className="w-1/2" onChange={handleChangeSearch} value={searchText} />

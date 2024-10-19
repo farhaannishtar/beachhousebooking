@@ -5,6 +5,7 @@ export default function BottomNav() {
   const currentPath = usePathname();
   return (
     <nav className=" h-[4.5rem] px-4 py-2 flex border-t-[1px] border-typo_light-100 items-center bottom-0 bg-white mt-8 sticky laptop-up:!top-0 laptop-up:h-full laptop-up:mt-0  laptop-up:block laptop-up:w-56  bottom-nav-shadow laptop-up:min-h-screen">
+     {/* desktop and laptop nav */}
       <div className="flex items-center justify-center gap-1 h-24 tablet-down:hidden">
         <img src="/logo.png" alt="logo" className="h-7 " />
         <h2 className="!m-0 title text-selectedButton">BEACHHOUSE</h2>

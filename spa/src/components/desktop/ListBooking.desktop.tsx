@@ -423,7 +423,7 @@ export default function ListBooking({ className }: ListBookingProps) {
   // *************************************************************************Html template********************************************************************************
   // **********************************************************************************************************************************************************************
   return (
-    <div className={"w-full px-4 pb-4 " + className}>
+    <div className={"w-full px-10 pb-4 " + className}>
 
       {/* Filters */}
       <BookingFilterDesktop
@@ -525,9 +525,10 @@ export default function ListBooking({ className }: ListBookingProps) {
             filter_list_off
           </span></div>}
       </div>
-      <div className="flex items-center justify-center">
+
+      <div className="flex items-center justify-end gap-4">
         <LoadingButton
-          className=" border-[1px] border-selectedButton text-selectedButton my-4 w-full py-2 px-4 rounded-xl w-64 rounded-[5px]"
+          className=" border-[1px] border-selectedButton text-selectedButton my-4  py-3 px-4 w-64 rounded-lg h-12"
           loading={loadingBackward}
           onClick={() => {
             numOfBookingsBackward = numOfBookingsBackward + 7;
@@ -537,6 +538,15 @@ export default function ListBooking({ className }: ListBookingProps) {
         >
           Load older data
         </LoadingButton>
+        <button className="flex items-center gap-4 p-3 text-white bg-selectedButton rounded-lg text-sm h-12" onClick={() => router.push("/protected/booking/create?returnTo=/protected/booking/list")} >
+          <span
+            className=" material-symbols-outlined cursor-pointer hover:text-selectedButton"
+
+          >
+            add
+          </span>
+          <span>Create booking</span>
+        </button>
       </div>
       {dates().map((date) => (
         <React.Fragment key={date}>

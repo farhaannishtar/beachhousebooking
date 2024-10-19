@@ -15,7 +15,7 @@ export const EventStaySwitch: React.FC<EventStaySwitchProps> = ({
 }) => (
   <label
     style={{ background: isOn ? `#${onColor}` : "bg-inputBoxbg" }} // Corrected usage of onColor with template literal
-    className="relative inline-block w-full h-auto py-4 bg-inputBoxbg cursor-pointer rounded-[20px] transition-colors duration-200"
+    className="relative inline-block w-full h-auto py-3 laptop-up:py-2 bg-inputBoxbg cursor-pointer rounded-[20px] laptop-up:rounded-lg transition-colors duration-200"
   >
     <input
       checked={isOn}
@@ -27,7 +27,7 @@ export const EventStaySwitch: React.FC<EventStaySwitchProps> = ({
       style={{
         left: isOn ? "0" : "50%", // Dynamically set the left property based on isOn
       }}
-      className={`${disabled ? '' : 'shadow-md '} absolute z-10 top-[1.5px] w-1/2 h-full bg-selectedButton  rounded-[20px] transition-all duration-200 `} // Assume bg-blue-500 is the slider color
+      className={`${disabled ? '' : 'shadow-md '} absolute z-10 top-[1.5px] w-1/2 h-full bg-selectedButton  rounded-[20px] laptop-up:rounded-lg transition-all duration-200 `} // Assume bg-blue-500 is the slider color
     />
     <div className="relative z-10 flex h-full">
       <span

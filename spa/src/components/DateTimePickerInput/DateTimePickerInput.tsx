@@ -64,7 +64,7 @@ const DateTimePickerInput = forwardRef<any, DateTimePickerInputProps>(
     let timeFormat = (showTime === false) ? "" : " hh:mmaa";
     //let dateTimeformat = !showOnlyTime ? `dd/MM/yy${timeFormat}` : timeFormat;
     return (
-      <Stack spacing={10} direction="column" className={`${className}`}>
+      <Stack spacing={10} direction="column" className={`${className} laptop-up:[&_.rs-stack-item]:w-full `}>
         <DatePicker
           renderCell={(date) => {
             const day = date.getDate();
@@ -150,7 +150,7 @@ const DateTimePickerInput = forwardRef<any, DateTimePickerInputProps>(
             label === "End Date" || !!bottomEnd ? "bottomEnd" : "bottomStart"
           }
           preventOverflow
-          className={`${styles.customDatePicker} ${styles.customDatePickerInput} ${styles.customDatePickerPlaceholderText}  h-14 `}
+          className={`${styles.customDatePicker} ${styles.customDatePickerInput} ${styles.customDatePickerPlaceholderText}  h-14 laptop-up:h-[52px] `}
           readOnly={readOnly}
           defaultValue={defaultValue}
           loading={loading}

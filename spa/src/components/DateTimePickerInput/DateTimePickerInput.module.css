@@ -18,3 +18,9 @@
   color: #617A8A; /* New placeholder text color */
  
 }
+.rs-stack-item {
+  width:100%
+}
+.customDatePicker :global {
+  width:100%
+}

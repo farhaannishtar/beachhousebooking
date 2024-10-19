@@ -52,9 +52,10 @@ interface formDataToValidate {
 
 interface BookingFormProps {
   bookingId?: number | undefined;
+  className?: string
 }
 
-export default function BookingFormComponent({ bookingId }: BookingFormProps) {
+export default function BookingFormComponent({ bookingId, className }: BookingFormProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const returnTo = searchParams.get("returnTo");
@@ -666,8 +667,14 @@ export default function BookingFormComponent({ bookingId }: BookingFormProps) {
   //   endDateRef.current?.fetchAvailabilities();
   // }, [formState.form.properties]);
 
+  // ***********************************************************************************////////////////////***********************************************************************************
+  // ***********************************************************************************////////////////////***********************************************************************************
+  // *************************************************************************////////////Html template///////********************************************************************************
+  // ***********************************************************************************////////////////////***********************************************************************************
+  // ***********************************************************************************////////////////////***********************************************************************************
+
   return (
-    <div className="w-full">
+    <div className={`w-full ${className}`}>
       {/* Error errorModal */}
       <BaseModalComponent
         openModal={!!errorModal}

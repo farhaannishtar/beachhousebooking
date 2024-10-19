@@ -60,7 +60,7 @@ const FullCalendar = () => {
     }
 
     return (
-        <div className='h-full flex items-start justify-center  w-full laptop-up:h-auto mobile-up:px-4 '>
+        <div className='h-full flex items-start justify-center  w-full laptop-up:h-auto mobile-up:px-10 '>
             <div className="w-full  ">
                 {/* Top Nav */}
                 <div className="flex items-center h-[72px]">
