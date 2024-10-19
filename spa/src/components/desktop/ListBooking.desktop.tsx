@@ -21,7 +21,7 @@ import format from "date-fns/format";
 import { useRouter } from "next/router";
 import { supabase } from "@/utils/supabase/client";
 import SearchInput from "../ui/SearchInput";
-import BookingFilter, { Filter } from "../BookingFilter";
+import BookingFilterDesktop, { Filter } from "./BookingFilter.desktop";
 import LoadingButton from "../ui/LoadingButton";
 import { useSearchParams } from "next/navigation";
 
@@ -63,13 +63,38 @@ export default function ListBooking({ className }: ListBookingProps) {
   const [loading, setLoading] = useState<boolean>(false);
   const [loadingForward, setLoadingForward] = useState<boolean>(false);
   const [loadingBackward, setLoadingBackward] = useState<boolean>(false);
+  const forwardLoaderRef = useRef<HTMLDivElement | null>(null);
+  const [hasMore, setHasMore] = useState<boolean>(true); // Indicates if more items can be loaded
 
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !loadingForward && hasMore) {
+          numOfBookingsForward = numOfBookingsForward + 7;
+          setLoadingForward(true);
+          fetchData(filterState);
+        }
+      },
+      { threshold: 1.0 }
+    );
+
+    if (forwardLoaderRef.current) {
+      observer.observe(forwardLoaderRef.current);
+    }
+
+    return () => {
+      if (forwardLoaderRef.current) {
+        observer.unobserve(forwardLoaderRef.current);
+      }
+    };
+  }, [loadingForward]);
   async function fetchData(filters: Filter, searchText?: string) {
     const requestId = new Date().getTime();
     latestRequestRef.current = requestId;
     setLoading(true);
     setLoadingForward(true);
     setLoadingBackward(true);
+    setHasMore(false);
     let bookingsData = supabase.from("bookings").select();
     let oldBookingsData = supabase.from("bookings").select();
 
@@ -191,7 +216,11 @@ export default function ListBooking({ className }: ListBookingProps) {
             ?.scrollIntoView({ behavior: "smooth" });
         }
       }, 500);
-
+      if (bookings.length < numOfBookingsBackward || bookings.length < numOfBookingsForward) {
+        setHasMore(false)
+      } else {
+        setHasMore(true)
+      }
       setLoading(false);
       setLoadingBackward(false);
       setLoadingForward(false);
@@ -390,27 +419,22 @@ export default function ListBooking({ className }: ListBookingProps) {
       { shallow: true }
     );
   };
+  // **********************************************************************************************************************************************************************
+  // *************************************************************************Html template********************************************************************************
+  // **********************************************************************************************************************************************************************
   return (
-    <div className={"w-full  " + className}>
-      {/* Top Nav */}
-      <div className="flex items-center h-[72px]">
-        <h1 className="text-lg font-bold leading-6 w-full text-center ">
-          Bookings
-        </h1>
+    <div className={"w-full px-4 pb-4 " + className}>
 
-        <span
-          className=" material-symbols-outlined cursor-pointer hover:text-selectedButton"
-          onClick={() => router.push("/protected/booking/create?returnTo=/protected/booking/list")}
-        >
-          add_circle
-        </span>
-      </div>
-      {/* Top Nav */}
-      <SearchInput
-        value={state.searchText || undefined}
-        onChange={handleChangeSearch}
-        onFilterClick={toggleFilterDisplay}
-        filterIsOn={checkEmptyFilterState()}
+      {/* Filters */}
+      <BookingFilterDesktop
+        isFiltersOpened={filterModalOpened}
+        toggleFilterDisplay={toggleFilterDisplay}
+        filtersFor="Bookings"
+        filterState={filterState}
+        setFilterState={setFilterState}
+        loading={loading}
+        applyFilters={() => refreshPageQueries()}
+        ref={filterBlockRef}
       />
       {/* Show filters if exists */}
       <div className="flex gap-3 mt-4 flex-wrap">
@@ -482,7 +506,7 @@ export default function ListBooking({ className }: ListBookingProps) {
               close
             </span></div>
         }
-        {(filterState.checkIn || filterState.properties || filterState.paymentPending || filterState.starred) && <div onClick={() => {
+        {(filterState.checkIn || filterState.properties?.length || filterState.paymentPending || filterState.starred) && <div onClick={() => {
           setFilterState({
             checkIn: null,
             properties: null,
@@ -501,89 +525,99 @@ export default function ListBooking({ className }: ListBookingProps) {
             filter_list_off
           </span></div>}
       </div>
-
-      <LoadingButton
-        className=" border-[1px] border-selectedButton text-selectedButton my-4 w-full py-2 px-4 rounded-xl"
-        loading={loadingBackward}
-        onClick={() => {
-          numOfBookingsBackward = numOfBookingsBackward + 7;
-          setLoadingBackward(true);
-          fetchData(filterState);
-        }}
-      >
-        Load More
-      </LoadingButton>
+      <div className="flex items-center justify-center">
+        <LoadingButton
+          className=" border-[1px] border-selectedButton text-selectedButton my-4 w-full py-2 px-4 rounded-xl w-64 rounded-[5px]"
+          loading={loadingBackward}
+          onClick={() => {
+            numOfBookingsBackward = numOfBookingsBackward + 7;
+            setLoadingBackward(true);
+            fetchData(filterState);
+          }}
+        >
+          Load older data
+        </LoadingButton>
+      </div>
       {dates().map((date) => (
         <React.Fragment key={date}>
-          <p className="pl-1 mt-6 text-neutral-900 text-lg font-semibold leading-6">
+          <p className="pl-1 mt-6 text-neutral-900 text-lg font-semibold leading-6 ">
             {convertDate(date)}
           </p>
-          {state.organizedByStartDate[date].map((booking, index) => (
-            <div
-              className="flex mt-3 w-full justify-between"
-              key={booking.bookingId}
-              id={`${booking.bookingId}-id`}
-              onClick={() => redirectToBookingId(booking.bookingId)}
-            >
-              {/* Booking details */}
-              <div className="pl-3 flex flex-col gap-0">
-                <label className="flex items-center gap-1">
-                  <span className="text-neutral-900 text-base font-medium leading-6">
-                    {booking.client.name}
-                  </span>{" "}
-                  <span className="text-slate-500 text-sm font-normal leading-5">
-                    {booking.status}
-                  </span>
-                  {booking?.starred && (
-                    <span className="material-symbols-filled text-2xl">
-                      star_rate
-                    </span>
-                  )}
-                </label>
-                <label className="text-slate-500 text-sm font-normal ">
-                  {numOfDays(booking)} days, {booking.numberOfGuests} pax
-                </label>
-                {booking.properties?.length > 0 && (
-                  <label className="text-slate-500 text-sm font-normal ">
-                    {booking.properties.join(", ")}
-                  </label>
-                )}
-                {
-                  <div className="flex items-center gap-4 text-sm">
-                    <label>
-                      Rs{" "}
-                      {booking.outstanding == 0
-                        ? booking.paid.toLocaleString("en-IN")
-                        : booking.outstanding.toLocaleString("en-IN")}
-                    </label>
-                    {booking.status == "Confirmed" && (
-                      <div
-                        className={`${booking.outstanding == 0 ? " bg-green-500/30" : "bg-error/20"} px-3 rounded-xl`}
-                      >
-                        {booking.outstanding == 0 ? "Paid" : "Unpaid"}
+          <div className="flex flex-wrap gap-4 mt-3">
+            {state.organizedByStartDate[date].map((booking, index) => (
+              <div
+                className="flex  justify-between w-[calc(25%-12px)] laptop-only:w-[calc(33%-12px)] max-w-72 bg-white p-4 shadow-[0_0_100px_0px_rgba(0,0,0,0.07)] rounded-xl cursor-pointer"
+                key={booking.bookingId}
+                id={`${booking.bookingId}-id`}
+                onClick={() => redirectToBookingId(booking.bookingId)}
+              >
+                {/* Booking details */}
+                <div className=" flex flex-col gap-0 w-full justify-between">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <label className="flex items-center gap-1">
+                        <span className="text-neutral-900 text-base  leading-6 font-semibold">
+                          {booking.client.name}
+                        </span>{" "}
+
+                        {booking?.starred && (
+                          <span className="material-symbols-filled text-xl">
+                            star_rate
+                          </span>
+                        )}
+                      </label>
+                      <label className="text-neutral-900 text-sm font-normal leading-5">
+                        {booking.status}
+                      </label>
+                    </div>
+                    {/* Booking type */}
+                    <div className="w-[69px] h-7 px-5 bg-gray-100 rounded-[5px] justify-center  inline-flex items-center">
+                      <div className="w-11 label_text !font-semibold left-[20px] top-[6px] text-center text-sky-500 text-base  leading-normal">
+                        {booking.bookingType}
                       </div>
-                    )}
+                    </div>
                   </div>
-                }
-                {booking.refferral && (
-                  <label className="text-slate-500 text-sm font-normal ">
-                    Referral: {booking.refferral}
+
+
+                  <label className="text-selectedButton text-sm font-normal ">
+                    {numOfDays(booking)} days, {booking.numberOfGuests} pax
                   </label>
-                )}
-              </div>
-              {/* Booking type */}
-              <div className="w-[84px] flex items-center">
-                <div className="w-[74px] h-8 px-5 bg-gray-100 rounded-[19px] justify-center items-center inline-flex items-center">
-                  <div className="w-11 label_text !font-medium left-[20px] top-[6px] text-center text-sky-500 text-base font-medium leading-normal">
-                    {booking.bookingType}
-                  </div>
+                  {booking.properties?.length > 0 && (
+                    <label className="text-slate-500 text-sm font-normal ">
+                      {booking.properties.join(", ")}
+                    </label>
+                  )}
+                  {booking.refferral && (
+                    <label className="text-slate-500 text-sm font-normal ">
+                      Referral: {booking.refferral}
+                    </label>
+                  )}
+                  {
+                    <div className="flex items-center gap-4 text-sm mt-3">
+                      <label>
+                        Rs{" "}
+                        {booking.outstanding == 0
+                          ? booking.paid.toLocaleString("en-IN")
+                          : booking.outstanding.toLocaleString("en-IN")}
+                      </label>
+                      {booking.status == "Confirmed" && (
+                        <div
+                          className={`${booking.outstanding == 0 ? " bg-[#DEF8E0] text-[#09DC44]" : "bg-error/20 text-error"} px-[18px] rounded-[5px] py-1 font-semibold`}
+                        >
+                          {booking.outstanding == 0 ? "Paid" : "Unpaid"}
+                        </div>
+                      )}
+                    </div>
+                  }
+
                 </div>
+
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </React.Fragment>
       ))}
-      <LoadingButton
+      {/* <LoadingButton
         className=" border-[1px] border-selectedButton text-selectedButton my-4 w-full py-2 px-4 rounded-xl"
         loading={loadingForward}
         onClick={() => {
@@ -593,19 +627,14 @@ export default function ListBooking({ className }: ListBookingProps) {
         }}
       >
         Load More
-      </LoadingButton>
+      </LoadingButton> */}
       {/* Filter modal */}
 
-      <BookingFilter
-        isFiltersOpened={filterModalOpened}
-        toggleFilterDisplay={toggleFilterDisplay}
-        filtersFor="Bookings"
-        filterState={filterState}
-        setFilterState={setFilterState}
-        loading={loading}
-        applyFilters={() => refreshPageQueries()}
-        ref={filterBlockRef}
-      />
+      <div className="flex items-center justify-center">
+        <div ref={forwardLoaderRef} className={`${loadingForward ? 'loading' : ''}`}>
+
+        </div>
+      </div>
     </div>
   );
 }
