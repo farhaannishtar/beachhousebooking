@@ -1,12 +1,12 @@
 import { Config } from "tailwindcss"
 
 const config = {
-  darkMode: false,
+  darkMode: "selector",
   content: [
-    './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
   ],
   prefix: "",
   theme: {
@@ -38,19 +38,25 @@ const config = {
         "xs-only": { max: "479px" },
       },
       colors: {
-        placeHolderText: '#617A8A',
-        inputBoxbg: '#F0F2F5',
-        selectedButton: '#129CED',
+        placeHolderText: "#617A8A",
+        inputBoxbg: "#F0F2F5",
+        selectedButton: "#129CED",
+        primaryShade: "#E3F5FF",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
-        link:'#757575',
-        blueShade:"#F7FAFA",
-        typo_dark:{300:'#141414',200:'#121417',100:'#676A6C'},
-        typo_light:{100:'#F0F2F5',200:'#637887',300:'#617A8A',400:'#3D4D5C'},
-        error:"#ED3912",
+        link: "#757575",
+        blueShade: "#F7FAFA",
+        typo_dark: { 300: "#141414", 200: "#121417", 100: "#676A6C" },
+        typo_light: {
+          100: "#F0F2F5",
+          200: "#637887",
+          300: "#617A8A",
+          400: "#3D4D5C",
+        },
+        error: "#ED3912",
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
@@ -101,7 +107,10 @@ const config = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate"), require('daisyui'),],
-}
+  plugins: [require("tailwindcss-animate"), require("daisyui")],
+  daisyui: {
+    themes: [],
+  },
+};
 
 export default config

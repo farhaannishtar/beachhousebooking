@@ -2,13 +2,13 @@
 
 import React, { useState, ChangeEvent, useEffect, useRef } from "react";
 import { Event, Property } from "@/utils/lib/bookingType";
-import BaseInput from "./ui/BaseInput";
-import DateTimePickerInput from "./DateTimePickerInput/DateTimePickerInput";
-import Properties from "./Properties";
-import ToggleButton from "./ui/ToggleButton";
+import BaseInput from "../ui/BaseInput";
+import DateTimePickerInput from "../DateTimePickerInput/DateTimePickerInput";
+import Properties from "../Properties";
+import ToggleButton from "../ui/ToggleButton";
 import * as yup from "yup";
 import moment from "moment-timezone";
-import BaseModalComponent from "./ui/BaseModal";
+import BaseModalComponent from "../ui/BaseModal";
 
 const properties = Object.values(Property);
 
@@ -268,6 +268,9 @@ const CreateEventComponent: React.FC<CreateEventFormProps> = ({
       {/* name and number */}
       <div className="flex items-start gap-3">
         <div className="flex-1">
+          <label className="label_text !font-medium mb-2 block tablet-down:hidden">
+            Event name
+          </label>
           <BaseInput
             type="text"
             name="eventName"
@@ -282,14 +285,19 @@ const CreateEventComponent: React.FC<CreateEventFormProps> = ({
             </div>
           )}
         </div>
-        <BaseInput
-          preIcon="group"
-          type="number"
-          name="numberOfGuests"
-          value={event.numberOfGuests}
-          onChange={handleChange}
-          className="w-28"
-        />
+        <div className="flex-1">
+          <label className="label_text !font-medium mb-2 block tablet-down:hidden">
+            Number of guests
+          </label>
+          <BaseInput
+            preIcon="group"
+            type="number"
+            name="numberOfGuests"
+            value={event.numberOfGuests}
+            onChange={handleChange}
+            className="flex-1"
+          />
+        </div>
       </div>
       <Properties
         properties={event.properties ?? []}
@@ -299,6 +307,9 @@ const CreateEventComponent: React.FC<CreateEventFormProps> = ({
       {/* Start and End  Date */}
       <div className="flex gap-x-2 w-full">
         <div className="w-1/2">
+          <label className="label_text !font-medium mb-2 block tablet-down:hidden">
+            Start Date
+          </label>
           <DateTimePickerInput
             label={"Start Date"}
             name="startDateTime"
@@ -318,6 +329,9 @@ const CreateEventComponent: React.FC<CreateEventFormProps> = ({
           )}
         </div>
         <div className="w-1/2">
+          <label className="label_text !font-medium mb-2 block tablet-down:hidden">
+            End Date
+          </label>
           <DateTimePickerInput
             label={"End Date"}
             name="endDateTime"
@@ -334,6 +348,9 @@ const CreateEventComponent: React.FC<CreateEventFormProps> = ({
       </div>
       {/* Notes input */}
       <div>
+        <label className="label_text !font-medium mb-2 block tablet-down:hidden">
+          Notes
+        </label>
         <label>
           <textarea
             name="notes"
@@ -346,7 +363,7 @@ const CreateEventComponent: React.FC<CreateEventFormProps> = ({
       </div>
 
       {/* Toggle buttons group */}
-      <p className="text-base font-bold leading-normal my-4">
+      <p className="text-base font-medium leading-normal my-4">
         Additional services
       </p>
       <div className="flex gap-4 flex-wrap items-center">
@@ -381,13 +398,13 @@ const CreateEventComponent: React.FC<CreateEventFormProps> = ({
             value={event.overNightGuests}
             onChange={handleChange}
             preIcon="group"
-            className="w-24 h-10 pr-2"
+            className="flex-1 h-10 pr-2"
           />
         )}
       </div>
       {/* Costs part */}
       <div className="flex flex-col gap-4">
-        <p className="text-base font-bold leading-normal my-4">Costs</p>
+        <p className="text-base font-medium leading-normal my-4">Costs</p>
         <div className="cost-list flex flex-col gap-4">
           {event.costs.map((cost, index) => (
             <div className="flex items-center gap-4 " key={`cost-${index}`}>
@@ -422,9 +439,9 @@ const CreateEventComponent: React.FC<CreateEventFormProps> = ({
           <button
             onClick={() => setOpenedDropDown(!openedDropDown)}
             type="button"
-            className="bg-typo_light-100 text-center rounded-xl py-2 px-6 title w-20"
+            className="bg-primaryShade text-selectedButton text-center rounded-lg py-2 px-6 font-medium "
           >
-            +
+            + Add cost
           </button>
           <div
             className={`${openedDropDown ? "flex " : "hidden "}bg-white rounded-xl shadow-lg absolute top-12  flex-col z-50 w-36`}
@@ -467,11 +484,14 @@ const CreateEventComponent: React.FC<CreateEventFormProps> = ({
             </label>
           </div>
         </div>
-        <h3 className="title w-full text-right">
-          Total :{" "}
-          {event.finalCost
-            ? `₹ ${event.finalCost.toLocaleString("en-IN")}`
-            : "₹ 0"}{" "}
+
+        <h3 className="title text-right flex items-center justify-between">
+          <span>Total</span>
+          <span>
+            {event.finalCost
+              ? `₹ ${event.finalCost.toLocaleString("en-IN")}`
+              : "₹ 0"}
+          </span>
         </h3>
       </div>
       <div className="flex items-center justify-end gap-4 flex-wrap">

@@ -65,19 +65,43 @@ const Properties: React.FC<PropertiesProps> = ({ setFilterState, setFormState, s
 
   return (
     <>
-      <p className='text-base font-bold leading-normal'>
+      <p className="text-base font-bold leading-normal laptop-up:!font-medium">
         Properties
       </p>
-      <div className='flex flex-wrap gap-3'>
-        <PropertyBadge value={properties.includes(Property.Bluehouse)} propertyName={Property.Bluehouse} handlePropertyChange={handlePropertyChange} />
-        <PropertyBadge value={properties.includes(Property.MeadowLane)} propertyName={Property.MeadowLane} handlePropertyChange={handlePropertyChange} />
-        <PropertyBadge value={properties.includes(Property.Glasshouse)} propertyName={Property.Glasshouse} handlePropertyChange={handlePropertyChange} />
-        <PropertyBadge value={properties.includes(Property.VillaArmati)} propertyName={Property.VillaArmati} handlePropertyChange={handlePropertyChange} />
-        <PropertyBadge value={properties.includes(Property.LeChalet)} propertyName={Property.LeChalet} handlePropertyChange={handlePropertyChange} />
-        <PropertyBadge value={properties.includes(Property.Castle)} propertyName={Property.Castle} handlePropertyChange={handlePropertyChange} />
+      <div className="flex flex-wrap gap-3">
+        <PropertyBadge
+          value={properties.includes(Property.Bluehouse)}
+          propertyName={Property.Bluehouse}
+          handlePropertyChange={handlePropertyChange}
+        />
+        <PropertyBadge
+          value={properties.includes(Property.MeadowLane)}
+          propertyName={Property.MeadowLane}
+          handlePropertyChange={handlePropertyChange}
+        />
+        <PropertyBadge
+          value={properties.includes(Property.Glasshouse)}
+          propertyName={Property.Glasshouse}
+          handlePropertyChange={handlePropertyChange}
+        />
+        <PropertyBadge
+          value={properties.includes(Property.VillaArmati)}
+          propertyName={Property.VillaArmati}
+          handlePropertyChange={handlePropertyChange}
+        />
+        <PropertyBadge
+          value={properties.includes(Property.LeChalet)}
+          propertyName={Property.LeChalet}
+          handlePropertyChange={handlePropertyChange}
+        />
+        <PropertyBadge
+          value={properties.includes(Property.Castle)}
+          propertyName={Property.Castle}
+          handlePropertyChange={handlePropertyChange}
+        />
       </div>
     </>
-  )
+  );
 }
 
 export default Properties;

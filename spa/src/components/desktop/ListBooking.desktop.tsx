@@ -424,7 +424,6 @@ export default function ListBooking({ className }: ListBookingProps) {
   // **********************************************************************************************************************************************************************
   return (
     <div className={"w-full px-10 pb-4 " + className}>
-
       {/* Filters */}
       <BookingFilterDesktop
         isFiltersOpened={filterModalOpened}
@@ -438,92 +437,113 @@ export default function ListBooking({ className }: ListBookingProps) {
       />
       {/* Show filters if exists */}
       <div className="flex gap-3 mt-4 flex-wrap">
-        {
-          filterState.checkIn && <div className="flex gap-4 items-center rounded-xl border-[1px] border-typo_dark-300 px-4 py-1"><label className="label_text "> {format(new Date(filterState.checkIn), "iii LLL d")}</label>
+        {filterState.checkIn && (
+          <div className="flex gap-4 items-center rounded-xl border-[1px] border-typo_dark-300 px-4 py-1">
+            <label className="label_text ">
+              {" "}
+              {format(new Date(filterState.checkIn), "iii LLL d")}
+            </label>
             <span
               className=" material-symbols-outlined cursor-pointer "
               onClick={() => {
-                filterBlockRef.current.handleDateChange('checkIn', null);
+                filterBlockRef.current.handleDateChange("checkIn", null);
                 setTimeout(() => {
-                  filterBlockRef.current.applyFilters()
+                  filterBlockRef.current.applyFilters();
                 }, 200);
-
               }}
             >
               close
-            </span></div>
-        }
-        {
-          filterState.properties && filterState.properties.map((p, index) => {
-            return <div key={index} className="flex gap-4 items-center rounded-xl border-[1px] border-typo_dark-300 px-4 py-1"><label className="label_text "> {p}</label>
-              <span
-                className=" material-symbols-outlined cursor-pointer "
-                onClick={() => {
-                  const clearedProperties = filterState.properties ? filterState.properties.filter(proprety => { return proprety !== p }) : []
-                  setFilterState(prevState => ({
-                    ...prevState,
-                    properties:
-                      clearedProperties.length ? [...clearedProperties] : null
-
-                  }))
-                  setTimeout(() => {
-                    filterBlockRef.current.applyFilters()
-                  }, 200);
-
-                }}
+            </span>
+          </div>
+        )}
+        {filterState.properties &&
+          filterState.properties.map((p, index) => {
+            return (
+              <div
+                key={index}
+                className="flex gap-4 items-center rounded-xl border-[1px] border-typo_dark-300 px-4 py-1"
               >
-                close
-              </span></div>
-          })
-        }
-        {
-          filterState.paymentPending && <div className="flex gap-4 items-center rounded-xl border-[1px] border-typo_dark-300 px-4 py-1"><label className="label_text "> Payment pending</label>
+                <label className="label_text "> {p}</label>
+                <span
+                  className=" material-symbols-outlined cursor-pointer "
+                  onClick={() => {
+                    const clearedProperties = filterState.properties
+                      ? filterState.properties.filter((proprety) => {
+                          return proprety !== p;
+                        })
+                      : [];
+                    setFilterState((prevState) => ({
+                      ...prevState,
+                      properties: clearedProperties.length
+                        ? [...clearedProperties]
+                        : null,
+                    }));
+                    setTimeout(() => {
+                      filterBlockRef.current.applyFilters();
+                    }, 200);
+                  }}
+                >
+                  close
+                </span>
+              </div>
+            );
+          })}
+        {filterState.paymentPending && (
+          <div className="flex gap-4 items-center rounded-xl border-[1px] border-typo_dark-300 px-4 py-1">
+            <label className="label_text "> Payment pending</label>
             <span
               className=" material-symbols-outlined cursor-pointer "
               onClick={() => {
-                filterBlockRef.current.handleDateChange('paymentPending', null);
+                filterBlockRef.current.handleDateChange("paymentPending", null);
                 setTimeout(() => {
-                  filterBlockRef.current.applyFilters()
+                  filterBlockRef.current.applyFilters();
                 }, 200);
-
               }}
             >
               close
-            </span></div>
-        }
-        {
-          filterState.starred && <div className="flex gap-4 items-center rounded-xl border-[1px] border-typo_dark-300 px-4 py-1"><label className="label_text "> Starred</label>
+            </span>
+          </div>
+        )}
+        {filterState.starred && (
+          <div className="flex gap-4 items-center rounded-xl border-[1px] border-typo_dark-300 px-4 py-1">
+            <label className="label_text "> Starred</label>
             <span
               className=" material-symbols-outlined cursor-pointer "
               onClick={() => {
-                filterBlockRef.current.handleDateChange('starred', null);
+                filterBlockRef.current.handleDateChange("starred", null);
                 setTimeout(() => {
-                  filterBlockRef.current.applyFilters()
+                  filterBlockRef.current.applyFilters();
                 }, 200);
-
               }}
             >
               close
-            </span></div>
-        }
-        {(filterState.checkIn || filterState.properties?.length || filterState.paymentPending || filterState.starred) && <div onClick={() => {
-          setFilterState({
-            checkIn: null,
-            properties: null,
-            starred: null,
-            paymentPending: null,
-          })
-          setTimeout(() => {
-            filterBlockRef.current.applyFilters()
-          }, 200);
-
-        }} className="flex gap-4 items-center rounded-xl border-[1px] border-typo_dark-300 px-4 py-1 cursor-pointer"><label className="label_text "> Clear All</label>
-          <span
-            className=" material-symbols-outlined  "
-
+            </span>
+          </div>
+        )}
+        {(filterState.checkIn ||
+          filterState.properties?.length ||
+          filterState.paymentPending ||
+          filterState.starred) && (
+          <div
+            onClick={() => {
+              setFilterState({
+                checkIn: null,
+                properties: null,
+                starred: null,
+                paymentPending: null,
+              });
+              setTimeout(() => {
+                filterBlockRef.current.applyFilters();
+              }, 200);
+            }}
+            className="flex gap-4 items-center rounded-xl border-[1px] border-typo_dark-300 px-4 py-1 cursor-pointer"
           >
-            filter_list_off
-          </span></div>}
+            <label className="label_text "> Clear All</label>
+            <span className=" material-symbols-outlined  ">
+              filter_list_off
+            </span>
+          </div>
+        )}
       </div>
 
       <div className="flex items-center justify-end gap-4">
@@ -538,11 +558,15 @@ export default function ListBooking({ className }: ListBookingProps) {
         >
           Load older data
         </LoadingButton>
-        <button className="flex items-center gap-4 p-3 text-white bg-selectedButton rounded-lg text-sm h-12" onClick={() => router.push("/protected/booking/create?returnTo=/protected/booking/list")} >
-          <span
-            className=" material-symbols-outlined cursor-pointer hover:text-selectedButton"
-
-          >
+        <button
+          className="flex items-center gap-3 p-3 text-white bg-selectedButton rounded-lg text-sm h-12"
+          onClick={() =>
+            router.push(
+              "/protected/booking/create?returnTo=/protected/booking/list"
+            )
+          }
+        >
+          <span className=" material-symbols-outlined cursor-pointer hover:text-selectedButton">
             add
           </span>
           <span>Create booking</span>
@@ -569,7 +593,6 @@ export default function ListBooking({ className }: ListBookingProps) {
                         <span className="text-neutral-900 text-base  leading-6 font-semibold">
                           {booking.client.name}
                         </span>{" "}
-
                         {booking?.starred && (
                           <span className="material-symbols-filled text-xl">
                             star_rate
@@ -587,7 +610,6 @@ export default function ListBooking({ className }: ListBookingProps) {
                       </div>
                     </div>
                   </div>
-
 
                   <label className="text-selectedButton text-sm font-normal ">
                     {numOfDays(booking)} days, {booking.numberOfGuests} pax
@@ -619,9 +641,7 @@ export default function ListBooking({ className }: ListBookingProps) {
                       )}
                     </div>
                   }
-
                 </div>
-
               </div>
             ))}
           </div>
@@ -641,9 +661,10 @@ export default function ListBooking({ className }: ListBookingProps) {
       {/* Filter modal */}
 
       <div className="flex items-center justify-center">
-        <div ref={forwardLoaderRef} className={`${loadingForward ? 'loading' : ''}`}>
-
-        </div>
+        <div
+          ref={forwardLoaderRef}
+          className={`${loadingForward ? "loading" : ""}`}
+        ></div>
       </div>
     </div>
   );
