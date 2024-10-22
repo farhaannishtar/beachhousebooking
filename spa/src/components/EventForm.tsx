@@ -39,8 +39,6 @@ export default function EventForm({ events, setEvents }: { events: Event[], setE
 
   const deleteEvent = (index: number, e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
-    console.log('index', index)
-    console.log('event name', events[index].eventName)
     e.preventDefault();
     const newEvents = [...events];
     newEvents.splice(index, 1);

@@ -203,7 +203,6 @@ export default function ListLogs({ className }: ListLogsProps) {
       });
       return;
     }
-    console.log("query changed: ", query);
 
     const {
       searchText,

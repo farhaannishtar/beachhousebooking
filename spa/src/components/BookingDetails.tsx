@@ -68,7 +68,6 @@ export default function BookingDetailsComponent({
           if (!bookingsData) return;
           const currentIndex = bookingsData[0].json.length - 1;
           const newData = bookingsData[0].json[currentIndex];
-          console.log({ newData });
 
           setFormState((prevState) => ({
             ...prevState,
@@ -85,7 +84,6 @@ export default function BookingDetailsComponent({
   function moveFormState(direction: "next" | "previous") {
     if (direction === "next") {
       if (formState.currentIndex === formState.allData.length - 1) return;
-      console.log("next ", "index: ", formState.currentIndex + 1);
       setFormState((prevState) => ({
         ...prevState,
         form: prevState.allData[prevState.currentIndex + 1],
@@ -94,7 +92,6 @@ export default function BookingDetailsComponent({
       }));
     } else {
       if (formState.currentIndex === 0) return;
-      console.log("prev ", "index: ", formState.currentIndex - 1);
       setFormState((prevState) => ({
         ...prevState,
         form: prevState.allData[prevState.currentIndex - 1],
@@ -185,7 +182,6 @@ export default function BookingDetailsComponent({
       ...prevState,
       pageToShow: showPage,
     }));
-    console.log(formState.form.events);
   };
 
   const phoneRegExp = /^\+?(?:[0-9]\s?){6,14}[0-9]$/;
@@ -230,8 +226,8 @@ export default function BookingDetailsComponent({
                 <button
                   type="button"
                   onClick={() => {
-                    console.log(searchParams);
 
+                    
                     if (returnTo) {
                       bookingId
                         ? router.push(

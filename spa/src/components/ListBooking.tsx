@@ -94,7 +94,6 @@ export default function ListBooking({ className }: ListBookingProps) {
         convertDateToIndianDate({ date: new Date("2122-05-20") })
       );
       if (filters.checkIn) {
-        console.log("Filtering by checkIn: ", filters.checkIn);
         bookingsData = bookingsData
           .gte(
             "check_in",
@@ -139,13 +138,6 @@ export default function ListBooking({ className }: ListBookingProps) {
       .eq("status", "confirmed")
       .order("check_in", { ascending: true })
       .range(0, numOfBookingsForward);
-    console.log(
-      requestId,
-      " of ",
-      filters,
-      " request id :",
-      latestRequestRef.current
-    );
 
     try {
       let [backwardResults, forwardResults] = await Promise.all([
@@ -155,8 +147,6 @@ export default function ListBooking({ className }: ListBookingProps) {
 
       // Check if this is the latest request
       if (latestRequestRef.current !== requestId) return;
-      console.log(requestId, "Backward Results:", backwardResults.data);
-      console.log(requestId, "Forward Results:", forwardResults.data);
 
       let bookings: BookingDB[] = [];
       for (const booking of backwardResults.data ?? []) {
@@ -175,8 +165,6 @@ export default function ListBooking({ className }: ListBookingProps) {
           bookingId: booking.id,
         });
       }
-
-      console.log("Combined Bookings:", bookings);
 
       setState((prevState) => ({
         ...prevState,
@@ -250,7 +238,6 @@ export default function ListBooking({ className }: ListBookingProps) {
       });
       return;
     }
-    console.log("query changed: ", query);
 
     const { searchText, checkIn, properties, starred, paymentPending } = query;
     if (searchText) {

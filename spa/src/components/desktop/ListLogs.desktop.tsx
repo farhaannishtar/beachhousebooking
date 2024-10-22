@@ -26,6 +26,7 @@ import DateTimePickerInput from "../DateTimePickerInput/DateTimePickerInput";
 import Properties from "../Properties";
 import BookingFilterDesktop, { Filter } from "./BookingFilter.desktop";
 import { supabase } from "@/utils/supabase/client";
+import eventEmitter from "@/utils/eventEmitter";
 
 export interface ListLogsState {
   searchText: string | null;
@@ -65,7 +66,16 @@ export default function ListLogs({ className }: ListLogsProps) {
   const [loadingForward, setLoadingForward] = useState<boolean>(false);
   const forwardLoaderRef = useRef<HTMLDivElement | null>(null);
   const [hasMore, setHasMore] = useState<boolean>(true); // Indicates if more items can be loaded
-
+  useEffect(() => {
+    // Subscribe to the layout button click event
+    eventEmitter.on("filterBtnClicked", toggleFilterDisplay);
+    eventEmitter.on("searchTextChanged", handleChangeSearch);
+    // Cleanup subscription on unmount
+    return () => {
+      eventEmitter.off("filterBtnClicked", toggleFilterDisplay);
+      eventEmitter.off("searchTextChanged", handleChangeSearch);
+    };
+  }, []);
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -258,6 +268,12 @@ export default function ListLogs({ className }: ListLogsProps) {
           paymentPending: paymentPending || null,
         },
       }));
+      eventEmitter.emit("searchTextChangedFromChild", {
+        target: {
+          name: "searchText",
+          value: searchText ? searchText.toString() : null,
+        },
+      });
     }
 
     setFilterState({
@@ -345,8 +361,8 @@ export default function ListLogs({ className }: ListLogsProps) {
   };
   //Filter modal
   const [filterModalOpened, setFilterModalOpened] = useState<boolean>(false);
-  const toggleFilterDisplay = () => {
-    setFilterModalOpened(!filterModalOpened);
+  const toggleFilterDisplay = (e?: boolean) => {
+    setFilterModalOpened(e != undefined ? e : !filterModalOpened);
   };
   //Print return to link
   const redirectToBookingId = (bookingId?: number) => {

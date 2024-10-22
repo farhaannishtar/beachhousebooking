@@ -39,10 +39,9 @@ const BookingFilter = forwardRef<any, BookingFilterProps>(({ filtersFor, filterS
   }
 
   const handleDateChange = (name: string, value: string | null) => {
-    console.log(name, value)
     setFilterState((prevfilterState: Filter) => ({
       ...prevfilterState,
-      [name]: value
+      [name]: value,
     }));
   };
 

@@ -39,7 +39,6 @@ const EditEventComponent: React.FC<EditEventFormProps> = ({
     markForDeletion: false,
   });
   useEffect(() => {
-    console.log({ selectedEvent });
 
     selectedEvent ? setEvent(selectedEvent) : null;
   }, []);

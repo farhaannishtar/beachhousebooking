@@ -24,6 +24,7 @@ import SearchInput from "../ui/SearchInput";
 import BookingFilterDesktop, { Filter } from "./BookingFilter.desktop";
 import LoadingButton from "../ui/LoadingButton";
 import { useSearchParams } from "next/navigation";
+import eventEmitter from "@/utils/eventEmitter";
 
 // interface BookingProps {
 //   bookingsFromParent: BookingDB[];
@@ -36,7 +37,7 @@ interface ListBookingsState {
   organizedByStartDate: { [key: string]: BookingDB[] };
 }
 interface ListBookingProps {
-  className?: string
+  className?: string;
 }
 let numOfBookingsForward = 7;
 let numOfBookingsBackward = 0;
@@ -65,7 +66,17 @@ export default function ListBooking({ className }: ListBookingProps) {
   const [loadingBackward, setLoadingBackward] = useState<boolean>(false);
   const forwardLoaderRef = useRef<HTMLDivElement | null>(null);
   const [hasMore, setHasMore] = useState<boolean>(true); // Indicates if more items can be loaded
+  useEffect(() => {
+    // Subscribe to the layout button click event
+    eventEmitter.on("filterBtnClicked", toggleFilterDisplay);
+    eventEmitter.on("searchTextChanged", handleChangeSearch);
 
+    // Cleanup subscription on unmount
+    return () => {
+      eventEmitter.off("filterBtnClicked", toggleFilterDisplay);
+      eventEmitter.off("searchTextChanged", handleChangeSearch);
+    };
+  }, []);
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -216,10 +227,13 @@ export default function ListBooking({ className }: ListBookingProps) {
             ?.scrollIntoView({ behavior: "smooth" });
         }
       }, 500);
-      if (bookings.length < numOfBookingsBackward || bookings.length < numOfBookingsForward) {
-        setHasMore(false)
+      if (
+        bookings.length < numOfBookingsBackward ||
+        bookings.length < numOfBookingsForward
+      ) {
+        setHasMore(false);
       } else {
-        setHasMore(true)
+        setHasMore(true);
       }
       setLoading(false);
       setLoadingBackward(false);
@@ -293,6 +307,12 @@ export default function ListBooking({ className }: ListBookingProps) {
           paymentPending: paymentPending || null,
         },
       }));
+      eventEmitter.emit("searchTextChangedFromChild", {
+        target: {
+          name: "searchText",
+          value: searchText ? searchText.toString() : null,
+        },
+      });
     }
     setFilterState({
       checkIn: checkIn ? checkIn.toString() : null,
@@ -373,8 +393,8 @@ export default function ListBooking({ className }: ListBookingProps) {
   };
   //Filter modal
   const [filterModalOpened, setFilterModalOpened] = useState<boolean>(false);
-  const toggleFilterDisplay = () => {
-    setFilterModalOpened(!filterModalOpened);
+  const toggleFilterDisplay = (e?: boolean) => {
+    setFilterModalOpened(e != undefined ? e : !filterModalOpened);
   };
   //Print return to link
   const redirectToBookingId = (bookingId?: number) => {

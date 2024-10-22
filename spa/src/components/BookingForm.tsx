@@ -491,7 +491,6 @@ export default function BookingFormComponent({ bookingId, className }: BookingFo
       ...prevState,
       pageToShow: showPage,
     }));
-    // console.log(formState.form.events)
   };
 
   const handleClientChange = (e: ChangeEvent<HTMLInputElement>) => {

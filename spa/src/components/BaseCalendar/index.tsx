@@ -50,7 +50,6 @@ const BaseCalendar: React.FC<BaseCalendarProps> = ({ onMonthChange, bookingsList
         const firstDay = new Date(monthDate.getFullYear(), monthDate.getMonth(), 1)
         while (format(firstDay, 'eee') !== 'Sun') {
             firstDay.setDate(firstDay.getDate() - 1);
-            console.log(firstDay);
 
         }
 

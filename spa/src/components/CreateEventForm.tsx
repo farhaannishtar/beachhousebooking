@@ -54,7 +54,6 @@ const CreateEventComponent: React.FC<CreateEventFormProps> = ({
   const [exitModal, setExitModal] = useState<boolean>(false);
 
   useEffect(() => {
-    console.log({ selectedEvent });
     window.scrollTo({ top: 0, behavior: "smooth" });
 
     selectedEvent ? setEvent(selectedEvent) : null;
