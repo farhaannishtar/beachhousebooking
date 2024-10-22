@@ -24,3 +24,8 @@
 .customDatePicker :global {
   width:100%
 }
+@media only screen and (min-width: 1024px) {
+  .customDatePickerInput :global .rs-input {
+    height: 3rem;
+  }
+}

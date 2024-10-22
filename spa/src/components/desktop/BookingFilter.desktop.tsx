@@ -47,85 +47,200 @@ const BookingFilter = forwardRef<any, BookingFilterProps>(({ filtersFor, filterS
     };
 
     return (
+      <div
+        className={`transition-all  h-full w-full z-30 top-0 left-0 flex flex-col justify-end`}
+      >
+        {/* Filter part  */}
+        <div className=" flex flex-col py-4 relative gap-4 z-20 ">
+          {/* filters */}
+          <div className="flex items-center justify-between">
+            <label className="title ">Filters</label>{" "}
+            <span
+              className=" material-symbols-outlined cursor-pointer"
+              onClick={toggleFilterDisplay}
+            >
+              {isFiltersOpened ? "keyboard_arrow_up" : "keyboard_arrow_down"}
+            </span>
+          </div>
+          <div
+            className={`${isFiltersOpened ? "flex flex-col gap-4" : "hidden"}`}
+          >
+            {filtersFor == "Logs" && (
+              <DateTimePickerInput
+                label="Pick Date"
+                name="createdTime"
+                onChange={handleDateChange}
+                value={filterState.createdTime}
+                className="filterDatePicker"
+                cleanable={true}
+                showTime={false}
+              />
+            )}
+            {filtersFor == "Bookings" && (
+              <DateTimePickerInput
+                label="Pick Date"
+                name="checkIn"
+                onChange={handleDateChange}
+                value={filterState.checkIn}
+                className="filterDatePicker"
+                cleanable={true}
+                showTime={false}
+              />
+            )}
+            {/* Referrals */}
 
-        <div className={`transition-all  h-full w-full z-30 top-0 left-0 flex flex-col justify-end`}>
-
-            {/* Filter part  */}
-            <div className=' flex flex-col py-4 relative gap-4 z-20 max-h-[80vh] overflow-y-auto'>
-                {/* filters */}
-                <div className="flex items-center justify-between"><label className='title '>Filters</label>  <span
-                    className=" material-symbols-outlined cursor-pointer"
-                    onClick={toggleFilterDisplay}
-                >
-                    {isFiltersOpened ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}
-                </span></div>
-                <div className={`${isFiltersOpened ? 'flex flex-col gap-4' : 'hidden'}`}>
-                    {filtersFor == 'Logs' && (
-                        <DateTimePickerInput label="Pick Date" name="createdTime" onChange={handleDateChange} value={filterState.createdTime} className='filterDatePicker' cleanable={true} showTime={false} />
-                    )}
-                    {filtersFor == 'Bookings' && (
-                        <DateTimePickerInput label="Pick Date" name="checkIn" onChange={handleDateChange} value={filterState.checkIn} className='filterDatePicker' cleanable={true} showTime={false} />
-                    )}
-                    {/* Referrals */}
-
-                    <Properties properties={filterState.properties ?? []} setFilterState={setFilterState} />
-                    {/* Booking Types */}
-                    {filtersFor == 'Logs' && (
-                        <div>
-                            <label className='subheading'>Booking Types</label>
-                            <div className='flex items-center flex-wrap gap-4' >
-                                <div onClick={() => filterChange({ name: 'status', value: 'Inquiry' })} className={`badge badge-lg text-center w-32 ${filterState.status == 'Inquiry' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
-                                    } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Inquiries</div>
-                                <div onClick={() => filterChange({ name: 'status', value: 'Quotation' })} className={`badge badge-lg text-center w-32 ${filterState.status == 'Quotation' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
-                                    } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Quotations</div>
-                                <div onClick={() => filterChange({ name: 'status', value: 'Confirmed' })} className={`badge badge-lg text-center w-32 ${filterState.status == 'Confirmed' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
-                                    } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Confirmed</div>
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Other */}
-                    <label className='subheading'>Other</label>
-                    <div className='flex items-center flex-wrap gap-4' >
-                        <div onClick={() => filterChange({ name: 'paymentPending', value: !filterState.paymentPending })} className={`badge badge-lg text-center w-44 ${filterState.paymentPending ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
-                            } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Payment Pending</div>
-                        <div onClick={() => filterChange({ name: 'starred', value: !filterState.starred })} className={`badge badge-lg text-center w-32 ${filterState.starred ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
-                            } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Starred</div>
-
-
-                    </div>
-                    {/* Employees */}
-                    {filtersFor == 'Logs' && (
-                        <div>
-                            <label className='subheading'>Employees</label>
-                            <div className='flex items-center flex-wrap gap-4' >
-                                <div onClick={() => filterChange({ name: 'createdBy', value: 'Indhu' })} className={`badge badge-lg text-center w-32 ${filterState.createdBy == 'Indhu' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
-                                    } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Indhu</div>
-                                <div onClick={() => filterChange({ name: 'createdBy', value: 'Thejas' })} className={`badge badge-lg text-center w-32 ${filterState.createdBy == 'Thejas' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
-                                    } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Thejas</div>
-                                <div onClick={() => filterChange({ name: 'createdBy', value: 'Yasmeen' })} className={`badge badge-lg text-center w-32 ${filterState.createdBy == 'Yasmeen' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
-                                    } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Yasmeen</div>
-                                <div onClick={() => filterChange({ name: 'createdBy', value: 'Rafica' })} className={`badge badge-lg text-center w-32 ${filterState.createdBy == 'Rafica' ? '!text-white bg-selectedButton' : 'text-black bg-inputBoxbg'
-                                    } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}>Rafica</div>
-                            </div>
-                        </div>
-                    )}
-                    {/* Apply filters */}
-                    <div className="flex items-center justify-end">
-                        <LoadingButton
-                            className=" border-[1px] border-selectedButton text-selectedButton my-4  py-2 px-4 rounded-xl w-64"
-                            loading={loading}
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                applyFilters()
-                            }} >Apply filters</LoadingButton>
-                    </div>
+            <Properties
+              properties={filterState.properties ?? []}
+              setFilterState={setFilterState}
+            />
+            {/* Booking Types */}
+            {filtersFor == "Logs" && (
+              <React.Fragment>
+                <label className="text-base !font-medium">Booking Types</label>
+                <div className="flex items-center flex-wrap gap-4">
+                  <div
+                    onClick={() =>
+                      filterChange({ name: "status", value: "Inquiry" })
+                    }
+                    className={`badge badge-lg text-center w-32 ${
+                      filterState.status == "Inquiry"
+                        ? "!text-white bg-selectedButton laptop-gradient"
+                        : "text-black bg-inputBoxbg"
+                    } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}
+                  >
+                    Inquiries
+                  </div>
+                  <div
+                    onClick={() =>
+                      filterChange({ name: "status", value: "Quotation" })
+                    }
+                    className={`badge badge-lg text-center w-32 ${
+                      filterState.status == "Quotation"
+                        ? "!text-white bg-selectedButton laptop-gradient"
+                        : "text-black bg-inputBoxbg"
+                    } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}
+                  >
+                    Quotations
+                  </div>
+                  <div
+                    onClick={() =>
+                      filterChange({ name: "status", value: "Confirmed" })
+                    }
+                    className={`badge badge-lg text-center w-32 ${
+                      filterState.status == "Confirmed"
+                        ? "!text-white bg-selectedButton laptop-gradient"
+                        : "text-black bg-inputBoxbg"
+                    } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}
+                  >
+                    Confirmed
+                  </div>
                 </div>
+              </React.Fragment>
+            )}
 
+            {/* Other */}
+            <label className="text-base !font-medium">Other</label>
+            <div className="flex items-center flex-wrap gap-4">
+              <div
+                onClick={() =>
+                  filterChange({
+                    name: "paymentPending",
+                    value: !filterState.paymentPending,
+                  })
+                }
+                className={`badge badge-lg text-center w-44 ${
+                  filterState.paymentPending
+                    ? "!text-white bg-selectedButton laptop-gradient"
+                    : "text-black bg-inputBoxbg"
+                } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}
+              >
+                Payment Pending
+              </div>
+              <div
+                onClick={() =>
+                  filterChange({ name: "starred", value: !filterState.starred })
+                }
+                className={`badge badge-lg text-center w-32 ${
+                  filterState.starred
+                    ? "!text-white bg-selectedButton laptop-gradient"
+                    : "text-black bg-inputBoxbg"
+                } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}
+              >
+                Starred
+              </div>
             </div>
-
+            {/* Employees */}
+            {filtersFor == "Logs" && (
+              <React.Fragment>
+                <label className="text-base !font-medium">Employees</label>
+                <div className="flex items-center flex-wrap gap-4">
+                  <div
+                    onClick={() =>
+                      filterChange({ name: "createdBy", value: "Indhu" })
+                    }
+                    className={`badge badge-lg text-center w-32 ${
+                      filterState.createdBy == "Indhu"
+                        ? "!text-white bg-selectedButton laptop-gradient"
+                        : "text-black bg-inputBoxbg"
+                    } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}
+                  >
+                    Indhu
+                  </div>
+                  <div
+                    onClick={() =>
+                      filterChange({ name: "createdBy", value: "Thejas" })
+                    }
+                    className={`badge badge-lg text-center w-32 ${
+                      filterState.createdBy == "Thejas"
+                        ? "!text-white bg-selectedButton laptop-gradient"
+                        : "text-black bg-inputBoxbg"
+                    } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}
+                  >
+                    Thejas
+                  </div>
+                  <div
+                    onClick={() =>
+                      filterChange({ name: "createdBy", value: "Yasmeen" })
+                    }
+                    className={`badge badge-lg text-center w-32 ${
+                      filterState.createdBy == "Yasmeen"
+                        ? "!text-white bg-selectedButton laptop-gradient"
+                        : "text-black bg-inputBoxbg"
+                    } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}
+                  >
+                    Yasmeen
+                  </div>
+                  <div
+                    onClick={() =>
+                      filterChange({ name: "createdBy", value: "Rafica" })
+                    }
+                    className={`badge badge-lg text-center w-32 ${
+                      filterState.createdBy == "Rafica"
+                        ? "!text-white bg-selectedButton laptop-gradient"
+                        : "text-black bg-inputBoxbg"
+                    } text-base font-medium leading-normal p-4 text-typo_dark-100 h-12 rounded-[20px] cursor-pointer`}
+                  >
+                    Rafica
+                  </div>
+                </div>
+              </React.Fragment>
+            )}
+            {/* Apply filters */}
+            <div className="flex items-center justify-end">
+              <LoadingButton
+                className=" border-[1px] border-selectedButton text-selectedButton my-4  py-2 px-4 rounded-xl w-64"
+                loading={loading}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  applyFilters();
+                }}
+              >
+                Apply filters
+              </LoadingButton>
+            </div>
+          </div>
         </div>
-
+      </div>
     );
 })
 BookingFilter.displayName = "BookingFilter";

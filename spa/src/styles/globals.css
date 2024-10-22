@@ -200,3 +200,9 @@ width: 100% !important;
   box-shadow: -8px 0px 32px 0px #0000000D;
 
 }
+@media only screen and (min-width: 1024px) {
+
+.laptop-gradient{
+  background: linear-gradient(180deg, #0B9AEF 0%, #0B7DC0 100%);
+
+}}
