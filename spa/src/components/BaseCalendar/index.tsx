@@ -200,39 +200,88 @@ const BaseCalendar: React.FC<BaseCalendarProps> = ({ onMonthChange, bookingsList
         const displayList = list
 
         if (list.length) {
+          return (
+            <ul
+              className={`calendar-todo-list grid  relative`}
+              style={{ gridTemplateRows: `repeat(${dayMaxRow}, 1fr)` }}
+            >
+              {displayList.map((event, index) => (
+                <li
+                  key={event.title + "-" + index}
+                  className={`flex items-start my-[2px]  w-full  min-w-0 relative `}
+                  style={{ gridRow: event.order }}
+                >
+                  {event.positions.includes("start") ? (
+                    <span
+                      className={`text-white text-[8px] pl-1 max-w-full overflow-hidden whitespace-nowrap text-ellipsis tablet-down:text-[6px] absolute top-1/2 -translate-y-1/2`}
+                    >
+                      {event.title}
+                    </span>
+                  ) : (
+                    ""
+                  )}
+                  {event.positions.map((pos, i) => {
+                    switch (pos) {
+                      case "start":
+                        return (
+                          <div
+                            key={event.title + "-" + index + "-pos-" + i}
+                            id={event.title + "-" + index + "-pos-" + pos}
+                            style={{ backgroundColor: event.color }}
+                            className={`h-4 ${dayMaxRow > 3 ? "tablet-down:h-2.5 xs-only:h-2" : "mobile-down:h-3"}  flex-1 rounded-l-lg flex items-center -mr-[6px]`}
+                          ></div>
+                        );
+                        break;
 
-            return (
-                <ul className={`calendar-todo-list grid  relative`} style={{ gridTemplateRows: `repeat(${dayMaxRow}, 1fr)` }}>
-                    {displayList.map((event, index) => (
-                        <li key={event.title + '-' + index} className={`flex items-start my-[2px] relative w-full  min-w-0  `} style={{ gridRow: event.order }} >
-                            {event.positions.map((pos, i) => {
-                                switch (pos) {
-                                    case 'start':
-                                        return <div key={event.title + '-' + index + '-pos-' + i} id={event.title + '-' + index + '-pos-' + pos} style={{ backgroundColor: event.color }} className={`h-4 ${dayMaxRow > 3 ? 'tablet-down:h-2.5 xs-only:h-1.5' : 'mobile-down:h-3'} min-w-0 flex-1 rounded-l-lg flex items-center -mr-[6px]`}><span className={`text-white text-[8px] pl-1 overflow-hidden whitespace-nowrap text-ellipsis tablet-down:text-[6px] ${dayMaxRow > 3 ? 'xs-only:hidden' : ''}`}>{event.title}</span></div>
-                                        break;
+                      case "middle":
+                        return (
+                          <div
+                            key={event.title + "-" + index + "-pos-" + i}
+                            id={event.title + "-" + index + "-pos-" + pos}
+                            style={{ backgroundColor: event.color }}
+                            className={`h-4 ${dayMaxRow > 3 ? "tablet-down:h-2.5 xs-only:h-2" : "mobile-down:h-3"} min-w-0 flex-1 flex items-center -mx-[6px]`}
+                          ></div>
+                        );
+                        break;
 
-                                    case 'middle':
-                                        return <div key={event.title + '-' + index + '-pos-' + i} id={event.title + '-' + index + '-pos-' + pos} style={{ backgroundColor: event.color }} className={`h-4 ${dayMaxRow > 3 ? 'tablet-down:h-2.5 xs-only:h-1.5' : 'mobile-down:h-3'} min-w-0 flex-1 flex items-center -mx-[6px]`}><span className={`text-white text-[8px] pl-1 overflow-hidden whitespace-nowrap text-ellipsis tablet-down:text-[6px] ${dayMaxRow > 3 ? 'xs-only:hiddenhidden' : ''}`}></span></div>
-                                        break;
-
-                                    case 'end':
-                                        return <div key={event.title + '-' + index + '-pos-' + i} id={event.title + '-' + index + '-pos-' + pos} style={{ backgroundColor: event.color }} className={`h-4 ${dayMaxRow > 3 ? 'tablet-down:h-2.5 xs-only:h-1.5' : 'mobile-down:h-3'} min-w-0 flex-1 rounded-r-lg flex items-center -ml-[6px]`}><span className={`text-white text-[8px] pl-1 overflow-hidden whitespace-nowrap text-ellipsis tablet-down:text-[6px]${dayMaxRow > 3 ? 'xs-only:hiddenhidden' : ''}`}></span></div>
-                                        break;
-                                }
-                            })}
-                        </li>
-                    ))}
-
-                </ul>
-            );
+                      case "end":
+                        return (
+                          <div
+                            key={event.title + "-" + index + "-pos-" + i}
+                            id={event.title + "-" + index + "-pos-" + pos}
+                            style={{
+                              backgroundColor: event.color,
+                            }}
+                            className={`h-4 ${dayMaxRow > 3 ? "tablet-down:h-2.5 xs-only:h-2" : "mobile-down:h-3"} min-w-0 flex-1 rounded-r-lg flex items-center -ml-[6px]`}
+                          ></div>
+                        );
+                        break;
+                    }
+                  })}
+                </li>
+              ))}
+            </ul>
+          );
         }
 
-        return <ul className={`calendar-todo-list grid  relative`} style={{ gridTemplateRows: `repeat(${dayMaxRow}, 1fr)` }}>
-            {Array.from({ length: dayMaxRow }).map((e, i) => <li key={`empty-${i}`} className={`flex items-start  relative w-full my-[2px] min-w-0  `} style={{ gridRow: i + 1 }} >
-                <div className={`h-4 ${dayMaxRow > 3 ? 'mobile-down:h-2 xs-only:h-1.5' : 'mobile-down:h-3'} min-w-0 flex-1 rounded-l-lg flex items-center -mr-[6px]`}></div>
-            </li>)}
-
-        </ul>;
+        return (
+          <ul
+            className={`calendar-todo-list grid  relative`}
+            style={{ gridTemplateRows: `repeat(${dayMaxRow}, 1fr)` }}
+          >
+            {Array.from({ length: dayMaxRow }).map((e, i) => (
+              <li
+                key={`empty-${i}`}
+                className={`flex items-start  relative w-full my-[2px] min-w-0  `}
+                style={{ gridRow: i + 1 }}
+              >
+                <div
+                  className={`h-4 ${dayMaxRow > 3 ? "mobile-down:h-2 xs-only:h-2" : "mobile-down:h-3"} min-w-0 flex-1 rounded-l-lg flex items-center -mr-[6px]`}
+                ></div>
+              </li>
+            ))}
+          </ul>
+        );
     }
     return (
         <div style={{ width: selectedDate && showEvents && listOfAllEvents.current[selectedDate.getTime()]?.length ? 'calc(100% - 24rem)' : '100%' }}>

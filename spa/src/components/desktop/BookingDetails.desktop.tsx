@@ -352,7 +352,7 @@ export default function BookingDetailsComponent({
               </div>
               {/* Numbers of events */}
               {formState.form.bookingType === "Event" && (
-                <div className="flex  gap-4">
+                <div className="flex  gap-2">
                   <label className="label_text">
                     <span className="!font-semibold">Number of Events: </span>
                   </label>
@@ -364,7 +364,7 @@ export default function BookingDetailsComponent({
               )}
 
               {/* Numbers of Guests */}
-              <div className="flex  gap-4">
+              <div className="flex  gap-2">
                 <span className="!font-semibold">Number of Guests: </span>
                 <label className="label_text flex items-center gap-2">
                   {formState.form.numberOfGuests}
@@ -372,14 +372,14 @@ export default function BookingDetailsComponent({
               </div>
               {/* Notes  */}
               {formState.form.notes && (
-                <div className="gap-4 flex">
+                <div className="gap-2 flex">
                   <label className="label_text !font-semibold">Notes:</label>
                   <label className="label_text "> {formState.form.notes}</label>
                 </div>
               )}
               {/* Properties  */}
               {formState.form.properties?.length > 0 && (
-                <div className="gap-4 flex">
+                <div className="gap-2 flex">
                   <span className="!font-semibold">Properties: </span>
                   <label className="label_text flex items-center gap-2">
                     {formState.form.properties.join(", ")}
