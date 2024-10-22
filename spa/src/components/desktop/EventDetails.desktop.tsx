@@ -1,10 +1,8 @@
 "use client";
 
-import React, { useState, ChangeEvent, useEffect } from 'react';
-import { Event, Property } from '@/utils/lib/bookingType';
-import format from 'date-fns/format';
-
-
+import React, { useState, ChangeEvent, useEffect } from "react";
+import { Event, Property } from "@/utils/lib/bookingType";
+import format from "date-fns/format";
 
 interface EditEventFormProps {
   cancelAddEvent: () => void;
@@ -65,25 +63,27 @@ const EditEventComponent: React.FC<EditEventFormProps> = ({
       </div>
 
       {/* Dates  */}
-      <div className="flex flex-col  w-full gap-2">
+      <div className="flex   w-full gap-4">
         <label className="label_text !font-semibold">Dates</label>
-        <div className="flex  items-center pl-4">
+        <div className="flex  items-center gap-1">
           {event.startDateTime && (
             <label className="label_text ">
               {" "}
               {format(
                 new Date(`${event.startDateTime || ""}`),
                 "iii LLL d, hh:mmaa"
-              )}{" "}
+              )}
+              {"  "}
             </label>
           )}
-          <span className="label_text">-</span>
+          {" - "}
           {event.endDateTime && (
             <label className="label_text ">
               {format(
                 new Date(`${event.endDateTime || ""}`),
                 "iii LLL d, hh:mmaa"
-              )}{" "}
+              )}
+              {"  "}
             </label>
           )}
         </div>
@@ -97,15 +97,15 @@ const EditEventComponent: React.FC<EditEventFormProps> = ({
       </div>
       {/* Notes  */}
       {event.notes && (
-        <div className="flex-col flex gap-2">
+        <div className=" flex gap-4">
           <label className="label_text !font-semibold">Notes: </label>
-          <label className="label_text pl-4">{event.notes}</label>
+          <label className="label_text ">{event.notes}</label>
         </div>
       )}
       {/* Properties  */}
-      <div className="flex-col flex gap-2 ">
+      <div className=" flex gap-4 ">
         <label className="label_text !font-semibold">Properties: </label>
-        <div className="flex flex-col gap-2 pl-4">
+        <div className="flex flex-col gap-2 ">
           {event.properties &&
             event.properties.map((p, i) => (
               <label className="label_text" key={`prop-${i}`}>
@@ -140,11 +140,11 @@ const EditEventComponent: React.FC<EditEventFormProps> = ({
         <div className="cost-list flex flex-col gap-2">
           {event.costs.map((cost, index) => (
             <div
-              className="flex items-center pl-4 justify-between"
+              className="flex items-center px-4 py-2 rounded-lg bg-typo_light-100 justify-between"
               key={`cost-${index}`}
             >
               <label className="label_text !font-medium">{cost.name}: </label>
-              <label className="label_text">
+              <label className="label_text !font-medium">
                 ₹{cost.amount.toLocaleString("en-IN")}
               </label>
             </div>
@@ -153,11 +153,13 @@ const EditEventComponent: React.FC<EditEventFormProps> = ({
       </div>
       {/* Total cost */}
       <div>
-        <h3 className="title w-full text-right">
-          Total :{" "}
-          {event.finalCost
-            ? `₹ ${event.finalCost.toLocaleString("en-IN")}`
-            : "₹ 0"}{" "}
+        <h3 className="title w-full text-right flex items-center justify-between">
+          <span>Total</span>
+          <span>
+            {event.finalCost
+              ? `₹ ${event.finalCost.toLocaleString("en-IN")}`
+              : "₹ 0"}
+          </span>
         </h3>
       </div>
     </div>
