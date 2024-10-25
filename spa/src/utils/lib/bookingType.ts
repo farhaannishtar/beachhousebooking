@@ -387,6 +387,7 @@ export interface CalendarCell {
   startDateTime: string;
   endDateTime: string;
   color:string;
+  propertyName:string;
   order:number
   
 }

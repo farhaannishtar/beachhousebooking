@@ -15,7 +15,7 @@ const FullCalendar = () => {
         date: null,
         dbBookings: [],
     });
-    const [selectedProperty, setSelectedProperty] = useState<Property | 'all'>(Property.Bluehouse);
+    const [selectedProperty, setSelectedProperty] = useState<Property | 'all'>('all');
     const [monthDate, setMonthDate] = useState<Date>(new Date());
     const bookingsList = useRef<CalendarCell[]>([])
     useEffect(() => {

@@ -2,7 +2,7 @@ import { Calendar, Whisper, Popover, Badge } from 'rsuite';
 import "rsuite/dist/rsuite-no-reset.min.css";
 import format from "date-fns/format";
 import { useEffect, useRef, useState } from "react";
-import { BookingDB, CalendarCell } from '@/utils/lib/bookingType';
+import { BookingDB, CalendarCell, convertDateToIndianDate, convertIndianTimeToUTC } from '@/utils/lib/bookingType';
 import { title } from 'process';
 import { useRouter } from 'next/router';
 
@@ -23,7 +23,9 @@ type DayCellEvent = {
     positions: string[];
     color: string;
     order: number;
-    bookingOrderNumber: number
+    bookingOrderNumber: number;
+    numberOfGuests?: number;
+    propertyName: string
 }
 const BaseCalendar: React.FC<BaseCalendarProps> = ({ onMonthChange, bookingsList, loading }) => {
     const router = useRouter();
@@ -50,6 +52,7 @@ const BaseCalendar: React.FC<BaseCalendarProps> = ({ onMonthChange, bookingsList
         const firstDay = new Date(monthDate.getFullYear(), monthDate.getMonth(), 1)
         while (format(firstDay, 'eee') !== 'Sun') {
             firstDay.setDate(firstDay.getDate() - 1);
+            //console.log(firstDay);
 
         }
 
@@ -81,7 +84,7 @@ const BaseCalendar: React.FC<BaseCalendarProps> = ({ onMonthChange, bookingsList
         }
         calendarDays.current = { ...calendarDays.current, [format(firstDay, 'MMM_dd')]: 6 }
 
-        console.log({ calendarRows, calendarDays });
+        //console.log({ calendarRows, calendarDays });
 
         return maxRows
     }
@@ -90,7 +93,7 @@ const BaseCalendar: React.FC<BaseCalendarProps> = ({ onMonthChange, bookingsList
         // Set time to 00:00:00 for date, rangeStart, and rangeEnd
         const normalizeToMidnight = (d: Date) => new Date(d.setHours(0, 0, 0, 0));
         const normalizeToLastHour = (d: Date) => new Date(d.setHours(23, 59, 0, 0));
-        const normalizeTo11Am = (d: Date) => new Date(d.setHours(11, 0, 0, 0));
+        const normalizeTo11Am = (d: Date) => new Date(d.setHours(11, 0, 59, 0));
 
 
         const normalizedDate = normalizeToMidnight(new Date(date));
@@ -106,9 +109,8 @@ const BaseCalendar: React.FC<BaseCalendarProps> = ({ onMonthChange, bookingsList
 
 
         const nextDay = (d: Date) => new Date(d.setDate(d.getDate() + 1))
-        const normalizeTo11Am = (d: Date) => new Date(nextDay(d).setHours(11, 0, 0, 0));
+        const normalizeTo11Am = (d: Date) => new Date(nextDay(d).setHours(11, 0, 59, 0));
         const normalizedNextDateTo11Am = normalizeTo11Am(new Date(date));
-
         if (format(date, 'd-MM-yyyy') == format(rangeStart, 'd-MM-yyyy')) {
             positions.unshift('start')
         }
@@ -173,7 +175,7 @@ const BaseCalendar: React.FC<BaseCalendarProps> = ({ onMonthChange, bookingsList
                     index++
                 }
 
-                return { bookingId: cell.booking.bookingId, startTime: format(bookingDate, 'd-MM-yyyy hh:mm aaa'), endTime: format(endBookingDate, 'd-MM-yyyy hh:mm aaa'), title: bookingEvent, bookingType: cell.booking.bookingType, positions, color: cell.color, order: tableOfOrders.current?.[cell.order], bookingOrderNumber: cell.order }
+                return { bookingId: cell.booking.bookingId, startTime: format(bookingDate, 'd-MM-yyyy hh:mm aaa'), endTime: format(endBookingDate, 'd-MM-yyyy hh:mm aaa'), title: bookingEvent, bookingType: cell.booking.bookingType, positions, color: cell.color, order: tableOfOrders.current?.[cell.order], bookingOrderNumber: cell.order, numberOfGuests: cell.booking.numberOfGuests, propertyName: cell.propertyName }
 
 
             }
@@ -192,7 +194,7 @@ const BaseCalendar: React.FC<BaseCalendarProps> = ({ onMonthChange, bookingsList
     function renderCell(date: Date) {
         let dayMaxRow = calendarRows.current[calendarDays.current[format(date, 'MMM_dd')] - 1];
         dayMaxRow = maxRowsByGrid //dayMaxRow != 0 ? maxRowsByGrid : 1
-        console.log(dayMaxRow, calendarRows.current, calendarDays.current, format(date, 'MMM_dd'));
+        //console.log(dayMaxRow, calendarRows.current, calendarDays.current, format(date, 'MMM_dd'));
 
         if (loading) return <ul className={`calendar-todo-list grid  relative`} ><li className='flex items-center justify-center'><div className="loader-spinner "></div></li></ul>
         const list = getTodoList(date);
@@ -200,88 +202,39 @@ const BaseCalendar: React.FC<BaseCalendarProps> = ({ onMonthChange, bookingsList
         const displayList = list
 
         if (list.length) {
-          return (
-            <ul
-              className={`calendar-todo-list grid  relative`}
-              style={{ gridTemplateRows: `repeat(${dayMaxRow}, 1fr)` }}
-            >
-              {displayList.map((event, index) => (
-                <li
-                  key={event.title + "-" + index}
-                  className={`flex items-start my-[2px]  w-full  min-w-0 relative `}
-                  style={{ gridRow: event.order }}
-                >
-                  {event.positions.includes("start") ? (
-                    <span
-                      className={`text-white text-[8px] pl-1 max-w-full overflow-hidden whitespace-nowrap text-ellipsis tablet-down:text-[6px] absolute top-1/2 -translate-y-1/2`}
-                    >
-                      {event.title}
-                    </span>
-                  ) : (
-                    ""
-                  )}
-                  {event.positions.map((pos, i) => {
-                    switch (pos) {
-                      case "start":
-                        return (
-                          <div
-                            key={event.title + "-" + index + "-pos-" + i}
-                            id={event.title + "-" + index + "-pos-" + pos}
-                            style={{ backgroundColor: event.color }}
-                            className={`h-4 ${dayMaxRow > 3 ? "tablet-down:h-2.5 xs-only:h-2" : "mobile-down:h-3"}  flex-1 rounded-l-lg flex items-center -mr-[6px]`}
-                          ></div>
-                        );
-                        break;
 
-                      case "middle":
-                        return (
-                          <div
-                            key={event.title + "-" + index + "-pos-" + i}
-                            id={event.title + "-" + index + "-pos-" + pos}
-                            style={{ backgroundColor: event.color }}
-                            className={`h-4 ${dayMaxRow > 3 ? "tablet-down:h-2.5 xs-only:h-2" : "mobile-down:h-3"} min-w-0 flex-1 flex items-center -mx-[6px]`}
-                          ></div>
-                        );
-                        break;
+            return (
+                <ul className={`calendar-todo-list grid  relative`} style={{ gridTemplateRows: `repeat(${dayMaxRow}, 1fr)` }}>
+                    {displayList.map((event, index) => (
+                        <li key={event.title + '-' + index} className={`flex items-start my-[2px] relative w-full  min-w-0  `} style={{ gridRow: event.order }} >
+                            {event.positions.map((pos, i) => {
+                                switch (pos) {
+                                    case 'start':
+                                        return <div key={event.title + '-' + index + '-pos-' + i} id={event.title + '-' + index + '-pos-' + pos} style={{ backgroundColor: event.color }} className={`h-4 ${dayMaxRow > 3 ? 'tablet-down:h-2.5 xs-only:h-1.5' : 'mobile-down:h-3'} min-w-0 flex-1 rounded-l-lg flex items-center -mr-[6px]`}><span className={`text-white text-[8px] pl-1 overflow-hidden whitespace-nowrap text-ellipsis tablet-down:text-[6px] ${dayMaxRow > 3 ? 'xs-only:hidden' : ''}`}>{event.title}</span></div>
+                                        break;
 
-                      case "end":
-                        return (
-                          <div
-                            key={event.title + "-" + index + "-pos-" + i}
-                            id={event.title + "-" + index + "-pos-" + pos}
-                            style={{
-                              backgroundColor: event.color,
-                            }}
-                            className={`h-4 ${dayMaxRow > 3 ? "tablet-down:h-2.5 xs-only:h-2" : "mobile-down:h-3"} min-w-0 flex-1 rounded-r-lg flex items-center -ml-[6px]`}
-                          ></div>
-                        );
-                        break;
-                    }
-                  })}
-                </li>
-              ))}
-            </ul>
-          );
+                                    case 'middle':
+                                        return <div key={event.title + '-' + index + '-pos-' + i} id={event.title + '-' + index + '-pos-' + pos} style={{ backgroundColor: event.color }} className={`h-4 ${dayMaxRow > 3 ? 'tablet-down:h-2.5 xs-only:h-1.5' : 'mobile-down:h-3'} min-w-0 flex-1 flex items-center -mx-[6px]`}><span className={`text-white text-[8px] pl-1 overflow-hidden whitespace-nowrap text-ellipsis tablet-down:text-[6px] ${dayMaxRow > 3 ? 'xs-only:hiddenhidden' : ''}`}></span></div>
+                                        break;
+
+                                    case 'end':
+                                        return <div key={event.title + '-' + index + '-pos-' + i} id={event.title + '-' + index + '-pos-' + pos} style={{ backgroundColor: event.color }} className={`h-4 ${dayMaxRow > 3 ? 'tablet-down:h-2.5 xs-only:h-1.5' : 'mobile-down:h-3'} min-w-0 flex-1 rounded-r-lg flex items-center -ml-[6px]`}><span className={`text-white text-[8px] pl-1 overflow-hidden whitespace-nowrap text-ellipsis tablet-down:text-[6px]${dayMaxRow > 3 ? 'xs-only:hiddenhidden' : ''}`}></span></div>
+                                        break;
+                                }
+                            })}
+                        </li>
+                    ))}
+
+                </ul>
+            );
         }
 
-        return (
-          <ul
-            className={`calendar-todo-list grid  relative`}
-            style={{ gridTemplateRows: `repeat(${dayMaxRow}, 1fr)` }}
-          >
-            {Array.from({ length: dayMaxRow }).map((e, i) => (
-              <li
-                key={`empty-${i}`}
-                className={`flex items-start  relative w-full my-[2px] min-w-0  `}
-                style={{ gridRow: i + 1 }}
-              >
-                <div
-                  className={`h-4 ${dayMaxRow > 3 ? "mobile-down:h-2 xs-only:h-2" : "mobile-down:h-3"} min-w-0 flex-1 rounded-l-lg flex items-center -mr-[6px]`}
-                ></div>
-              </li>
-            ))}
-          </ul>
-        );
+        return <ul className={`calendar-todo-list grid  relative`} style={{ gridTemplateRows: `repeat(${dayMaxRow}, 1fr)` }}>
+            {Array.from({ length: dayMaxRow }).map((e, i) => <li key={`empty-${i}`} className={`flex items-start  relative w-full my-[2px] min-w-0  `} style={{ gridRow: i + 1 }} >
+                <div className={`h-4 ${dayMaxRow > 3 ? 'mobile-down:h-2 xs-only:h-1.5' : 'mobile-down:h-3'} min-w-0 flex-1 rounded-l-lg flex items-center -mr-[6px]`}></div>
+            </li>)}
+
+        </ul>;
     }
     return (
         <div style={{ width: selectedDate && showEvents && listOfAllEvents.current[selectedDate.getTime()]?.length ? 'calc(100% - 24rem)' : '100%' }}>
@@ -309,14 +262,7 @@ const BaseCalendar: React.FC<BaseCalendarProps> = ({ onMonthChange, bookingsList
                             listOfAllEvents.current[selectedDate.getTime()]?.length && <div className='bg-white p-4 rounded-xl flex flex-col flex-1 gap-1 event-list mobile-down:px-0'>
                                 {listOfAllEvents.current[selectedDate.getTime()] ? listOfAllEvents.current[selectedDate.getTime()].map((d, i) => <div key={i}>
                                     <div className='flex gap-3 cursor-pointer' onClick={() => {
-                                        const userAgent = navigator.userAgent.toLowerCase();
-                                        if (/mobile|android|iphone|ipad|ipod|blackberry|opera mini|iemobile|wpdesktop/.test(userAgent) || (/tablet|ipad/.test(userAgent))) {
-                                            router.push(`/protected/booking/${d.bookingId}?returnTo=/protected/fullCalendar`)
-                                        } else {
-                                            let host = window.location.host;
-                                            host = !host.includes("http") ? `http://${host}` : host;
-                                            window.open(`${host}/protected/booking/${d.bookingId}?returnTo=/protected/fullCalendar`, '_blank')
-                                        }
+                                        router.push(`/protected/booking/${d.bookingId}?returnTo=/protected/fullCalendar`)
 
                                     }}>
                                         <div className='w-3 h-3 rounded-full bg-selectedButton mt-2' style={{ backgroundColor: d.color }}></div>
@@ -324,6 +270,10 @@ const BaseCalendar: React.FC<BaseCalendarProps> = ({ onMonthChange, bookingsList
                                             <label className='title'>{d.title}</label>
                                             <div className="flex items-center gap-3"><span className="label-text text-selectedButton w-11">From</span> {d.startTime} </div>
                                             <div className="flex items-center gap-3"><span className="label-text text-selectedButton w-11">To</span> {d.endTime}</div>
+                                            <div className="flex items-center gap-3"><span className="label-text text-selectedButton ">Booking Type</span> {d.bookingType}</div>
+                                            <div className="flex items-center gap-3"><span className="label-text text-selectedButton ">Property</span> {d.propertyName}</div>
+                                            <div className="flex items-center gap-3"><span className="label-text text-selectedButton">Number of Guests</span> {d.numberOfGuests}</div>
+
                                         </div>
                                     </div>
                                     <hr />

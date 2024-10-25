@@ -4,14 +4,14 @@ import { max } from "lodash";
 import { useEffect, useState } from "react";
 
 interface InquiriesVsConfirmedProps {
-    data?: any
+  data?: any
 }
 
 const InquiriesVsConfirmed: React.FC<InquiriesVsConfirmedProps> = ({ data }) => {
 
 
   useEffect(() => {
-    console.log({ data });
+    //console.log({ data });
 
     let barData = {
       labels: [0, ...Object.keys(data?.daily)],
@@ -119,6 +119,11 @@ const InquiriesVsConfirmed: React.FC<InquiriesVsConfirmedProps> = ({ data }) => 
             const month = date.toLocaleString('default', { month: 'long' });
             const dayNumber = context[0]?.label || '';
             return `${dayNumber} ${month}`;
+          },
+          afterLabel: function (context: any) {
+            const firstStackValue = context.raw;
+            const secondStackValue = context.dataset.metadata.data[context.dataIndex];
+            return `Total: ${firstStackValue + secondStackValue}`;
           },
         },
       }

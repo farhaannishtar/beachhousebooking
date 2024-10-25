@@ -74,17 +74,17 @@ export function initializeHourAvailabilityMap(month: number, year: number, defau
 export function getPropertyColor(property:Property){
   switch (property.replace(/\s/g, '').toLocaleLowerCase()) {
     case "Bluehouse".toLocaleLowerCase():
-      return "#009688";
+      return "#4287EE";
     case "Glasshouse".toLocaleLowerCase():
-      return  "#e67c73";
+      return  "#8F24AB";
     case "MeadowLane".toLocaleLowerCase():
-      return  "#F4511e";
+      return  "#C1C0BE";
     case "LeChalet".toLocaleLowerCase():
-      return  "#4285f4";
+      return  "#DD7F74";
     case "VillaArmati".toLocaleLowerCase():
-      return  "#b39ddb";
+      return  "#D50106";
     case "Castle".toLocaleLowerCase():
-      return  "#c0ca33";
+      return  "#127D3E";
     default:
       return  "#129CED";;
   }
@@ -118,6 +118,7 @@ if(filteredByProperty!='all'){
     startDateTime:event.startDateTime,
     endDateTime:event.endDateTime,
     color:getPropertyColor(filteredByProperty),
+    propertyName:filteredByProperty.toLowerCase(),
     order:Math.floor(Math.random() * 100000) + (booking.bookingId||999)
   
   }
@@ -130,6 +131,7 @@ if(filteredByProperty!='all'){
       startDateTime:event.startDateTime,
       endDateTime:event.endDateTime,
       color:getPropertyColor(property),
+      propertyName:property.toLowerCase(),
       order:(Math.floor(Math.random() * 100000)  + (booking.bookingId||999))
     }
    // console.log(calendarCell);
