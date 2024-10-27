@@ -14,6 +14,7 @@ export default function ProtectedLayout({
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
   const [filterModalOpened, setFilterModalOpened] = useState<boolean>(false);
+  const [openedDropDown, setOpenedDropDown] = useState<Boolean>(false);
 
   const [searchText, setSearchText] = useState("");
   const handleChangeSearch = (
@@ -21,6 +22,10 @@ export default function ProtectedLayout({
   ) => {
     const { name, value } = e.target;
     setSearchText(value);
+  };
+  const signOut = async () => {
+    await supabase.auth.signOut();
+    router.push("/");
   };
   useEffect(() => {
     // Subscribe to the layout button click event
@@ -60,7 +65,7 @@ export default function ProtectedLayout({
             value={searchText}
             onFilterClick={() => {
               setFilterModalOpened(!filterModalOpened)
-              eventEmitter.emit("filterBtnClicked",filterModalOpened);
+              eventEmitter.emit("filterBtnClicked", filterModalOpened);
             }}
           />
           <div className="flex items-center gap-4">
@@ -71,8 +76,19 @@ export default function ProtectedLayout({
                 notifications
               </span>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="avartar h-9 w-9 rounded-full bg-[url('https://avatar.iran.liara.run/public/44')] bg-no-repeat bg-center bg-cover"></div>
+            <div className="flex items-center gap-2 relative">
+              <div onClick={() => setOpenedDropDown(!openedDropDown)} className="cursor-pointer avartar h-9 w-9 rounded-full bg-[url('https://avatar.iran.liara.run/public/44')] bg-no-repeat bg-center bg-cover"></div>
+              <div
+                className={`${openedDropDown ? "flex " : "hidden "}bg-white rounded-xl shadow-lg absolute top-12  flex-col z-50 w-36`}
+              >
+                <label
+                  className="p-4 rounded-t-xl hover:bg-typo_light-100 cursor-pointer"
+                  onClick={signOut}
+                >
+                  Logout
+                </label>
+
+              </div>
               <div>
                 <h3 className="small-text !font-bold">
                   Hi! {user?.user_metadata?.display_name}
@@ -86,6 +102,6 @@ export default function ProtectedLayout({
       </section>
       {/* Bottom Nav bar */}
       <BottomNav />
-    </main>
+    </main >
   );
 }

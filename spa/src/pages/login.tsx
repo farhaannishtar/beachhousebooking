@@ -28,6 +28,7 @@ const Login = () => {
   }, [reSendWaitingSeconds]);
 
   const router = useRouter();
+  const usersList = [{ name: 'Indhu', phone: '+917010155010' }, { name: 'Thejas', phone: '+918838892623' }, { name: 'Yasmeen', phone: '+916383282186' }, { name: 'Nishtar', phone: '+916374542005' }, { name: 'Yassine', phone: '+21692243333' }, { name: 'Rafica', phone: '+919092665230' }, { name: 'Nathik', phone: '+12098628445' }]
   const sendOTP = async () => {
     setLoading(true);
     setErrorMessage(null);
@@ -87,13 +88,13 @@ const Login = () => {
         <label className="text-md label-text font-semibold" htmlFor="email">
           Phone Number
         </label>
-        <input
-          className="rounded-md px-4 py-2 bg-inherit border mb-4"
-          name="phone"
-          placeholder="+919841293731"
-          required
-          onChange={(e) => setPhone(e.target.value)}
-        />
+        <select name="properties" id="properties" className="my-2 w-full h-10 border-[1px] border-typo_dark-100 rounded-sm px-3" value={phone} onChange={(e) => setPhone(e.target.value)}>
+          <option value="">Select a user</option>
+          {usersList.map(usr => {
+            return <option key={usr.phone} value={usr.phone}>{`${usr.name} (${usr.phone})`}</option>
+          })}
+        </select>
+
         <LoadingButton
           loading={loading}
           disabled={!!reSendWaitingSeconds}
