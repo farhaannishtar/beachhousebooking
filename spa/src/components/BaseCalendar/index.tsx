@@ -140,6 +140,8 @@ const BaseCalendar: React.FC<BaseCalendarProps> = ({ onMonthChange, bookingsList
         const day = date.getDate();
         let index = 1;
         let thisDayRowsIndexesByOrder = {} as Record<number, number>;
+
+
         let returnedBookings: DayCellEvent[] = bookingsList.map(cell => {
             const bookingDate = new Date(cell.startDateTime);
             const endBookingDate = new Date(cell.endDateTime);
@@ -151,12 +153,26 @@ const BaseCalendar: React.FC<BaseCalendarProps> = ({ onMonthChange, bookingsList
             if (!isNaN(startDateToShow.getTime()) && !isNaN(endDateToShow.getTime()) && !isNaN(endBookingDate.getTime()) && !isNaN(bookingDate.getTime()) && isDateInRange(date, bookingDate, endBookingDate)) {
                 let positions = rangePositions(date, bookingDate, endBookingDate)
                 if (!tableOfOrders.current?.[cell.order]) { //this event dosn't start before this day
+                  
+                    let indexAlreadyUsed: string | undefined = undefined;
+                    indexAlreadyUsed = Object.keys(thisDayRowsIndexesByOrder).find(key => {
 
+                        const t = thisDayRowsIndexesByOrder[parseInt(key)];
+                        return t == index
+                    });
+                    while (indexAlreadyUsed) {
+                        index++;
+                        indexAlreadyUsed = Object.keys(thisDayRowsIndexesByOrder).find(key => {
+
+                            const t = thisDayRowsIndexesByOrder[parseInt(key)];
+                            return t == index
+                        });
+                    }
                     tableOfOrders.current = { ...tableOfOrders.current, [cell.order]: index };
                     thisDayRowsIndexesByOrder = { ...thisDayRowsIndexesByOrder, [cell.order]: index };
                     index++;
                 } else {//this event start before this day
-
+                   
                     let existAlready: string | undefined = undefined;
 
 
@@ -173,9 +189,11 @@ const BaseCalendar: React.FC<BaseCalendarProps> = ({ onMonthChange, bookingsList
                     }
                     thisDayRowsIndexesByOrder = { ...thisDayRowsIndexesByOrder, [cell.order]: tableOfOrders.current?.[cell.order] };
 
-                    index++
+                    if (index >= tableOfOrders.current?.[cell.order]) {
+                        index++
+                    }
                 }
-
+               
                 return { bookingId: cell.booking.bookingId, startTime: format(bookingDate, 'd-MM-yyyy hh:mm aaa'), endTime: format(endBookingDate, 'd-MM-yyyy hh:mm aaa'), title: bookingEvent, bookingType: cell.booking.bookingType, positions, color: cell.color, order: tableOfOrders.current?.[cell.order], bookingOrderNumber: cell.order, numberOfGuests: cell.booking.numberOfGuests, propertyName: cell.propertyName, booking: cell.booking }
 
 
