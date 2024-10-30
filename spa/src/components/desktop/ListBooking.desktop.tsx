@@ -394,7 +394,7 @@ export default function ListBooking({ className }: ListBookingProps) {
   //Filter modal
   const [filterModalOpened, setFilterModalOpened] = useState<boolean>(false);
   const toggleFilterDisplay = (e?: boolean) => {
-    setFilterModalOpened(e != undefined ? e : !filterModalOpened);
+    setFilterModalOpened(typeof e == "boolean" ? e : !filterModalOpened);
   };
   //Print return to link
   const redirectToBookingId = (bookingId?: number) => {
@@ -489,8 +489,8 @@ export default function ListBooking({ className }: ListBookingProps) {
                   onClick={() => {
                     const clearedProperties = filterState.properties
                       ? filterState.properties.filter((proprety) => {
-                          return proprety !== p;
-                        })
+                        return proprety !== p;
+                      })
                       : [];
                     setFilterState((prevState) => ({
                       ...prevState,
@@ -544,26 +544,26 @@ export default function ListBooking({ className }: ListBookingProps) {
           filterState.properties?.length ||
           filterState.paymentPending ||
           filterState.starred) && (
-          <div
-            onClick={() => {
-              setFilterState({
-                checkIn: null,
-                properties: null,
-                starred: null,
-                paymentPending: null,
-              });
-              setTimeout(() => {
-                filterBlockRef.current.applyFilters();
-              }, 200);
-            }}
-            className="flex gap-4 items-center rounded-xl border-[1px] border-typo_dark-300 px-4 py-1 cursor-pointer"
-          >
-            <label className="label_text "> Clear All</label>
-            <span className=" material-symbols-outlined  ">
-              filter_list_off
-            </span>
-          </div>
-        )}
+            <div
+              onClick={() => {
+                setFilterState({
+                  checkIn: null,
+                  properties: null,
+                  starred: null,
+                  paymentPending: null,
+                });
+                setTimeout(() => {
+                  filterBlockRef.current.applyFilters();
+                }, 200);
+              }}
+              className="flex gap-4 items-center rounded-xl border-[1px] border-typo_dark-300 px-4 py-1 cursor-pointer"
+            >
+              <label className="label_text "> Clear All</label>
+              <span className=" material-symbols-outlined  ">
+                filter_list_off
+              </span>
+            </div>
+          )}
       </div>
 
       <div className="flex items-center justify-end gap-4">

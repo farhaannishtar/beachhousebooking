@@ -25,7 +25,8 @@ type DayCellEvent = {
     order: number;
     bookingOrderNumber: number;
     numberOfGuests?: number;
-    propertyName: string
+    propertyName: string;
+    booking: BookingDB;
 }
 const BaseCalendar: React.FC<BaseCalendarProps> = ({ onMonthChange, bookingsList, loading }) => {
     const router = useRouter();
@@ -93,7 +94,7 @@ const BaseCalendar: React.FC<BaseCalendarProps> = ({ onMonthChange, bookingsList
         // Set time to 00:00:00 for date, rangeStart, and rangeEnd
         const normalizeToMidnight = (d: Date) => new Date(d.setHours(0, 0, 0, 0));
         const normalizeToLastHour = (d: Date) => new Date(d.setHours(23, 59, 0, 0));
-        const normalizeTo11Am = (d: Date) => new Date(d.setHours(11, 0, 59, 0));
+        const normalizeTo11Am = (d: Date) => new Date(d.setHours(14, 0, 59, 0));
 
 
         const normalizedDate = normalizeToMidnight(new Date(date));
@@ -109,7 +110,7 @@ const BaseCalendar: React.FC<BaseCalendarProps> = ({ onMonthChange, bookingsList
 
 
         const nextDay = (d: Date) => new Date(d.setDate(d.getDate() + 1))
-        const normalizeTo11Am = (d: Date) => new Date(nextDay(d).setHours(11, 0, 59, 0));
+        const normalizeTo11Am = (d: Date) => new Date(nextDay(d).setHours(14, 0, 59, 0));
         const normalizedNextDateTo11Am = normalizeTo11Am(new Date(date));
         if (format(date, 'd-MM-yyyy') == format(rangeStart, 'd-MM-yyyy')) {
             positions.unshift('start')
@@ -175,7 +176,7 @@ const BaseCalendar: React.FC<BaseCalendarProps> = ({ onMonthChange, bookingsList
                     index++
                 }
 
-                return { bookingId: cell.booking.bookingId, startTime: format(bookingDate, 'd-MM-yyyy hh:mm aaa'), endTime: format(endBookingDate, 'd-MM-yyyy hh:mm aaa'), title: bookingEvent, bookingType: cell.booking.bookingType, positions, color: cell.color, order: tableOfOrders.current?.[cell.order], bookingOrderNumber: cell.order, numberOfGuests: cell.booking.numberOfGuests, propertyName: cell.propertyName }
+                return { bookingId: cell.booking.bookingId, startTime: format(bookingDate, 'd-MM-yyyy hh:mm aaa'), endTime: format(endBookingDate, 'd-MM-yyyy hh:mm aaa'), title: bookingEvent, bookingType: cell.booking.bookingType, positions, color: cell.color, order: tableOfOrders.current?.[cell.order], bookingOrderNumber: cell.order, numberOfGuests: cell.booking.numberOfGuests, propertyName: cell.propertyName, booking: cell.booking }
 
 
             }
@@ -266,14 +267,28 @@ const BaseCalendar: React.FC<BaseCalendarProps> = ({ onMonthChange, bookingsList
 
                                     }}>
                                         <div className='w-3 h-3 rounded-full bg-selectedButton mt-2' style={{ backgroundColor: d.color }}></div>
-                                        <div className='flex flex-col w-full'>
+                                        <div className='flex flex-col w-full '>
                                             <label className='title'>{d.title}</label>
                                             <div className="flex items-center gap-3"><span className="label-text text-selectedButton w-11">From</span> {d.startTime} </div>
                                             <div className="flex items-center gap-3"><span className="label-text text-selectedButton w-11">To</span> {d.endTime}</div>
                                             <div className="flex items-center gap-3"><span className="label-text text-selectedButton ">Booking Type</span> {d.bookingType}</div>
                                             <div className="flex items-center gap-3"><span className="label-text text-selectedButton ">Property</span> {d.propertyName}</div>
                                             <div className="flex items-center gap-3"><span className="label-text text-selectedButton">Number of Guests</span> {d.numberOfGuests}</div>
-
+                                            <div className="flex items-center gap-3 label-text my-2">
+                                                <label>
+                                                    Rs{" "}
+                                                    {d.booking.outstanding == 0
+                                                        ? d.booking.paid.toLocaleString("en-IN")
+                                                        : d.booking.outstanding.toLocaleString("en-IN")}
+                                                </label>
+                                                {d.booking.status == "Confirmed" && (
+                                                    <div
+                                                        className={`${d.booking.outstanding == 0 ? " bg-[#DEF8E0] text-[#09DC44]" : "bg-error/20 text-error"} px-[18px] rounded-[5px] py-1 font-semibold`}
+                                                    >
+                                                        {d.booking.outstanding == 0 ? "Paid" : "Unpaid"}
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
                                     <hr />

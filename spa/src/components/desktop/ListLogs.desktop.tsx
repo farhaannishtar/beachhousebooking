@@ -655,11 +655,11 @@ export default function ListLogs({ className }: ListLogsProps) {
                         {booking.properties.join(", ")}
                       </label>
                     )}
-                    {booking.refferral && (
+                    {
                       <label className="text-slate-500 text-sm font-normal ">
-                        Referral: {booking.refferral}
+                        Referral: {booking.refferral || 'No referral'}
                       </label>
-                    )}
+                    }
                     {
                       <div className="flex items-center gap-4 text-sm mt-3">
                         <label>
@@ -677,6 +677,12 @@ export default function ListLogs({ className }: ListLogsProps) {
                         )}
                       </div>
                     }
+                    {booking.updatedBy.name && (
+                      <label className="text-slate-500 text-sm font-normal pt-3">
+                        @{booking.createdBy.name}{" "}
+                        {printInIndianTime(booking.createdDateTime, true)}
+                      </label>
+                    )}
                   </div>
                 </div>
               )
